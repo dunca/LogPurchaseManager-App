@@ -12,7 +12,7 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 import dunca.github.io.logpurchasemanager.data.StaticDataGenerator;
-import dunca.github.io.logpurchasemanager.data.model.BuyerModel;
+import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getName();
@@ -21,7 +21,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String LOCAL_DB_NAME = "lpm_database.db";
 
     // Dao instances
-    private RuntimeExceptionDao<BuyerModel, Integer> mBuyerModelDao;
+    private RuntimeExceptionDao<Acquirer, Integer> mBuyerModelDao;
 
     public DatabaseHelper(Context context) {
         super(context, LOCAL_DB_NAME, null, LOCAL_DB_VERSION);
@@ -50,13 +50,13 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     /**
-     * Gets the {@link RuntimeExceptionDao} instance associated with the {@link BuyerModel} table
+     * Gets the {@link RuntimeExceptionDao} instance associated with the {@link Acquirer} table
      *
-     * @return the {@link RuntimeExceptionDao} instance associated with the {@link BuyerModel} table
+     * @return the {@link RuntimeExceptionDao} instance associated with the {@link Acquirer} table
      */
-    public RuntimeExceptionDao<BuyerModel, Integer> getBuyerModelDao() {
+    public RuntimeExceptionDao<Acquirer, Integer> getBuyerModelDao() {
         if (mBuyerModelDao == null) {
-            mBuyerModelDao = getRuntimeExceptionDao(BuyerModel.class);
+            mBuyerModelDao = getRuntimeExceptionDao(Acquirer.class);
         }
 
         return mBuyerModelDao;
@@ -71,6 +71,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private void createDatabaseTables(ConnectionSource connectionSource)
             throws java.sql.SQLException {
 
-        TableUtils.createTable(connectionSource, BuyerModel.class);
+        TableUtils.createTable(connectionSource, Acquirer.class);
     }
 }

@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.data.model.BuyerModel;
+import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 import dunca.github.io.logpurchasemanager.data.model.CommonFieldNames;
 
 public class LoginActivity extends AppCompatActivity {
@@ -59,10 +59,10 @@ public class LoginActivity extends AppCompatActivity {
         String username = mEtUsername.getText().toString();
         String password = mEtPassword.getText().toString();
 
-        BuyerModel buyer;
+        Acquirer acquirer;
 
         try {
-            buyer = mDbHelper.getBuyerModelDao().queryBuilder().where()
+            acquirer = mDbHelper.getBuyerModelDao().queryBuilder().where()
                     .eq(CommonFieldNames.USERNAME, username)
                     .queryForFirst();
         } catch (SQLException e) {
@@ -76,10 +76,10 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         /*
-        no BuyerModel with the given username, or the supplied password doesn't match the one
+        no Acquirer with the given username, or the supplied password doesn't match the one
         in the db
         */
-        if (buyer == null || !buyer.getPassword().equals(password)) {
+        if (acquirer == null || !acquirer.getPassword().equals(password)) {
             PopupUtil.snackbar(mRootLayout, R.string.activity_login_invalid_credentials_msg);
 
             return;
