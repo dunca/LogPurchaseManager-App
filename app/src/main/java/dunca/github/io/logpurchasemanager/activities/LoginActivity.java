@@ -1,7 +1,10 @@
 package dunca.github.io.logpurchasemanager.activities;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +19,8 @@ import dunca.github.io.logpurchasemanager.data.model.BuyerModel;
 import dunca.github.io.logpurchasemanager.data.model.CommonFieldNames;
 
 public class LoginActivity extends AppCompatActivity {
+    private final String PROP_USERNAME = "prop_username";
+
     private final String TAG = LoginActivity.class.getName();
 
     private DatabaseHelper mDbHelper;
@@ -34,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
 
         initViews();
         setOnClickListeners();
+
+        retrievePreviousUsername();
     }
 
     private void initViews() {
@@ -84,5 +91,47 @@ public class LoginActivity extends AppCompatActivity {
 
         PopupUtil.snackbar(mRootLayout, successMessage);
         Log.i(TAG, successMessage);
+
+        saveUsername();
+    }
+
+    /**
+     * Saves the value of {@link #mEtUsername} as a preference with the {@link #PROP_USERNAME}
+     * key
+     */
+    private void saveUsername() {
+        String username = mEtUsername.getText().toString();
+
+        if (TextUtils.isEmpty(username)) {
+            return;
+        }
+
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+
+        editor.putString(PROP_USERNAME, username);
+        editor.apply();
+    }
+
+    /**
+     * Attempts to retrieve the value of  the {@link #PROP_USERNAME} preference. If it succeeds,
+     * its value is set as the value of {@link #mEtUsername}
+     */
+    private void retrievePreviousUsername() {
+        String username = getSharedPreferences().getString(PROP_USERNAME, null);
+
+        if (username == null) {
+            return;
+        }
+
+        mEtUsername.setText(username);
+    }
+
+    /**
+     * Returns the {@link SharedPreferences} instance associated with the current activity
+     *
+     * @return the {@link SharedPreferences} instance associated with the current activity
+     */
+    private SharedPreferences getSharedPreferences() {
+        return getPreferences(Context.MODE_PRIVATE);
     }
 }
