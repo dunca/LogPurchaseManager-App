@@ -21,7 +21,7 @@ public final class Supplier {
     private String country;
 
     @DatabaseField(canBeNull = false, defaultValue = "")
-    private String locality;
+    private String address;
 
     @DatabaseField(canBeNull = false, defaultValue = "")
     private String code;

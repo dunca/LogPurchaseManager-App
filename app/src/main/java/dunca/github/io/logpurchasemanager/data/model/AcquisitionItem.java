@@ -3,60 +3,58 @@ package dunca.github.io.logpurchasemanager.data.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.Date;
-
 import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class Acquisition {
+public final class AcquisitionItem {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField(canBeNull = false)
-    private String serialNumber;
+    @DatabaseField(canBeNull = false, foreign = true)
+    private Acquisition acquisition;
 
     @DatabaseField(canBeNull = false, foreign = true)
     private Acquirer acquirer;
 
-    @DatabaseField(canBeNull = false, foreign = true)
-    private Supplier supplier;
+    @DatabaseField(canBeNull = false)
+    private String logBarCode;
 
     @DatabaseField(canBeNull = false)
-    private Date receptionDate;
-
-    @DatabaseField(canBeNull = false, foreign = true)
-    private Status status;
+    private double netDiameter;
 
     @DatabaseField(canBeNull = false)
-    private String regionZone;
+    private double grossDiameter;
+
+    @DatabaseField(canBeNull = false)
+    private double netLength;
+
+    @DatabaseField(canBeNull = false)
+    private double grossLength;
+
+    @DatabaseField(canBeNull = false)
+    private double netVolume;
+
+    @DatabaseField(canBeNull = false)
+    private double grossVolume;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private WoodRegion woodRegion;
+    private LogQualityClass logQualityClass;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private LogCertification logCertification;
+    private LogDiameterClass logDiameterClass;
+
+    @DatabaseField(canBeNull = false, foreign = true)
+    private LogSpecies logSpecies;
 
     @DatabaseField(canBeNull = false)
     private String observations;
 
     @DatabaseField(canBeNull = false)
-    private double totalValue;
-
-    @DatabaseField(canBeNull = false)
-    private double grossTotal;
-
-    @DatabaseField(canBeNull = false)
-    private double netTotal;
-
-    @DatabaseField(canBeNull = false)
-    private double discountPercentage;
-
-    @DatabaseField(canBeNull = false)
-    private double discountValue;
+    private double price;
 
     @DatabaseField(canBeNull = false, defaultValue = "0")
-    private boolean net;
+    private boolean isSpecialPrice;
 
     @DatabaseField(canBeNull = false)
     private boolean isSynced;

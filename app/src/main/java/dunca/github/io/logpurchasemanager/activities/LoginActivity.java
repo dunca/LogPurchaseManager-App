@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         Acquirer acquirer;
 
         try {
-            acquirer = mDbHelper.getBuyerModelDao().queryBuilder().where()
+            acquirer = mDbHelper.getAcquirerDao().queryBuilder().where()
                     .eq(CommonFieldNames.USERNAME, username)
                     .queryForFirst();
         } catch (SQLException e) {

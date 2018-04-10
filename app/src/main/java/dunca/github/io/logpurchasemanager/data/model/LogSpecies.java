@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class Species {
+public final class LogSpecies {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -18,5 +18,5 @@ public final class Species {
     private String name;
 
     @DatabaseField(canBeNull = false, defaultValue = "0")
-    private int order;
+    private int listPriority;
 }

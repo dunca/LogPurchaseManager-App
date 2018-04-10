@@ -7,7 +7,8 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public class Price {
+public class LogPrice {
+    // TODO: switch to id if this is synced with the service
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -18,13 +19,13 @@ public class Price {
     private Acquirer acquirer;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private Species species;
+    private LogSpecies logSpecies;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private QualityClass qualityClass;
+    private LogQualityClass logQualityClass;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private DiameterClass diameterClass;
+    private LogDiameterClass logDiameterClass;
 
     @DatabaseField(canBeNull = false)
     private double price;
@@ -33,5 +34,5 @@ public class Price {
     private int quantity;
 
     @DatabaseField(canBeNull = false)
-    private boolean synced;
+    private boolean isSynced;
 }

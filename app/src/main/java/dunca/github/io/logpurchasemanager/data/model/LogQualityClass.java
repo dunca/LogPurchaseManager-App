@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class QualityClass {
+public final class LogQualityClass {
     @DatabaseField(generatedId = true)
     private int id;
 

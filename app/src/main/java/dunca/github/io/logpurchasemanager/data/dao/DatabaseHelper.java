@@ -40,7 +40,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         StaticDataGenerator staticDataGenerator = new StaticDataGenerator(this);
-        staticDataGenerator.createBuyerEntries();
+        staticDataGenerator.createAcquirers();
     }
 
     @Override
@@ -54,7 +54,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      *
      * @return the {@link RuntimeExceptionDao} instance associated with the {@link Acquirer} table
      */
-    public RuntimeExceptionDao<Acquirer, Integer> getBuyerModelDao() {
+    public RuntimeExceptionDao<Acquirer, Integer> getAcquirerDao() {
         if (mBuyerModelDao == null) {
             mBuyerModelDao = getRuntimeExceptionDao(Acquirer.class);
         }

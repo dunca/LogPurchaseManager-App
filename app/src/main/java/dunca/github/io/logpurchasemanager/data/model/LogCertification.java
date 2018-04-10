@@ -7,11 +7,13 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class AcquisitionLine {
+public final class LogCertification {
     @DatabaseField(generatedId = true)
     private int id;
 
-    private Acquisition acquisition;
+    @DatabaseField(canBeNull = false)
+    private String name;
 
-
+    @DatabaseField(canBeNull = false, defaultValue = "0")
+    private int listPriority;
 }

@@ -7,13 +7,13 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class Certification {
+public final class WoodRegion {
     @DatabaseField(generatedId = true)
     private int id;
 
     @DatabaseField(canBeNull = false)
     private String name;
 
-    @DatabaseField(canBeNull = false, defaultValue = "0")
-    private int order;
+    @DatabaseField(canBeNull = false)
+    private String symbol;
 }

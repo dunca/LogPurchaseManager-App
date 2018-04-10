@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class DiameterClass {
+public final class LogDiameterClass {
     @DatabaseField(generatedId = true)
     private int id;
 
