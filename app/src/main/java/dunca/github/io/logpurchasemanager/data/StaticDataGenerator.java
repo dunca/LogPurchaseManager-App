@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
+import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
 
 public final class StaticDataGenerator {
@@ -25,5 +26,12 @@ public final class StaticDataGenerator {
         WoodRegion woodRegion2 = new WoodRegion("Germany", "DE");
 
         mDatabaseHelper.getWoodRegionDao().create(Arrays.asList(woodRegion1, woodRegion2));
+    }
+
+    public void createTreeSpecies() {
+        TreeSpecies treeSpecies1 = new TreeSpecies("bc", "Beech");
+        TreeSpecies treeSpecies2 = new TreeSpecies("sp", "Spruce");
+
+        mDatabaseHelper.getWoodSpeciesDao().create(Arrays.asList(treeSpecies1, treeSpecies2));
     }
 }
