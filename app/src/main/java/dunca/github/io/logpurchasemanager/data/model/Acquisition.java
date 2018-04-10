@@ -26,7 +26,7 @@ public final class Acquisition {
     private Date receptionDate;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private Status status;
+    private AcquisitionStatus acquisitionStatus;
 
     @DatabaseField(canBeNull = false)
     private String regionZone;
@@ -35,7 +35,7 @@ public final class Acquisition {
     private WoodRegion woodRegion;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private LogCertification logCertification;
+    private WoodCertification woodCertification;
 
     @DatabaseField(canBeNull = false)
     private String observations;

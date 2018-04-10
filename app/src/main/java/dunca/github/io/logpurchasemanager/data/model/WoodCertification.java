@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class LogCertification {
+public final class WoodCertification {
     @DatabaseField(generatedId = true)
     private int id;
 

@@ -7,10 +7,16 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class Status {
+public final class WoodSpecies {
     @DatabaseField(generatedId = true)
     private int id;
 
     @DatabaseField(canBeNull = false)
+    private String symbol;
+
+    @DatabaseField(canBeNull = false)
     private String name;
+
+    @DatabaseField(canBeNull = false, defaultValue = "0")
+    private int listPriority;
 }

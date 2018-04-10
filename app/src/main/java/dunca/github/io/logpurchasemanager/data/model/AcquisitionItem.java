@@ -45,7 +45,7 @@ public final class AcquisitionItem {
     private LogDiameterClass logDiameterClass;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private LogSpecies logSpecies;
+    private WoodSpecies woodSpecies;
 
     @DatabaseField(canBeNull = false)
     private String observations;
