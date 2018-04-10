@@ -16,4 +16,13 @@ public final class WoodRegion {
 
     @DatabaseField(canBeNull = false)
     private String symbol;
+
+    public WoodRegion(String name, String symbol) {
+        this.name = name;
+        this.symbol = symbol;
+    }
+
+    WoodRegion() {
+
+    }
 }
