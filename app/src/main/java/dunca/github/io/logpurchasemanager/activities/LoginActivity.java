@@ -1,7 +1,6 @@
 package dunca.github.io.logpurchasemanager.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.EditText;
 import java.sql.SQLException;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.BuyerModel;
 import dunca.github.io.logpurchasemanager.data.model.CommonFieldNames;
@@ -62,9 +62,9 @@ public class LoginActivity extends AppCompatActivity {
             // cannot talk to the db, missing tables, etc.
             String errorString = getString(R.string.activity_login_cannot_read_credentials_msg);
 
-            Snackbar.make(mRootLayout, errorString, Snackbar.LENGTH_INDEFINITE).show();
-
+            PopupUtil.snackbar(mRootLayout, errorString);
             Log.e(TAG, String.format("%s: %s", errorString, e.getMessage()));
+
             return;
         }
 
@@ -73,8 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         in the db
         */
         if (buyer == null || !buyer.getPassword().equals(password)) {
-            Snackbar.make(mRootLayout, R.string.activity_login_invalid_credentials_msg,
-                    Snackbar.LENGTH_INDEFINITE).show();
+            PopupUtil.snackbar(mRootLayout, R.string.activity_login_invalid_credentials_msg);
 
             return;
         }
@@ -82,8 +81,8 @@ public class LoginActivity extends AppCompatActivity {
         // TODO start next activity
 
         String successMessage = getString(R.string.activity_login_successfully_logged_in_msg);
-        Snackbar.make(mRootLayout, successMessage, Snackbar.LENGTH_INDEFINITE).show();
 
+        PopupUtil.snackbar(mRootLayout, successMessage);
         Log.i(TAG, successMessage);
     }
 }
