@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class WoodSpecies {
+public final class TreeSpecies {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -19,4 +19,18 @@ public final class WoodSpecies {
 
     @DatabaseField(canBeNull = false, defaultValue = "0")
     private int listPriority;
+
+    public TreeSpecies(String symbol, String name, int listPriority) {
+        this.symbol = symbol;
+        this.name = name;
+        this.listPriority = listPriority;
+    }
+
+    public TreeSpecies(String symbol, String name) {
+        this(symbol, name, 0);
+    }
+
+    TreeSpecies() {
+
+    }
 }

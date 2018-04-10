@@ -19,7 +19,7 @@ public class LogPrice {
     private Acquirer acquirer;
 
     @DatabaseField(canBeNull = false, foreign = true)
-    private WoodSpecies woodSpecies;
+    private TreeSpecies treeSpecies;
 
     @DatabaseField(canBeNull = false, foreign = true)
     private LogQualityClass logQualityClass;
