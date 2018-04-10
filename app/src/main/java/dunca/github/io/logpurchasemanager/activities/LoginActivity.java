@@ -1,6 +1,7 @@
 package dunca.github.io.logpurchasemanager.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -85,14 +86,19 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO start next activity
-
         String successMessage = getString(R.string.activity_login_successfully_logged_in_msg);
 
         PopupUtil.snackbar(mRootLayout, successMessage);
         Log.i(TAG, successMessage);
 
         saveUsername();
+
+        startAcquisitionActivity();
+    }
+
+    private void startAcquisitionActivity() {
+        Intent intent = new Intent(this, AcquisitionActivity.class);
+        startActivity(intent);
     }
 
     /**
