@@ -12,7 +12,7 @@ import lombok.Data;
 @DatabaseTable()
 public final class BuyerModel {
     @DatabaseField(generatedId = true)
-    private int buyerId;
+    private int id;
 
     @DatabaseField
     private String username;
