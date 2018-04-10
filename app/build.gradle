@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -35,4 +39,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
+
+    implementation 'com.android.support:design:27.1.1'
+
+    annotationProcessor "org.projectlombok:lombok:1.16.20"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
