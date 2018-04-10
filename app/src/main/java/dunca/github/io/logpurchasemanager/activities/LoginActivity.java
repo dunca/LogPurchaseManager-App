@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.BuyerModel;
+import dunca.github.io.logpurchasemanager.data.model.CommonFieldNames;
 
 public class LoginActivity extends AppCompatActivity {
     private final String TAG = LoginActivity.class.getName();
@@ -55,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             buyer = mDbHelper.getBuyerModelDao().queryBuilder().where()
-                    .eq("login", username)
+                    .eq(CommonFieldNames.USERNAME, username)
                     .queryForFirst();
         } catch (SQLException e) {
             // cannot talk to the db, missing tables, etc.
