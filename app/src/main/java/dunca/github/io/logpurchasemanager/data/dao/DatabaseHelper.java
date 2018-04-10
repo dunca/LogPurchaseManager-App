@@ -11,6 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
+import dunca.github.io.logpurchasemanager.data.StaticDataGenerator;
 import dunca.github.io.logpurchasemanager.data.model.BuyerModel;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
@@ -37,6 +38,9 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             throw new RuntimeException(message);
         }
+
+        StaticDataGenerator staticDataGenerator = new StaticDataGenerator(this);
+        staticDataGenerator.createBuyerEntries();
     }
 
     @Override
