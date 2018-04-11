@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
@@ -291,14 +292,17 @@ public class AcquisitionFragment extends Fragment {
             Acquisition acquisition = createAcquisitionMatchingUi();
             DatabaseHelper.getLatestInstance().getAcquisitionDao().create(acquisition);
 
-            saveAcquisitionSerialNumber(mModifiedAcquisition);
+            saveAcquisitionSerialNumber(acquisition);
+
+            PopupUtil.snackbar(getView(), "New acquisition persisted");
+
+            mModifiedAcquisition = acquisition;
         } else {
             syncAcquisitionWithUi(mModifiedAcquisition);
             DatabaseHelper.getLatestInstance().getAcquisitionDao().update(mModifiedAcquisition);
+
+            PopupUtil.snackbar(getView(), "Updated existing acquisition");
         }
-
-
-        // TODO add notifications
     }
 
     private Acquirer getSelectedAcquirer() {
