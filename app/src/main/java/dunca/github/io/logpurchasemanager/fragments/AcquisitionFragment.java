@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -217,7 +219,7 @@ public class AcquisitionFragment extends Fragment {
                     we use getItemAtPosition instead of querying the list because the dialog
                     lets the user filter the list
                     */
-                    mSelectedSupplier = (Supplier) parent.getItemAtPosition(position);
+                    mSelectedSupplier = (Supplier) supplierListView.getItemAtPosition(position);
 
                     mTvSupplierName.setText(mSelectedSupplier.getName());
                 }
@@ -226,6 +228,25 @@ public class AcquisitionFragment extends Fragment {
             ArrayAdapter<Supplier> arrayAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1, mSupplierList);
             supplierListView.setAdapter(arrayAdapter);
+
+            EditText etNamePrefix = supplierListDialogView.findViewById(R.id.etNamePrefix);
+
+            etNamePrefix.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    arrayAdapter.getFilter().filter(s);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
 
             supplierListDialog.show();
         });
