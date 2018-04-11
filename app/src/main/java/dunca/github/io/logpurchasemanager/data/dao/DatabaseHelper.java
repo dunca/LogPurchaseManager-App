@@ -13,6 +13,17 @@ import java.sql.SQLException;
 
 import dunca.github.io.logpurchasemanager.data.StaticDataGenerator;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
+import dunca.github.io.logpurchasemanager.data.model.Acquisition;
+import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
+import dunca.github.io.logpurchasemanager.data.model.AcquisitionStatus;
+import dunca.github.io.logpurchasemanager.data.model.LogDiameterClass;
+import dunca.github.io.logpurchasemanager.data.model.LogPrice;
+import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
+import dunca.github.io.logpurchasemanager.data.model.Supplier;
+import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
+import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
+import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
+import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getName();
@@ -20,8 +31,16 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int LOCAL_DB_VERSION = 1;
     private static final String LOCAL_DB_NAME = "lpm_database.db";
 
+    private ConnectionSource mConnectionSource;
+
     // Dao instances
-    private RuntimeExceptionDao<Acquirer, Integer> mBuyerModelDao;
+    private RuntimeExceptionDao<Acquirer, Integer> mAcquirerDao;
+    private RuntimeExceptionDao<WoodRegion, Integer> mWoodRegionDao;
+    private RuntimeExceptionDao<TreeSpecies, Integer> mWoodSpeciesDao;
+    private RuntimeExceptionDao<WoodCertification, Integer> mWoodCertificationDao;
+    private RuntimeExceptionDao<LogQualityClass, Integer> mLogQualityClassDao;
+    private RuntimeExceptionDao<AcquisitionStatus, Integer> mAcquisitionStatusDao;
+    private RuntimeExceptionDao<Supplier, Integer> mSupplierDao;
 
     public DatabaseHelper(Context context) {
         super(context, LOCAL_DB_NAME, null, LOCAL_DB_VERSION);
@@ -29,8 +48,10 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
+        mConnectionSource = connectionSource;
+
         try {
-            createDatabaseTables(connectionSource);
+            createDatabaseTables();
             Log.i(TAG, "Database tables created successfully");
         } catch (SQLException e) {
             final String message = "Cannot create database tables: " + e.getMessage();
@@ -40,7 +61,17 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         StaticDataGenerator staticDataGenerator = new StaticDataGenerator(this);
+
         staticDataGenerator.createAcquirers();
+
+        staticDataGenerator.createWoodRegions();
+        staticDataGenerator.createTreeSpecies();
+        staticDataGenerator.createWoodCertifications();
+
+        staticDataGenerator.createLogQualityClasses();
+
+        staticDataGenerator.createAcquisitionStatuses();
+        staticDataGenerator.createSuppliers();
     }
 
     @Override
@@ -49,28 +80,82 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         // TODO
     }
 
-    /**
-     * Gets the {@link RuntimeExceptionDao} instance associated with the {@link Acquirer} table
-     *
-     * @return the {@link RuntimeExceptionDao} instance associated with the {@link Acquirer} table
-     */
     public RuntimeExceptionDao<Acquirer, Integer> getAcquirerDao() {
-        if (mBuyerModelDao == null) {
-            mBuyerModelDao = getRuntimeExceptionDao(Acquirer.class);
+        if (mAcquirerDao == null) {
+            mAcquirerDao = getRuntimeExceptionDao(Acquirer.class);
         }
 
-        return mBuyerModelDao;
+        return mAcquirerDao;
+    }
+
+    public RuntimeExceptionDao<WoodRegion, Integer> getWoodRegionDao() {
+        if (mWoodRegionDao == null) {
+            mWoodRegionDao = getRuntimeExceptionDao(WoodRegion.class);
+        }
+
+        return mWoodRegionDao;
+    }
+
+    public RuntimeExceptionDao<TreeSpecies, Integer> getWoodSpeciesDao() {
+        if (mWoodSpeciesDao == null) {
+            mWoodSpeciesDao = getRuntimeExceptionDao(TreeSpecies.class);
+        }
+
+        return mWoodSpeciesDao;
+    }
+
+    public RuntimeExceptionDao<WoodCertification, Integer> getWoodCertificationDao() {
+        if (mWoodCertificationDao == null) {
+            mWoodCertificationDao = getRuntimeExceptionDao(WoodCertification.class);
+        }
+
+        return mWoodCertificationDao;
+    }
+
+    public RuntimeExceptionDao<LogQualityClass, Integer> getLogQualityClassDao() {
+        if (mLogQualityClassDao == null) {
+            mLogQualityClassDao = getRuntimeExceptionDao(LogQualityClass.class);
+        }
+
+        return mLogQualityClassDao;
+    }
+
+    public RuntimeExceptionDao<AcquisitionStatus, Integer> getAcquisitionStatusDao() {
+        if (mAcquisitionStatusDao == null) {
+            mAcquisitionStatusDao = getRuntimeExceptionDao(AcquisitionStatus.class);
+        }
+
+        return mAcquisitionStatusDao;
+    }
+
+    public RuntimeExceptionDao<Supplier, Integer> getSupplierDao() {
+        if (mSupplierDao == null) {
+            mSupplierDao = getRuntimeExceptionDao(Supplier.class);
+        }
+
+        return mSupplierDao;
     }
 
     /**
      * Creates tables based on model classes
      *
-     * @param connectionSource the {@link ConnectionSource} object associated with the local db
      * @throws SQLException if an underlying SQL related error occurs
      */
-    private void createDatabaseTables(ConnectionSource connectionSource)
-            throws java.sql.SQLException {
-
-        TableUtils.createTable(connectionSource, Acquirer.class);
+    private void createDatabaseTables() throws java.sql.SQLException {
+        createDatabaseTable(Acquirer.class);
+        createDatabaseTable(Acquisition.class);
+        createDatabaseTable(AcquisitionItem.class);
+        createDatabaseTable(AcquisitionStatus.class);
+        createDatabaseTable(LogDiameterClass.class);
+        createDatabaseTable(LogPrice.class);
+        createDatabaseTable(LogQualityClass.class);
+        createDatabaseTable(Supplier.class);
+        createDatabaseTable(TreeSpecies.class);
+        createDatabaseTable(WoodCertification.class);
+        createDatabaseTable(WoodRegion.class);
+    }
+    
+    private <T extends Model> void createDatabaseTable(Class<T> modelClass) throws SQLException {
+        TableUtils.createTable(mConnectionSource, modelClass);
     }
 }
