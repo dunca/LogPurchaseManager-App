@@ -1,6 +1,7 @@
 package dunca.github.io.logpurchasemanager.fragments;
 
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,9 +10,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -70,9 +73,13 @@ public class AcquisitionFragment extends Fragment {
     private Button mBtnSave;
 
     private DatabaseHelper mDbHelper;
+
     private List<WoodRegion> mWoodRegionList;
     private List<WoodCertification> mWoodCertificationList;
     private List<Acquirer> mAcquirerList;
+    private List<Supplier> mSupplierList;
+
+    private Supplier mSelectedSupplier;
 
     public AcquisitionFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
@@ -97,6 +104,9 @@ public class AcquisitionFragment extends Fragment {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        mSupplierList = mDbHelper.getSupplierDao().queryForAll();
+        mSelectedSupplier = mSupplierList.get(0);
     }
 
     public static AcquisitionFragment newInstance(int acquisitionId) {
@@ -148,16 +158,7 @@ public class AcquisitionFragment extends Fragment {
 
         // set the first supplier as the default one
         mTvSupplierName = mFragment.findViewById(R.id.tvSupplierName);
-        Supplier firstSupplier;
-
-        try {
-            firstSupplier = mDbHelper.getSupplierDao().queryBuilder()
-                    .queryForFirst();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        mTvSupplierName.setText(firstSupplier.getName());
+        mTvSupplierName.setText(mSelectedSupplier.getName());
 
         mSpinnerWoodRegion = mFragment.findViewById(R.id.spinnerWoodRegionSymbol);
         ArrayAdapter woodRegionAdapter = createDefaultSpinnerAdapter(mWoodRegionList);
@@ -179,6 +180,7 @@ public class AcquisitionFragment extends Fragment {
     private void setupOnClickActions() {
         mBtnSave.setOnClickListener((source) -> persistAcquisitionChanges());
 
+
         DatePickerDialog.OnDateSetListener datePickListener = (view, year, month, dayOfMonth) -> {
             Date pickedDate = new Date(year - 1900, month, dayOfMonth);
             updateUiDate(pickedDate);
@@ -190,6 +192,42 @@ public class AcquisitionFragment extends Fragment {
             new DatePickerDialog(getContext(), datePickListener, currentCalendar.get(Calendar.YEAR),
                     currentCalendar.get(Calendar.MONTH),
                     currentCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+
+        mTvSupplierName.setOnClickListener((source) -> {
+            AlertDialog supplierListDialog = new AlertDialog.Builder(getContext()).create();
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+
+            View supplierListDialogView = inflater.inflate(R.layout.supplier_dialog_fragment_acquisition, null);
+
+            supplierListDialog.setView(supplierListDialogView);
+            supplierListDialog.setTitle("Select the supplier");
+
+            ListView supplierListView = supplierListDialogView.findViewById(R.id.lvSuppliers);
+
+            supplierListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    supplierListDialog.dismiss();
+
+                    // mSelectedSupplier = mSupplierList.get(position);
+
+                    /*
+                    we use getItemAtPosition instead of querying the list because the dialog
+                    lets the user filter the list
+                    */
+                    mSelectedSupplier = (Supplier) parent.getItemAtPosition(position);
+
+                    mTvSupplierName.setText(mSelectedSupplier.getName());
+                }
+            });
+
+            ArrayAdapter<Supplier> arrayAdapter = new ArrayAdapter<>(getActivity(),
+                    android.R.layout.simple_list_item_1, mSupplierList);
+            supplierListView.setAdapter(arrayAdapter);
+
+            supplierListDialog.show();
         });
     }
 
