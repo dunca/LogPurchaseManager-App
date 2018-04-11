@@ -3,11 +3,12 @@ package dunca.github.io.logpurchasemanager.data.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import lombok.Data;
 
 @Data
 @DatabaseTable
-public class LogPrice {
+public class LogPrice implements Model {
     // TODO: switch to id if this is synced with the service
     @DatabaseField(generatedId = true)
     private int id;

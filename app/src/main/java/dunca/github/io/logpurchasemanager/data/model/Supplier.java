@@ -3,11 +3,12 @@ package dunca.github.io.logpurchasemanager.data.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import lombok.Data;
 
 @Data
 @DatabaseTable
-public final class Supplier {
+public final class Supplier implements Model {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -25,4 +26,16 @@ public final class Supplier {
 
     @DatabaseField(canBeNull = false, defaultValue = "")
     private String code;
+
+    public Supplier(String name, String street, String country, String address, String code) {
+        this.name = name;
+        this.street = street;
+        this.country = country;
+        this.address = address;
+        this.code = code;
+    }
+
+    Supplier() {
+
+    }
 }
