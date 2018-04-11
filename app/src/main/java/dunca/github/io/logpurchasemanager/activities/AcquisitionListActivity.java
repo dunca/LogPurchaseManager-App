@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -73,6 +72,10 @@ public class AcquisitionListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         mAcquisitionList = DatabaseHelper.getLatestInstance().getAcquisitionDao().queryForAll();
+
+        if (mAcquisitionList.isEmpty()) {
+            startMainActivity(null);
+        }
 
         setupAcquisitionRecyclerView();
 
