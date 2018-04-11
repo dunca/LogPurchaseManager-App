@@ -23,4 +23,11 @@ public final class LogDiameterClass implements Model {
 
     @DatabaseField
     private double maximum;
+
+    public LogDiameterClass(String symbol, String name, double minimum, double maximum) {
+        this.symbol = symbol;
+        this.name = name;
+        this.minimum = minimum;
+        this.maximum = maximum;
+    }
 }

@@ -36,4 +36,17 @@ public class LogPrice implements Model {
 
     @DatabaseField(canBeNull = false)
     private boolean isSynced;
+
+    public LogPrice(Acquisition acquisition, Acquirer acquirer, TreeSpecies treeSpecies,
+                    LogQualityClass logQualityClass, LogDiameterClass logDiameterClass,
+                    double price, int quantity, boolean isSynced) {
+        this.acquisition = acquisition;
+        this.acquirer = acquirer;
+        this.treeSpecies = treeSpecies;
+        this.logQualityClass = logQualityClass;
+        this.logDiameterClass = logDiameterClass;
+        this.price = price;
+        this.quantity = quantity;
+        this.isSynced = isSynced;
+    }
 }

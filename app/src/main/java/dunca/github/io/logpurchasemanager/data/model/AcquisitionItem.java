@@ -59,4 +59,28 @@ public final class AcquisitionItem implements Model {
 
     @DatabaseField(canBeNull = false)
     private boolean isSynced;
+
+    public AcquisitionItem(Acquisition acquisition, Acquirer acquirer, String logBarCode,
+                           double netDiameter, double grossDiameter, double netLength,
+                           double grossLength, double netVolume, double grossVolume,
+                           LogQualityClass logQualityClass, LogDiameterClass logDiameterClass,
+                           TreeSpecies treeSpecies, String observations, double price,
+                           boolean isSpecialPrice, boolean isSynced) {
+        this.acquisition = acquisition;
+        this.acquirer = acquirer;
+        this.logBarCode = logBarCode;
+        this.netDiameter = netDiameter;
+        this.grossDiameter = grossDiameter;
+        this.netLength = netLength;
+        this.grossLength = grossLength;
+        this.netVolume = netVolume;
+        this.grossVolume = grossVolume;
+        this.logQualityClass = logQualityClass;
+        this.logDiameterClass = logDiameterClass;
+        this.treeSpecies = treeSpecies;
+        this.observations = observations;
+        this.price = price;
+        this.isSpecialPrice = isSpecialPrice;
+        this.isSynced = isSynced;
+    }
 }

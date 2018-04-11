@@ -61,4 +61,27 @@ public final class Acquisition implements Model {
 
     @DatabaseField(canBeNull = false)
     private boolean isSynced;
+
+    public Acquisition(String serialNumber, Acquirer acquirer, Supplier supplier,
+                       Date receptionDate, AcquisitionStatus acquisitionStatus, String regionZone,
+                       WoodRegion woodRegion, WoodCertification woodCertification,
+                       String observations, double totalValue, double grossTotal, double netTotal,
+                       double discountPercentage, double discountValue, boolean net, boolean isSynced) {
+        this.serialNumber = serialNumber;
+        this.acquirer = acquirer;
+        this.supplier = supplier;
+        this.receptionDate = receptionDate;
+        this.acquisitionStatus = acquisitionStatus;
+        this.regionZone = regionZone;
+        this.woodRegion = woodRegion;
+        this.woodCertification = woodCertification;
+        this.observations = observations;
+        this.totalValue = totalValue;
+        this.grossTotal = grossTotal;
+        this.netTotal = netTotal;
+        this.discountPercentage = discountPercentage;
+        this.discountValue = discountValue;
+        this.net = net;
+        this.isSynced = isSynced;
+    }
 }
