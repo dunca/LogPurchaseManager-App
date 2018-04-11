@@ -149,7 +149,7 @@ public class AcquisitionFragment extends Fragment {
 
     private void initViews() {
         mEtSerialNumber = mFragment.findViewById(R.id.etSerialNumber);
-        mEtSerialNumber.setText(String.valueOf(getLastAcquisitionSerialNumber() + 1));
+        // mEtSerialNumber.setText(String.valueOf(getLastAcquisitionSerialNumber() + 1));
 
         mSpinnerAcquirer = mFragment.findViewById(R.id.spinnerAcquirer);
         ArrayAdapter acquirerAdapter = createDefaultSpinnerAdapter(mAcquirerList);
@@ -407,13 +407,26 @@ public class AcquisitionFragment extends Fragment {
         return (WoodCertification) mSpinnerWoodCertification.getSelectedItem();
     }
 
+    /**
+     * Sets the value of the {@link #LAST_ACQUISITION_ID_PROP} property to match the
+     * {@link Acquisition#serialNumber} of the given {@link Acquisition} instance
+     *
+     * @param currentAcquisition the {@link Acquisition} instance to use a the source
+     */
     private void saveAcquisitionSerialNumber(Acquisition currentAcquisition) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
 
         editor.putInt(LAST_ACQUISITION_ID_PROP, Integer.valueOf(
                 currentAcquisition.getSerialNumber()));
+
+        editor.apply();
     }
 
+    /**
+     * Gets the value of the {@link #LAST_ACQUISITION_ID_PROP} property
+     *
+     * @return the value of the {@link #LAST_ACQUISITION_ID_PROP} property
+     */
     private int getLastAcquisitionSerialNumber() {
         return getSharedPreferences().getInt(LAST_ACQUISITION_ID_PROP, 0);
     }
