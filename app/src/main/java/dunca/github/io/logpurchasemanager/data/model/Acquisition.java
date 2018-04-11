@@ -85,7 +85,7 @@ public final class Acquisition implements Model {
         this.isSynced = isSynced;
     }
 
-    Acquisition() {
+    public Acquisition() {
 
     }
 }
