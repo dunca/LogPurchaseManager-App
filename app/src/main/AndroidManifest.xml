@@ -18,11 +18,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.MainTabbedActivity"
             android:label="@string/title_activity_main_tabbed"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.AcquisitionListActivity"
+            android:label="@string/title_activity_acquisition_list"
+            android:parentActivityName=".activities.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dunca.github.io.logpurchasemanager.activities.LoginActivity" />
+        </activity>
     </application>
 
 </manifest>

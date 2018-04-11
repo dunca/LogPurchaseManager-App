@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
-        Intent intent = new Intent(this, MainTabbedActivity.class);
+        Intent intent = new Intent(this, AcquisitionListActivity.class);
         startActivity(intent);
     }
 
