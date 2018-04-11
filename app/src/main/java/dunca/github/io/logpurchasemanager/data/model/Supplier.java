@@ -38,4 +38,9 @@ public final class Supplier implements Model {
     Supplier() {
 
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
