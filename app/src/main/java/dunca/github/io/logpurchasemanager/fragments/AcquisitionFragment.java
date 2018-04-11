@@ -1,6 +1,7 @@
 package dunca.github.io.logpurchasemanager.fragments;
 
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -68,6 +71,22 @@ public class AcquisitionFragment extends Fragment {
 
 
         mTvDate = mFragment.findViewById(R.id.tvDate);
+
+        DatePickerDialog.OnDateSetListener datePickListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                Date pickedDate = new Date(year - 1900, month, dayOfMonth);
+                updateUiDate(pickedDate);
+            }
+        };
+
+        Calendar currentCalendar = Calendar.getInstance();
+
+        mTvDate.setOnClickListener(v -> {
+            new DatePickerDialog(getContext(), datePickListener, currentCalendar.get(Calendar.YEAR),
+                    currentCalendar.get(Calendar.MONTH),
+                    currentCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
 
         // set the first supplier as the default one
         mTvSupplierName = mFragment.findViewById(R.id.tvSupplierName);
@@ -185,10 +204,12 @@ public class AcquisitionFragment extends Fragment {
         int currentAcquisitionSerialNumber = getLastAcquisitionSerialNumber() + 1;
         mEtSerialNumber.setText(String.valueOf(currentAcquisitionSerialNumber));
 
-        DateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date currentDate = new Date();
+        updateUiDate(new Date());
+    }
 
-        mTvDate.setText(isoDateFormat.format(currentDate));
+    private void updateUiDate(Date date) {
+        final DateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        mTvDate.setText(isoDateFormat.format(date));
     }
 
     private void setupOnClickActions() {
