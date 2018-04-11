@@ -83,4 +83,8 @@ public final class AcquisitionItem implements Model {
         this.isSpecialPrice = isSpecialPrice;
         this.isSynced = isSynced;
     }
+
+    AcquisitionItem() {
+
+    }
 }

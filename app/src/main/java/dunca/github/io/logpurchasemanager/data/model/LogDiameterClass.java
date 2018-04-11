@@ -30,4 +30,8 @@ public final class LogDiameterClass implements Model {
         this.minimum = minimum;
         this.maximum = maximum;
     }
+
+    LogDiameterClass() {
+
+    }
 }

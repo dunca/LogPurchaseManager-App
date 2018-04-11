@@ -84,4 +84,8 @@ public final class Acquisition implements Model {
         this.net = net;
         this.isSynced = isSynced;
     }
+
+    Acquisition() {
+
+    }
 }

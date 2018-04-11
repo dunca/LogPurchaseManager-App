@@ -49,4 +49,8 @@ public class LogPrice implements Model {
         this.quantity = quantity;
         this.isSynced = isSynced;
     }
+
+    LogPrice() {
+
+    }
 }
