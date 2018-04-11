@@ -37,4 +37,9 @@ public final class Acquirer implements Model {
     Acquirer() {
 
     }
+
+    @Override
+    public String toString() {
+        return username + String.format(" (%s %s)", firstName, lastName);
+    }
 }
