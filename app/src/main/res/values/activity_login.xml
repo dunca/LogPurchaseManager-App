@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Labels-->
-    <string name="activity_login_activity_label">Login</string>
+    <string name="title_login_activity">Login</string>
     <string name="activity_login_username_label">Username</string>
     <string name="activity_login_password_label">Password</string>
     <string name="activity_login_button_label">Login</string>
