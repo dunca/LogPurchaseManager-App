@@ -26,4 +26,9 @@ public final class WoodRegion implements Model {
     WoodRegion() {
 
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
