@@ -68,7 +68,19 @@ public class AcquisitionFragment extends Fragment {
 
 
         mTvDate = mFragment.findViewById(R.id.tvDate);
+
+        // set the first supplier as the default one
         mTvSupplierName = mFragment.findViewById(R.id.tvSupplierName);
+        Supplier firstSupplier;
+
+        try {
+            firstSupplier = dbHelper.getSupplierDao().queryBuilder()
+                    .queryForFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        mTvSupplierName.setText(firstSupplier.getName());
 
         mSpinnerWoodRegion = mFragment.findViewById(R.id.spinnerWoodRegionSymbol);
         List<WoodRegion> woodRegionList = dbHelper.getWoodRegionDao().queryForAll();
