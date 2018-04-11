@@ -36,9 +36,7 @@ public class AcquisitionFragment extends Fragment {
     private Button mBtnSave;
 
     public AcquisitionFragment() {
-        initViews();
 
-        mBtnSave.setOnClickListener((source) -> persistAcquisitionChanges());
     }
 
     private void initViews() {
@@ -85,7 +83,15 @@ public class AcquisitionFragment extends Fragment {
                              Bundle savedInstanceState) {
         // inflate the layout for this fragment
         mFragment = inflater.inflate(R.layout.fragment_acquisition, container, false);
+
+        initViews();
+        setupOnClickActions();
+
         return mFragment;
+    }
+
+    private void setupOnClickActions() {
+        mBtnSave.setOnClickListener((source) -> persistAcquisitionChanges());
     }
 
     private void persistAcquisitionChanges() {
@@ -103,6 +109,8 @@ public class AcquisitionFragment extends Fragment {
         // TODO, if its an existing acquisition, modify it
 
         DatabaseHelper.getLatestInstance().getAcquisitionDao().create(acquisition);
+
+        // TODO add notifications
     }
 
     private Acquirer getSelectedAcquirer() {
