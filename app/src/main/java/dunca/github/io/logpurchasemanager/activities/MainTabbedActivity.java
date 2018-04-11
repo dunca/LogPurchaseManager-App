@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 
 public class MainTabbedActivity extends AppCompatActivity {
     /**
@@ -134,6 +135,10 @@ public class MainTabbedActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page
+            if (position == 0) {
+                return AcquisitionFragment.newInstance();
+            }
+
             return PlaceholderFragment.newInstance(position + 1);
         }
 
