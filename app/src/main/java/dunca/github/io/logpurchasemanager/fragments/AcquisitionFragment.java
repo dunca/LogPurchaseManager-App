@@ -11,13 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -40,93 +40,62 @@ public class AcquisitionFragment extends Fragment {
 
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
 
+
     private Acquisition mModifiedAcquisition;
 
+    private DateFormat mIsoDateFormat;
+
+
     private View mFragment;
+
     private EditText mEtSerialNumber;
+
     private Spinner mSpinnerAcquirer;
+
     private TextView mTvDate;
+
     private TextView mTvSupplierName;
+
     private Spinner mSpinnerWoodRegion;
+
     private EditText mEtRegionZone;
+
     private Spinner mSpinnerWoodCertification;
+
     private EditText mEtObservations;
+
     private EditText mEtDiscountPercentage;
+
     private Button mBtnSave;
 
-    public AcquisitionFragment() {
+    private DatabaseHelper mDbHelper;
+    private List<WoodRegion> mWoodRegionList;
+    private List<WoodCertification> mWoodCertificationList;
+    private List<Acquirer> mAcquirerList;
 
+    public AcquisitionFragment() {
+        mDbHelper = DatabaseHelper.getLatestInstance();
+
+        mIsoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        initDbLists();
     }
 
-    private void initViews() {
-        DatabaseHelper dbHelper = DatabaseHelper.getLatestInstance();
+    /**
+     * Initializes lists of static data provided by the database (acquirers, wood regions, etc.)
+     */
+    private void initDbLists() {
+        mAcquirerList = mDbHelper.getAcquirerDao().queryForAll();
 
-        mEtSerialNumber = mFragment.findViewById(R.id.etSerialNumber);
-        mEtSerialNumber.setText(String.valueOf(getLastAcquisitionSerialNumber() + 1));
-
-        mSpinnerAcquirer = mFragment.findViewById(R.id.spinnerAcquirer);
-        List<Acquirer> acquirerList = dbHelper.getAcquirerDao().queryForAll();
-        ArrayAdapter acquirerAdapter = createDefaultSpinnerAdapter(acquirerList);
-        mSpinnerAcquirer.setAdapter(acquirerAdapter);
-
-
-        mTvDate = mFragment.findViewById(R.id.tvDate);
-
-        DatePickerDialog.OnDateSetListener datePickListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Date pickedDate = new Date(year - 1900, month, dayOfMonth);
-                updateUiDate(pickedDate);
-            }
-        };
-
-        Calendar currentCalendar = Calendar.getInstance();
-
-        mTvDate.setOnClickListener(v -> {
-            new DatePickerDialog(getContext(), datePickListener, currentCalendar.get(Calendar.YEAR),
-                    currentCalendar.get(Calendar.MONTH),
-                    currentCalendar.get(Calendar.DAY_OF_MONTH)).show();
-        });
-
-        // set the first supplier as the default one
-        mTvSupplierName = mFragment.findViewById(R.id.tvSupplierName);
-        Supplier firstSupplier;
+        mWoodRegionList = mDbHelper.getWoodRegionDao().queryForAll();
 
         try {
-            firstSupplier = dbHelper.getSupplierDao().queryBuilder()
-                    .queryForFirst();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        mTvSupplierName.setText(firstSupplier.getName());
-
-        mSpinnerWoodRegion = mFragment.findViewById(R.id.spinnerWoodRegionSymbol);
-        List<WoodRegion> woodRegionList = dbHelper.getWoodRegionDao().queryForAll();
-        ArrayAdapter woodRegionAdapter = createDefaultSpinnerAdapter(woodRegionList);
-        mSpinnerWoodRegion.setAdapter(woodRegionAdapter);
-
-        mEtRegionZone = mFragment.findViewById(R.id.etRegionZone);
-
-        mSpinnerWoodCertification = mFragment.findViewById(R.id.spinnerWoodCertification);
-        List<WoodCertification> woodCertificationList;
-
-        try {
-            woodCertificationList = dbHelper.getWoodCertificationDao()
+            mWoodCertificationList = mDbHelper.getWoodCertificationDao()
                     .queryBuilder().orderBy(CommonFieldNames.LIST_PRIORITY, true)
                     .query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        ArrayAdapter woodCertificationAdapter = createDefaultSpinnerAdapter(woodCertificationList);
-        mSpinnerWoodCertification.setAdapter(woodCertificationAdapter);
-
-        mEtObservations = mFragment.findViewById(R.id.edObservations);
-
-        mEtDiscountPercentage = mFragment.findViewById(R.id.etDiscountPercentage);
-
-        mBtnSave = mFragment.findViewById(R.id.btnSave);
     }
 
     public static AcquisitionFragment newInstance(int acquisitionId) {
@@ -141,15 +110,6 @@ public class AcquisitionFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // if (getArguments() != null) {
-        //     mParam1 = getArguments().getString(ARG_PARAM1);
-        //     mParam2 = getArguments().getString(ARG_PARAM2);
-        // }
     }
 
     @Override
@@ -174,6 +134,64 @@ public class AcquisitionFragment extends Fragment {
         return mFragment;
     }
 
+    private void initViews() {
+        mEtSerialNumber = mFragment.findViewById(R.id.etSerialNumber);
+        mEtSerialNumber.setText(String.valueOf(getLastAcquisitionSerialNumber() + 1));
+
+        mSpinnerAcquirer = mFragment.findViewById(R.id.spinnerAcquirer);
+        ArrayAdapter acquirerAdapter = createDefaultSpinnerAdapter(mAcquirerList);
+        mSpinnerAcquirer.setAdapter(acquirerAdapter);
+
+
+        mTvDate = mFragment.findViewById(R.id.tvDate);
+
+        // set the first supplier as the default one
+        mTvSupplierName = mFragment.findViewById(R.id.tvSupplierName);
+        Supplier firstSupplier;
+
+        try {
+            firstSupplier = mDbHelper.getSupplierDao().queryBuilder()
+                    .queryForFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        mTvSupplierName.setText(firstSupplier.getName());
+
+        mSpinnerWoodRegion = mFragment.findViewById(R.id.spinnerWoodRegionSymbol);
+        ArrayAdapter woodRegionAdapter = createDefaultSpinnerAdapter(mWoodRegionList);
+        mSpinnerWoodRegion.setAdapter(woodRegionAdapter);
+
+        mEtRegionZone = mFragment.findViewById(R.id.etRegionZone);
+
+        mSpinnerWoodCertification = mFragment.findViewById(R.id.spinnerWoodCertification);
+        ArrayAdapter woodCertificationAdapter = createDefaultSpinnerAdapter(mWoodCertificationList);
+        mSpinnerWoodCertification.setAdapter(woodCertificationAdapter);
+
+        mEtObservations = mFragment.findViewById(R.id.edObservations);
+
+        mEtDiscountPercentage = mFragment.findViewById(R.id.etDiscountPercentage);
+
+        mBtnSave = mFragment.findViewById(R.id.btnSave);
+    }
+
+    private void setupOnClickActions() {
+        mBtnSave.setOnClickListener((source) -> persistAcquisitionChanges());
+
+        DatePickerDialog.OnDateSetListener datePickListener = (view, year, month, dayOfMonth) -> {
+            Date pickedDate = new Date(year - 1900, month, dayOfMonth);
+            updateUiDate(pickedDate);
+        };
+
+        Calendar currentCalendar = Calendar.getInstance();
+
+        mTvDate.setOnClickListener(v -> {
+            new DatePickerDialog(getContext(), datePickListener, currentCalendar.get(Calendar.YEAR),
+                    currentCalendar.get(Calendar.MONTH),
+                    currentCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+    }
+
     /**
      * Sets {@link #mModifiedAcquisition} to the {@link Acquisition} instance corresponding to the
      * given id
@@ -191,9 +209,59 @@ public class AcquisitionFragment extends Fragment {
      * Updates the UI inputs based on the values of {@link #mModifiedAcquisition}
      */
     private void syncUiWithAcquisition() {
-        // TODO update ui with data from mModifiedAcquisition
+        mEtSerialNumber.setText(mModifiedAcquisition.getSerialNumber());
+        mEtRegionZone.setText(mModifiedAcquisition.getRegionZone());
+        mEtObservations.setText(mModifiedAcquisition.getObservations());
+        mEtDiscountPercentage.setText(String.valueOf(mModifiedAcquisition.getDiscountPercentage()));
 
+        mSpinnerAcquirer.setSelection(mAcquirerList.indexOf(mModifiedAcquisition.getAcquirer()));
+        mSpinnerWoodRegion.setSelection(mWoodRegionList.indexOf(mModifiedAcquisition.getWoodRegion()));
+        mSpinnerWoodCertification.setSelection(mWoodCertificationList.indexOf(mModifiedAcquisition.getWoodCertification()));
 
+        updateUiDate(mModifiedAcquisition.getReceptionDate());
+
+        mTvSupplierName.setText(mModifiedAcquisition.getSupplier().getName());
+    }
+
+    /**
+     * Updates the provided {@link Acquisition} instance with values of the UI inputs
+     *
+     * @param acquisition the {@link Acquisition} instance to update
+     */
+    private void syncAcquisitionWithUi(Acquisition acquisition) {
+        String serialNumber = mEtSerialNumber.getText().toString();
+        String regionZone = mEtRegionZone.getText().toString();
+        String observations = mEtObservations.getText().toString();
+        double discountPercentage = Double.valueOf(mEtDiscountPercentage.getText().toString());
+
+        acquisition.setSerialNumber(serialNumber);
+        acquisition.setAcquirer(getSelectedAcquirer());
+        acquisition.setSupplier(getSelectedSupplier());
+        acquisition.setReceptionDate(getSelectedDate());
+        acquisition.setAcquisitionStatus(getAcquisitionStatus());
+        acquisition.setRegionZone(regionZone);
+        acquisition.setWoodRegion(getSelectedWoodRegion());
+        acquisition.setWoodCertification(getSelectedWoodCertification());
+        acquisition.setObservations(observations);
+        acquisition.setTotalValue(0);
+        acquisition.setGrossTotal(0);
+        acquisition.setNetTotal(0);
+        acquisition.setDiscountPercentage(discountPercentage);
+        acquisition.setDiscountValue(0);
+        acquisition.setNet(false);
+        acquisition.setSynced(false);
+    }
+
+    /**
+     * Creates and returns a {@link Acquisition} instance based on the values in the UI
+     *
+     * @return a {@link Acquisition} instance based on the values in the UI
+     */
+    private Acquisition createAcquisitionMatchingUi() {
+        Acquisition acquisition = new Acquisition();
+        syncAcquisitionWithUi(acquisition);
+
+        return acquisition;
     }
 
     /**
@@ -207,34 +275,25 @@ public class AcquisitionFragment extends Fragment {
         updateUiDate(new Date());
     }
 
+    /**
+     * Updates the date {@link TextView} from the UI, with information found in the given
+     * {@link Date}
+     *
+     * @param date the {@link Date} to use when updating the date {@link TextView}
+     */
     private void updateUiDate(Date date) {
-        final DateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        mTvDate.setText(isoDateFormat.format(date));
-    }
-
-    private void setupOnClickActions() {
-        mBtnSave.setOnClickListener((source) -> persistAcquisitionChanges());
+        mTvDate.setText(mIsoDateFormat.format(date));
     }
 
     private void persistAcquisitionChanges() {
-        String serialNumber = mEtSerialNumber.getText().toString();
-        String regionZone = mEtRegionZone.getText().toString();
-        String observations = mEtObservations.getText().toString();
-        double discountPercentage = Double.valueOf(mEtDiscountPercentage.getText().toString());
-
         // not working with an existing object
         if (mModifiedAcquisition == null) {
-            Acquisition acquisition = new Acquisition(serialNumber, getSelectedAcquirer(),
-                    getSelectedSupplier(), getSelectedDate(), getAcquisitionStatus(), regionZone,
-                    getSelectedWoodRegion(), getSelectedWoodCertification(), observations,
-                    0, 0, 0, discountPercentage, 0, false, false);
-
-
+            Acquisition acquisition = createAcquisitionMatchingUi();
             DatabaseHelper.getLatestInstance().getAcquisitionDao().create(acquisition);
+
+            saveAcquisitionSerialNumber(mModifiedAcquisition);
         } else {
-            // TODO update all fields
-
-
+            syncAcquisitionWithUi(mModifiedAcquisition);
             DatabaseHelper.getLatestInstance().getAcquisitionDao().update(mModifiedAcquisition);
         }
 
@@ -243,27 +302,46 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private Acquirer getSelectedAcquirer() {
-        return null;
+        return (Acquirer) mSpinnerAcquirer.getSelectedItem();
     }
 
     private Supplier getSelectedSupplier() {
-        return null;
+        // TODO not ok, there could be suppliers with identical names
+
+        String selectedSupplierName = mTvSupplierName.getText().toString();
+
+        try {
+            return mDbHelper.getSupplierDao().queryBuilder()
+                    .where().eq(CommonFieldNames.NAME, selectedSupplierName)
+                    .queryForFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Date getSelectedDate() {
-        return null;
+        try {
+            return mIsoDateFormat.parse(mTvDate.getText().toString());
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Programming error!!!");
+        }
     }
 
     private AcquisitionStatus getAcquisitionStatus() {
-        return null;
+        // statuses seem to be unused, so pick the first one
+        try {
+            return mDbHelper.getAcquisitionStatusDao().queryBuilder().queryForFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private WoodRegion getSelectedWoodRegion() {
-        return null;
+        return (WoodRegion) mSpinnerWoodRegion.getSelectedItem();
     }
 
     private WoodCertification getSelectedWoodCertification() {
-        return null;
+        return (WoodCertification) mSpinnerWoodCertification.getSelectedItem();
     }
 
     private void saveAcquisitionSerialNumber(Acquisition currentAcquisition) {
