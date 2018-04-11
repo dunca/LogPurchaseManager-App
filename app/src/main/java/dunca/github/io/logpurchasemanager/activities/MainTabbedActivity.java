@@ -9,18 +9,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 
 public class MainTabbedActivity extends AppCompatActivity {
+    public static final String EXTRA_ACQUISITION_ID = "extra_acquisition_id";
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of
      * the sections
@@ -31,6 +29,7 @@ public class MainTabbedActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents
      */
     private ViewPager mViewPager;
+    private int mAcquisitionId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,39 +89,12 @@ public class MainTabbedActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main_tabbed, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
+        mAcquisitionId = getIntent().getIntExtra(EXTRA_ACQUISITION_ID,
+                MethodParameterConstants.NO_ELEMENT_INDEX);
     }
 
     /**
@@ -138,10 +110,10 @@ public class MainTabbedActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page
 
             if (position == 0) {
-                return AcquisitionFragment.newInstance(MethodParameterConstants.NO_ELEMENT_INDEX);
+                return AcquisitionFragment.newInstance(mAcquisitionId);
             }
 
-            return PlaceholderFragment.newInstance(position + 1);
+            return AcquisitionFragment.newInstance(mAcquisitionId);
         }
 
         @Override

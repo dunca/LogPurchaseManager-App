@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 
@@ -48,13 +50,23 @@ public class AcquisitionListActivity extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startMainActivity();
+                startMainActivity(null);
             }
         });
     }
 
-    private void startMainActivity() {
+    private void startMainActivity(Acquisition acquisition) {
         Intent intent = new Intent(this, MainTabbedActivity.class);
+
+        int id;
+
+        if (acquisition != null) {
+            id = acquisition.getId();
+        } else {
+            id = MethodParameterConstants.NO_ELEMENT_INDEX;
+        }
+
+        intent.putExtra(MainTabbedActivity.EXTRA_ACQUISITION_ID, id);
         startActivity(intent);
     }
 
@@ -108,13 +120,17 @@ public class AcquisitionListActivity extends AppCompatActivity {
         private TextView mTvSupplier;
         private TextView mTvAcquisitionDate;
 
-        public AcquisitionItemViewHolder(View itemView) {
+        AcquisitionItemViewHolder(View itemView) {
             super(itemView);
 
             mTvSerialNumber = itemView.findViewById(R.id.tvSerialNumber);
             mTvAcquirer = itemView.findViewById(R.id.tvAcquirer);
             mTvSupplier = itemView.findViewById(R.id.tvSupplierName);
             mTvAcquisitionDate = itemView.findViewById(R.id.tvAcquisitionDate);
+
+            itemView.setOnClickListener(v -> {
+                startMainActivity(mAcquisitionList.get(getAdapterPosition()));
+            });
         }
     }
 }
