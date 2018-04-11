@@ -74,8 +74,9 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="acquisition date"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/spinnerAcquirer" />
 
         <TextView
@@ -196,6 +197,16 @@
                 android:hint="Discount percentage"
                 android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Acquisition date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerAcquirer" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
