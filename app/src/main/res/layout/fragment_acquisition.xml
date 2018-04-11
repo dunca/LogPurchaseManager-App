@@ -87,6 +87,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="supplier name"
+            android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView5"
