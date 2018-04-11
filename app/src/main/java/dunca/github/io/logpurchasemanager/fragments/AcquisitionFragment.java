@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.Date;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
@@ -23,6 +24,10 @@ import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
 
 public class AcquisitionFragment extends Fragment {
+    public static final String ACQUISITION_ID_PARAM = "acquisition_id_param";
+
+    private Acquisition mModifiedAcquisition;
+
     private View mFragment;
     private EditText mEtSerialNumber;
     private Spinner mSpinnerAcquirer;
@@ -60,10 +65,15 @@ public class AcquisitionFragment extends Fragment {
         mBtnSave = mFragment.findViewById(R.id.btnSave);
     }
 
-    public static AcquisitionFragment newInstance() {
+    public static AcquisitionFragment newInstance(int acquisitionId) {
         AcquisitionFragment fragment = new AcquisitionFragment();
 
         Bundle args = new Bundle();
+
+        if (acquisitionId != MethodParameterConstants.NO_ELEMENT_INDEX) {
+            args.putInt(ACQUISITION_ID_PARAM, acquisitionId);
+        }
+
         fragment.setArguments(args);
 
         return fragment;
@@ -87,7 +97,34 @@ public class AcquisitionFragment extends Fragment {
         initViews();
         setupOnClickActions();
 
+        Bundle args = getArguments();
+        int acquisitionId = args.getInt(ACQUISITION_ID_PARAM, 0);
+
+        setModifiedAcquisition(acquisitionId);
+
         return mFragment;
+    }
+
+    /**
+     * Sets {@link #mModifiedAcquisition} to the {@link Acquisition} instance corresponding to the
+     * given id
+     *
+     * @param acquisitionId the {@link Acquisition#id} of the {@link Acquisition} instance
+     */
+    private void setModifiedAcquisition(int acquisitionId) {
+        mModifiedAcquisition = DatabaseHelper.getLatestInstance().getAcquisitionDao()
+                .queryForId(acquisitionId);
+
+        syncUiWithAcquisition();
+    }
+
+    /**
+     * Updates the UI inputs based on the values of {@link #mModifiedAcquisition}
+     */
+    private void syncUiWithAcquisition() {
+        // TODO update ui with data from mModifiedAcquisition
+
+
     }
 
     private void setupOnClickActions() {
@@ -100,15 +137,22 @@ public class AcquisitionFragment extends Fragment {
         String observations = mEtObservations.getText().toString();
         double discountPercentage = Double.valueOf(mEtDiscountPercentage.getText().toString());
 
-        Acquisition acquisition = new Acquisition(serialNumber, getSelectedAcquirer(),
-                getSelectedSupplier(), getSelectedDate(), getAcquisitionStatus(), regionZone,
-                getSelectedWoodRegion(), getSelectedWoodCertification(), observations,
-                0, 0, 0, discountPercentage, 0, false, false);
+        // not working with an existing object
+        if (mModifiedAcquisition == null) {
+            Acquisition acquisition = new Acquisition(serialNumber, getSelectedAcquirer(),
+                    getSelectedSupplier(), getSelectedDate(), getAcquisitionStatus(), regionZone,
+                    getSelectedWoodRegion(), getSelectedWoodCertification(), observations,
+                    0, 0, 0, discountPercentage, 0, false, false);
 
 
-        // TODO, if its an existing acquisition, modify it
+            DatabaseHelper.getLatestInstance().getAcquisitionDao().create(acquisition);
+        } else {
+            // TODO update all fields
 
-        DatabaseHelper.getLatestInstance().getAcquisitionDao().create(acquisition);
+
+            DatabaseHelper.getLatestInstance().getAcquisitionDao().update(mModifiedAcquisition);
+        }
+
 
         // TODO add notifications
     }
