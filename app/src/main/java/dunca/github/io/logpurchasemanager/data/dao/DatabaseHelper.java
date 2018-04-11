@@ -33,6 +33,8 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private ConnectionSource mConnectionSource;
 
+    private static DatabaseHelper sLatestInstance;
+
     // Dao instances
     private RuntimeExceptionDao<Acquirer, Integer> mAcquirerDao;
     private RuntimeExceptionDao<WoodRegion, Integer> mWoodRegionDao;
@@ -41,9 +43,12 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private RuntimeExceptionDao<LogQualityClass, Integer> mLogQualityClassDao;
     private RuntimeExceptionDao<AcquisitionStatus, Integer> mAcquisitionStatusDao;
     private RuntimeExceptionDao<Supplier, Integer> mSupplierDao;
+    private RuntimeExceptionDao<Acquisition, Integer> mAcquisitionDao;
 
     public DatabaseHelper(Context context) {
         super(context, LOCAL_DB_NAME, null, LOCAL_DB_VERSION);
+
+        sLatestInstance = this;
     }
 
     @Override
@@ -136,6 +141,23 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return mSupplierDao;
     }
 
+    public RuntimeExceptionDao<Acquisition, Integer> getAcquisitionDao() {
+        if (mAcquisitionDao == null) {
+            mAcquisitionDao = getRuntimeExceptionDao(Acquisition.class);
+        }
+
+        return mAcquisitionDao;
+    }
+
+    public static DatabaseHelper getLatestInstance() {
+        if (sLatestInstance == null) {
+            throw new IllegalStateException(DatabaseHelper.class.getSimpleName() +
+                    " has not been initialized");
+        }
+
+        return sLatestInstance;
+    }
+
     /**
      * Creates tables based on model classes
      *
@@ -154,7 +176,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         createDatabaseTable(WoodCertification.class);
         createDatabaseTable(WoodRegion.class);
     }
-    
+
     private <T extends Model> void createDatabaseTable(Class<T> modelClass) throws SQLException {
         TableUtils.createTable(mConnectionSource, modelClass);
     }
