@@ -93,11 +93,11 @@ public class LoginActivity extends AppCompatActivity {
 
         saveUsername();
 
-        startAcquisitionActivity();
+        startMainActivity();
     }
 
-    private void startAcquisitionActivity() {
-        Intent intent = new Intent(this, AcquisitionActivity.class);
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainTabbedActivity.class);
         startActivity(intent);
     }
 

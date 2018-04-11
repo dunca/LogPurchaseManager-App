@@ -21,6 +21,10 @@
         <activity
             android:name=".activities.AcquisitionActivity"
             android:label="@string/activity_acquisition_activity_label" />
+        <activity
+            android:name=".activities.MainTabbedActivity"
+            android:label="@string/title_activity_main_tabbed"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
