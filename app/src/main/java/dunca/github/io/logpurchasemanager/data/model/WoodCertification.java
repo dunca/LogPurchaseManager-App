@@ -30,4 +30,9 @@ public final class WoodCertification implements Model {
     WoodCertification() {
 
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
