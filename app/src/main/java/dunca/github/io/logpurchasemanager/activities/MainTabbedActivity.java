@@ -15,11 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
-import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 
 public class MainTabbedActivity extends AppCompatActivity {
@@ -137,10 +135,8 @@ public class MainTabbedActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Toast.makeText(MainTabbedActivity.this, String.valueOf(DatabaseHelper.getLatestInstance()
-                    .getAcquisitionDao().countOf()), Toast.LENGTH_LONG).show();
-
             // getItem is called to instantiate the fragment for the given page
+
             if (position == 0) {
                 return AcquisitionFragment.newInstance(MethodParameterConstants.NO_ELEMENT_INDEX);
             }
