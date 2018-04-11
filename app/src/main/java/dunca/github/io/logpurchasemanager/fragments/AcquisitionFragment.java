@@ -4,6 +4,7 @@ package dunca.github.io.logpurchasemanager.fragments;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.j256.ormlite.stmt.DeleteBuilder;
+
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -29,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
@@ -73,6 +77,8 @@ public class AcquisitionFragment extends Fragment {
     private EditText mEtDiscountPercentage;
 
     private Button mBtnSave;
+
+    private Button mBtnDelete;
 
     private DatabaseHelper mDbHelper;
 
@@ -144,7 +150,13 @@ public class AcquisitionFragment extends Fragment {
             updateUiWithDefaults();
         }
 
+        updateDeleteButtonState();
+
         return mFragment;
+    }
+
+    private void updateDeleteButtonState() {
+        mBtnDelete.setEnabled(mModifiedAcquisition != null);
     }
 
     private void initViews() {
@@ -177,10 +189,20 @@ public class AcquisitionFragment extends Fragment {
         mEtDiscountPercentage = mFragment.findViewById(R.id.etDiscountPercentage);
 
         mBtnSave = mFragment.findViewById(R.id.btnSave);
+
+        mBtnDelete = mFragment.findViewById(R.id.btnDelete);
     }
 
     private void setupOnClickActions() {
         mBtnSave.setOnClickListener((source) -> persistAcquisitionChanges());
+
+        mBtnDelete.setOnClickListener((source) -> {
+            try {
+                deleteCurrentAcquisition();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
 
         DatePickerDialog.OnDateSetListener datePickListener = (view, year, month, dayOfMonth) -> {
@@ -250,6 +272,17 @@ public class AcquisitionFragment extends Fragment {
 
             supplierListDialog.show();
         });
+    }
+
+    private void deleteCurrentAcquisition() throws SQLException {
+        // TODO show dialog
+
+        DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionDao().deleteBuilder();
+        deleteBuilder.where().eq(CommonFieldNames.ID, mModifiedAcquisition.getId());
+        deleteBuilder.delete();
+
+        Intent intent = new Intent(getContext(), AcquisitionListActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -356,6 +389,8 @@ public class AcquisitionFragment extends Fragment {
             PopupUtil.snackbar(getView(), "New acquisition persisted");
 
             mModifiedAcquisition = acquisition;
+
+            updateDeleteButtonState();
         } else {
             syncAcquisitionWithUi(mModifiedAcquisition);
             DatabaseHelper.getLatestInstance().getAcquisitionDao().update(mModifiedAcquisition);
