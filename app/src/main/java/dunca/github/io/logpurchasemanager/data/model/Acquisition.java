@@ -17,25 +17,25 @@ public final class Acquisition implements Model {
     @DatabaseField(canBeNull = false)
     private String serialNumber;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Acquirer acquirer;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Supplier supplier;
 
     @DatabaseField(canBeNull = false)
     private Date receptionDate;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private AcquisitionStatus acquisitionStatus;
 
     @DatabaseField(canBeNull = false)
     private String regionZone;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private WoodRegion woodRegion;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private WoodCertification woodCertification;
 
     @DatabaseField(canBeNull = false)
