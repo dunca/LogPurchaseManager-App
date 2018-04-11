@@ -5,4 +5,5 @@ public final class CommonFieldNames {
     public static final String USERNAME = "username";
     public static final String FIRSTNAME = "firstName";
     public static final String LASTNAME = "lastName";
+    public static final String LIST_PRIORITY = "listPriority";
 }
