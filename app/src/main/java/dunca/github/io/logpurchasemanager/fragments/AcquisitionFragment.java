@@ -78,6 +78,8 @@ public class AcquisitionFragment extends Fragment {
 
     private TextView mTvDiscountValue;
 
+    private TextView mTvTotalValue;
+
     private Button mBtnSave;
 
     private Button mBtnDelete;
@@ -207,6 +209,8 @@ public class AcquisitionFragment extends Fragment {
         });
 
         mTvDiscountValue = mFragment.findViewById(R.id.tvDiscountValue);
+
+        mTvTotalValue = mFragment.findViewById(R.id.tvTotalValue);
 
         mBtnSave = mFragment.findViewById(R.id.btnSave);
 
@@ -539,6 +543,7 @@ public class AcquisitionFragment extends Fragment {
 
         if (isVisibleToUser) {
             updateUiDiscountValue();
+            updateTotalValue();
         }
     }
 
@@ -548,6 +553,10 @@ public class AcquisitionFragment extends Fragment {
     private void updateUiDiscountValue() {
         double discountValue = getDiscountValue();
         mTvDiscountValue.setText(String.valueOf(discountValue));
+    }
+
+    private void updateTotalValue() {
+        mTvTotalValue.setText(String.valueOf(getTotalValue()));
     }
 
     private SharedPreferences getSharedPreferences() {
