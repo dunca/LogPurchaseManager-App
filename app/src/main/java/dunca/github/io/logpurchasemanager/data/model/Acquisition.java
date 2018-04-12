@@ -45,10 +45,10 @@ public final class Acquisition implements Model {
     private double totalValue;
 
     @DatabaseField(canBeNull = false)
-    private double grossTotal;
+    private double totalGrossVolume;
 
     @DatabaseField(canBeNull = false)
-    private double netTotal;
+    private double totalNetVolume;
 
     @DatabaseField(canBeNull = false)
     private double discountPercentage;
@@ -65,7 +65,7 @@ public final class Acquisition implements Model {
     public Acquisition(String serialNumber, Acquirer acquirer, Supplier supplier,
                        Date receptionDate, AcquisitionStatus acquisitionStatus, String regionZone,
                        WoodRegion woodRegion, WoodCertification woodCertification,
-                       String observations, double totalValue, double grossTotal, double netTotal,
+                       String observations, double totalValue, double totalGrossVolume, double totalNetVolume,
                        double discountPercentage, double discountValue, boolean net, boolean isSynced) {
         this.serialNumber = serialNumber;
         this.acquirer = acquirer;
@@ -77,8 +77,8 @@ public final class Acquisition implements Model {
         this.woodCertification = woodCertification;
         this.observations = observations;
         this.totalValue = totalValue;
-        this.grossTotal = grossTotal;
-        this.netTotal = netTotal;
+        this.totalGrossVolume = totalGrossVolume;
+        this.totalNetVolume = totalNetVolume;
         this.discountPercentage = discountPercentage;
         this.discountValue = discountValue;
         this.net = net;
