@@ -76,6 +76,8 @@ public class AcquisitionFragment extends Fragment {
 
     private EditText mEtDiscountPercentage;
 
+    private TextView mTvDiscountValue;
+
     private Button mBtnSave;
 
     private Button mBtnDelete;
@@ -187,6 +189,24 @@ public class AcquisitionFragment extends Fragment {
         mEtObservations = mFragment.findViewById(R.id.edObservations);
 
         mEtDiscountPercentage = mFragment.findViewById(R.id.etDiscountPercentage);
+        mEtDiscountPercentage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateUiDiscountValue();
+            }
+        });
+
+        mTvDiscountValue = mFragment.findViewById(R.id.tvDiscountValue);
 
         mBtnSave = mFragment.findViewById(R.id.btnSave);
 
@@ -337,8 +357,8 @@ public class AcquisitionFragment extends Fragment {
         acquisition.setWoodCertification(getSelectedWoodCertification());
         acquisition.setObservations(observations);
         acquisition.setTotalValue(0);
-        acquisition.setGrossTotal(0);
-        acquisition.setNetTotal(0);
+        acquisition.setTotalGrossVolume(0);
+        acquisition.setTotalNetVolume(0);
         acquisition.setDiscountPercentage(discountPercentage);
         acquisition.setDiscountValue(0);
         acquisition.setNet(false);
@@ -473,6 +493,61 @@ public class AcquisitionFragment extends Fragment {
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         return arrayAdapter;
+    }
+
+    /**
+     * Gets the discount value, based on {@link #mEtDiscountPercentage} and {@link #getTotalValue()}
+     * If {@link #mEtDiscountPercentage} is empty / null, 0 is returned
+     *
+     * @return the discount value, based on {@link #mEtDiscountPercentage} and {@link #getTotalValue()}
+     */
+    private double getDiscountValue() {
+        double discountPercentage;
+
+        try {
+            discountPercentage = Double.valueOf(mEtDiscountPercentage.getText().toString());
+        } catch (NumberFormatException e) {
+            // happens only when the EditText is empty, since
+            return 0;
+        }
+
+        double totalValue = getTotalValue();
+
+        return discountPercentage / 100 * totalValue;
+    }
+
+    private double getTotalValue() {
+        return 10;
+    }
+
+    /**
+     * Called when the visibility of the fragment changes
+     *
+     * @param isVisibleToUser if true, the fragment is visible to the user
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        /*
+        when isResumed() == false, onCreateView() has yet to run, thus UI objects are not
+        instantiated, thus, there's nothing to update
+        */
+        if (!isResumed()) {
+            return;
+        }
+
+        if (isVisibleToUser) {
+            updateUiDiscountValue();
+        }
+    }
+
+    /**
+     * Updates {@link #mTvDiscountValue} with the value provided by {@link #getDiscountValue()}
+     */
+    private void updateUiDiscountValue() {
+        double discountValue = getDiscountValue();
+        mTvDiscountValue.setText(String.valueOf(discountValue));
     }
 
     private SharedPreferences getSharedPreferences() {
