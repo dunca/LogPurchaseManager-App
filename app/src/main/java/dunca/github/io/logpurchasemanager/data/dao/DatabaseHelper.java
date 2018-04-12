@@ -44,6 +44,8 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private RuntimeExceptionDao<AcquisitionStatus, Integer> mAcquisitionStatusDao;
     private RuntimeExceptionDao<Supplier, Integer> mSupplierDao;
     private RuntimeExceptionDao<Acquisition, Integer> mAcquisitionDao;
+    private RuntimeExceptionDao<AcquisitionItem, Integer> mAcquisitionItemDao;
+    private RuntimeExceptionDao<LogPrice, Integer> mLogPriceDao;
 
     public DatabaseHelper(Context context) {
         super(context, LOCAL_DB_NAME, null, LOCAL_DB_VERSION);
@@ -147,6 +149,22 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         return mAcquisitionDao;
+    }
+
+    public RuntimeExceptionDao<AcquisitionItem, Integer> getAcquisitionItemDao() {
+        if (mAcquisitionItemDao == null) {
+            mAcquisitionItemDao = getRuntimeExceptionDao(AcquisitionItem.class);
+        }
+
+        return mAcquisitionItemDao;
+    }
+
+    public RuntimeExceptionDao<LogPrice, Integer> getLogPriceDao() {
+        if (mLogPriceDao == null) {
+            mLogPriceDao = getRuntimeExceptionDao(LogPrice.class);
+        }
+
+        return mLogPriceDao;
     }
 
     public static DatabaseHelper getLatestInstance() {
