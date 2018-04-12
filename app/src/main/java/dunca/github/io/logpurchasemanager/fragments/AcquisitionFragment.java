@@ -360,11 +360,11 @@ public class AcquisitionFragment extends Fragment {
         acquisition.setWoodRegion(getSelectedWoodRegion());
         acquisition.setWoodCertification(getSelectedWoodCertification());
         acquisition.setObservations(observations);
-        acquisition.setTotalValue(0);
+        acquisition.setTotalValue(getTotalValue());
         acquisition.setTotalGrossVolume(0);
         acquisition.setTotalNetVolume(0);
         acquisition.setDiscountPercentage(discountPercentage);
-        acquisition.setDiscountValue(0);
+        acquisition.setDiscountValue(getDiscountValue());
         acquisition.setNet(false);
         acquisition.setSynced(false);
     }
