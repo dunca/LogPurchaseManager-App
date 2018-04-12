@@ -38,7 +38,9 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
+import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionStatus;
+import dunca.github.io.logpurchasemanager.data.model.LogPrice;
 import dunca.github.io.logpurchasemanager.data.model.Supplier;
 import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
@@ -521,7 +523,35 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private double getTotalValue() {
-        return 10;
+        List<AcquisitionItem> acquisitionItemList;
+
+        List<LogPrice> logPriceList;
+
+        try {
+            acquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
+                    .where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, mModifiedAcquisition.getId())
+                    .and()
+                    .eq(CommonFieldNames.IS_SPECIAL_PRICE, 0)
+                    .query();
+
+            logPriceList = mDbHelper.getLogPriceDao().queryBuilder()
+                    .where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, mModifiedAcquisition.getId())
+                    .query();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        double totalValue = acquisitionItemList.stream()
+                .mapToDouble(AcquisitionItem::getPrice)
+                .sum();
+
+        totalValue += logPriceList.stream()
+                .mapToDouble(logPrice -> logPrice.getPrice() * logPrice.getQuantity())
+                .sum();
+
+        return totalValue;
     }
 
     /**

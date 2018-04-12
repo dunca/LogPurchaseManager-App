@@ -7,4 +7,6 @@ public final class CommonFieldNames {
     public static final String LASTNAME = "lastName";
     public static final String LIST_PRIORITY = "listPriority";
     public static final String NAME = "name";
+    public static final String ACQUISITION_ID = "acquisitionId";
+    public static final String IS_SPECIAL_PRICE = "isSpecialPrice";
 }
