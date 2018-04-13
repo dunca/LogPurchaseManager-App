@@ -113,6 +113,8 @@ public class AcquisitionItemFragment extends Fragment {
         int acquisitionItemId = args.getInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, 0);
         mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
 
+        syncUiWithAcquisitionItem();
+
         return mFragmentView;
     }
 
@@ -158,7 +160,10 @@ public class AcquisitionItemFragment extends Fragment {
 
             PopupUtil.snackbar(mFragmentView, "New acquisition item persisted");
         } else {
+            syncAcquisitionItemWithUi(mExistingAcquisitionItem);
 
+            mDbHelper.getAcquisitionItemDao().update(mExistingAcquisitionItem);
+            PopupUtil.snackbar(mFragmentView, "Updated existing acquisition item");
         }
     }
 
@@ -195,6 +200,28 @@ public class AcquisitionItemFragment extends Fragment {
         acquisitionItem.setNetVolume(Double.valueOf(mTvNetVolume.getText().toString()));
 
         acquisitionItem.setObservations(mEtObservations.getText().toString());
+    }
+
+    private void syncUiWithAcquisitionItem() {
+        mSpinnerSpecies.setSelection(mSpeciesList.indexOf(mExistingAcquisitionItem.getTreeSpecies()));
+        mSpinnerQualityClass.setSelection(mLogQualityClassList.indexOf(mExistingAcquisitionItem.getLogQualityClass()));
+
+        mEtBarCode.setText(mExistingAcquisitionItem.getLogBarCode());
+
+        mCbSpecialPrice.setChecked(mExistingAcquisitionItem.isSpecialPrice());
+
+        mEtVolumetricPrice.setText(String.valueOf(mExistingAcquisitionItem.getPrice()));
+
+        mEtGrossLength.setText(String.valueOf(mExistingAcquisitionItem.getGrossLength()));
+        mEtGrossDiameter.setText(String.valueOf(mExistingAcquisitionItem.getGrossDiameter()));
+
+        mEtNetLength.setText(String.valueOf(mExistingAcquisitionItem.getNetLength()));
+        mEtNetDiameter.setText(String.valueOf(mExistingAcquisitionItem.getNetDiameter()));
+
+        mTvGrossVolume.setText(String.valueOf(mExistingAcquisitionItem.getGrossVolume()));
+        mTvNetVolume.setText(String.valueOf(mExistingAcquisitionItem.getNetVolume()));
+
+        mEtObservations.setText(mExistingAcquisitionItem.getObservations());
     }
 
     private TreeSpecies getSelectedTreeSpecies() {
