@@ -10,121 +10,143 @@
             android:id="@+id/tvSpecies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="Species" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvQualityClass"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="QualityClass" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvLogBarCode"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="LogBarCode" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvNetLength"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="NetLength" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvNetDiameter"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="NetDiameter" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvGrossLength"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="GrossLength" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvGrossDiameter"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="GrossDiameter" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvNetVolume"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="NetVolume" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvGrossVolume"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="GrossVolume" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvVolumetricPrice"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="VolumetricPrice" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="   " />
 
         <TextView
             android:id="@+id/tvObservations"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="Observations" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
+            android:gravity="end"
             android:layout_marginBottom="20dp" />
     </LinearLayout>
 </TableRow>
