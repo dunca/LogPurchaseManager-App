@@ -2,6 +2,7 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 
 import android.os.Bundle;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
@@ -40,7 +39,7 @@ public class AcquisitionItemListFragment extends SmartFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // inflate the layout for this fragment
-        mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item_list, container, false);
+        mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item_list, null, false);
 
         if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
             return createPlaceholderView("Create an acquisition first...");
@@ -100,7 +99,7 @@ public class AcquisitionItemListFragment extends SmartFragment {
                 .tblAcquisitionItemList);
 
         for (AcquisitionItem acquisitionItem : mAcquisitionItemList) {
-            TableRow tableRow = (TableRow) getActivity().getLayoutInflater().inflate(
+            TableRow tableRow = (TableRow) getLayoutInflater().inflate(
                     R.layout.fragment_acquisition_item_list_row_item, null, false);
 
             TextView tvSpecies = tableRow.findViewById(R.id.tvSpecies);
@@ -130,14 +129,14 @@ public class AcquisitionItemListFragment extends SmartFragment {
             tblAcquisitionItemList.addView(tableRow);
         }
 
-        Map<Integer, Integer> maxTextViewWidths = new HashMap<>();
+        SparseIntArray maxTextViewWidths = new SparseIntArray();
 
         for (int rowIndex = 0; rowIndex < tblAcquisitionItemList.getChildCount(); rowIndex++) {
             TableRow tableRow = (TableRow) tblAcquisitionItemList.getChildAt(rowIndex);
             LinearLayout layout = (LinearLayout) tableRow.getChildAt(0);
 
             for (int textViewIndex = 0; textViewIndex < layout.getChildCount(); textViewIndex++) {
-                int lastMaxWidth = maxTextViewWidths.getOrDefault(textViewIndex, 0);
+                int lastMaxWidth = maxTextViewWidths.get(textViewIndex, 0);
 
                 TextView currentTextView = (TextView) layout.getChildAt(textViewIndex);
                 currentTextView.measure(0, 0);
