@@ -2,7 +2,6 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,35 +20,20 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
+import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 
-public class AcquisitionItemListFragment extends Fragment {
+public class AcquisitionItemListFragment extends SmartFragment {
     private View mFragmentView;
 
     private final DatabaseHelper mDbHelper;
     private List<AcquisitionItem> mAcquisitionItemList;
-    private TableLayout mTblAcquisitionItemList;
 
     public AcquisitionItemListFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
     }
 
-    public static AcquisitionItemListFragment newInstance(int acquisitionId) {
-        AcquisitionItemListFragment fragment = new AcquisitionItemListFragment();
-
-        Bundle args = new Bundle();
-
-        if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
-            args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
-        }
-
-        fragment.setArguments(args);
-
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public static AcquisitionItemListFragment newInstance() {
+        return new AcquisitionItemListFragment();
     }
 
     @Override
@@ -58,14 +42,49 @@ public class AcquisitionItemListFragment extends Fragment {
         // inflate the layout for this fragment
         mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item_list, container, false);
 
-        Bundle args = getArguments();
-
-        int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM, 0);
-
-        if (acquisitionId == 0) {
-            throw new RuntimeException("Acquisition id is required");
+        if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
+            return createPlaceholderView("Create an acquisition first...");
         }
 
+        if (!acquisitionHasItems()) {
+            return createPlaceholderView("This acquisition has no items...");
+        }
+
+        initUi();
+
+        return mFragmentView;
+    }
+
+    @Override
+    public void onVisible() {
+        if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
+            return;
+        }
+
+        /*
+        re-attaching the fragment recreates the view, thus we'll be able to render it properly
+        since we now have an acquisition id
+        */
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+    }
+
+    public void initUi() {
+        initAcquisitionItemList(AcquisitionFragment.sCurrentAcquisitionId);
+        initViews();
+    }
+
+    private boolean acquisitionHasItems() {
+        try {
+            return mDbHelper.getAcquisitionItemDao().queryBuilder()
+                    .where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, AcquisitionFragment.sCurrentAcquisitionId)
+                    .countOf() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void initAcquisitionItemList(int acquisitionId) {
         try {
             mAcquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
                     .where()
@@ -74,14 +93,10 @@ public class AcquisitionItemListFragment extends Fragment {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        initViews();
-
-        return mFragmentView;
     }
 
     private void initViews() {
-        mTblAcquisitionItemList = mFragmentView.findViewById(R.id
+        TableLayout tblAcquisitionItemList = mFragmentView.findViewById(R.id
                 .tblAcquisitionItemList);
 
         for (AcquisitionItem acquisitionItem : mAcquisitionItemList) {
@@ -112,13 +127,13 @@ public class AcquisitionItemListFragment extends Fragment {
             tvVolumetricPrice.setText(String.valueOf(acquisitionItem.getPrice()));
             tvObservations.setText(acquisitionItem.getObservations());
 
-            mTblAcquisitionItemList.addView(tableRow);
+            tblAcquisitionItemList.addView(tableRow);
         }
 
         Map<Integer, Integer> maxTextViewWidths = new HashMap<>();
 
-        for (int rowIndex = 0; rowIndex < mTblAcquisitionItemList.getChildCount(); rowIndex++) {
-            TableRow tableRow = (TableRow) mTblAcquisitionItemList.getChildAt(rowIndex);
+        for (int rowIndex = 0; rowIndex < tblAcquisitionItemList.getChildCount(); rowIndex++) {
+            TableRow tableRow = (TableRow) tblAcquisitionItemList.getChildAt(rowIndex);
             LinearLayout layout = (LinearLayout) tableRow.getChildAt(0);
 
             for (int textViewIndex = 0; textViewIndex < layout.getChildCount(); textViewIndex++) {
@@ -134,8 +149,8 @@ public class AcquisitionItemListFragment extends Fragment {
             }
         }
 
-        for (int rowIndex = 0; rowIndex < mTblAcquisitionItemList.getChildCount(); rowIndex++) {
-            TableRow tableRow = (TableRow) mTblAcquisitionItemList.getChildAt(rowIndex);
+        for (int rowIndex = 0; rowIndex < tblAcquisitionItemList.getChildCount(); rowIndex++) {
+            TableRow tableRow = (TableRow) tblAcquisitionItemList.getChildAt(rowIndex);
             LinearLayout layout = (LinearLayout) tableRow.getChildAt(0);
 
             for (int textViewIndex = 0; textViewIndex < layout.getChildCount(); textViewIndex++) {
@@ -146,5 +161,14 @@ public class AcquisitionItemListFragment extends Fragment {
                 currentTextView.setWidth(maxWidth);
             }
         }
+    }
+
+    private View createPlaceholderView(String message) {
+        View placeholderView = getLayoutInflater().inflate(R.layout.placeholder_layout, null,
+                false);
+
+        ((TextView) placeholderView.findViewById(R.id.tvContent)).setText(message);
+
+        return placeholderView;
     }
 }

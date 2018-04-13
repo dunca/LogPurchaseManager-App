@@ -2,7 +2,6 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -30,9 +29,11 @@ import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
+import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
-public class AcquisitionItemFragment extends Fragment {
+public class AcquisitionItemFragment extends SmartFragment {
+    private static final String NO_ACQUISITION_MESSAGE = "Create an acquisition first...";
 
     private View mFragmentView;
 
@@ -51,6 +52,7 @@ public class AcquisitionItemFragment extends Fragment {
     private Button mBtnSave;
 
     private final DatabaseHelper mDbHelper;
+
     private List<TreeSpecies> mSpeciesList;
     private List<LogQualityClass> mLogQualityClassList;
 
@@ -62,8 +64,18 @@ public class AcquisitionItemFragment extends Fragment {
 
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
+    }
 
-        initDbLists();
+    public static AcquisitionItemFragment newInstance(int acquisitionItemId) {
+        AcquisitionItemFragment fragment = new AcquisitionItemFragment();
+
+        Bundle args = new Bundle();
+
+        args.putInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, acquisitionItemId);
+
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     private void initDbLists() {
@@ -78,54 +90,51 @@ public class AcquisitionItemFragment extends Fragment {
         }
     }
 
-    public static AcquisitionItemFragment newInstance(int acquisitionId, int acquisitionItemId) {
-        AcquisitionItemFragment fragment = new AcquisitionItemFragment();
-
-        Bundle args = new Bundle();
-
-        if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
-            args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
-        } else {
-            throw new RuntimeException("Acquisition is required");
-        }
-
-        if (acquisitionItemId != MethodParameterConstants.INVALID_INDEX) {
-            args.putInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, acquisitionItemId);
-        }
-
-        fragment.setArguments(args);
-
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item, container, false);
+
+        if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
+            View placeholderView = inflater.inflate(R.layout.placeholder_layout, container, false);
+            ((TextView) placeholderView.findViewById(R.id.tvContent)).setText(NO_ACQUISITION_MESSAGE);
+
+            return placeholderView;
+        }
+
+        initUi();
+
+        return mFragmentView;
+    }
+
+    @Override
+    public void onVisible() {
+        if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
+            return;
+        }
+
+        /*
+        re-attaching the fragment recreates the view, thus we'll be able to render it properly
+        since we now have an acquisition id
+        */
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+    }
+
+    private void initUi() {
+        initDbLists();
 
         initViews();
         setupOnClickActions();
 
-        Bundle args = getArguments();
+        mAcquisition = mDbHelper.getAcquisitionDao().queryForId(AcquisitionFragment.sCurrentAcquisitionId);
 
-        int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM, 0);
-        mAcquisition = mDbHelper.getAcquisitionDao().queryForId(acquisitionId);
+        int acquisitionItemId = getArguments().getInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM);
 
-        int acquisitionItemId = args.getInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, 0);
-
-        if (acquisitionItemId != 0) {
+        if (acquisitionItemId != MethodParameterConstants.INVALID_INDEX) {
             mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
 
             syncUiWithAcquisitionItem();
         }
-
-        return mFragmentView;
     }
 
     private void initViews() {
@@ -262,14 +271,6 @@ public class AcquisitionItemFragment extends Fragment {
         }
     }
 
-    private <T extends View> T findViewById(int id) {
-        return mFragmentView.findViewById(id);
-    }
-
-    private <T extends Model> ArrayAdapter<T> createDefaultSpinnerAdapter(List<T> modelInstanceList) {
-        return FragmentUtil.createDefaultSpinnerAdapter(getContext(), modelInstanceList);
-    }
-
     private AcquisitionItem createAcquisitionItemMatchingUi() {
         AcquisitionItem acquisitionItem = new AcquisitionItem();
 
@@ -389,5 +390,13 @@ public class AcquisitionItemFragment extends Fragment {
      */
     private double calculateVolume(double length, double diameter) {
         return Math.PI * Math.pow(diameter * Math.pow(10, 2) / 2, 2) * length;
+    }
+
+    private <T extends View> T findViewById(int id) {
+        return mFragmentView.findViewById(id);
+    }
+
+    private <T extends Model> ArrayAdapter<T> createDefaultSpinnerAdapter(List<T> modelInstanceList) {
+        return FragmentUtil.createDefaultSpinnerAdapter(getContext(), modelInstanceList);
     }
 }

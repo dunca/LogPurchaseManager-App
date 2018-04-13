@@ -114,9 +114,9 @@ public class MainTabbedActivity extends AppCompatActivity {
             if (position == 0) {
                 return AcquisitionFragment.newInstance(mAcquisitionId);
             } else if (position == 1) {
-                return AcquisitionItemListFragment.newInstance(mAcquisitionId);
+                return AcquisitionItemListFragment.newInstance();
             } else if (position == 2) {
-                return AcquisitionItemFragment.newInstance(mAcquisitionId, -1);
+                return AcquisitionItemFragment.newInstance(-1);
             }
 
             return AcquisitionFragment.newInstance(mAcquisitionId);

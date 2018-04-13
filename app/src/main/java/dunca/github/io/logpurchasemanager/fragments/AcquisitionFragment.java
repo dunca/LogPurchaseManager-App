@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -46,48 +45,35 @@ import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
+import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
-public class AcquisitionFragment extends Fragment {
+public class AcquisitionFragment extends SmartFragment {
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
+    private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
+    public static int sCurrentAcquisitionId = MethodParameterConstants.INVALID_INDEX;
 
     private Acquisition mExistingAcquisition;
 
-    private DateFormat mIsoDateFormat;
-
-
-    private View mFragment;
+    private View mFragmentView;
 
     private EditText mEtSerialNumber;
-
     private Spinner mSpinnerAcquirer;
-
     private TextView mTvDate;
-
     private TextView mTvSupplierName;
-
     private Spinner mSpinnerWoodRegion;
-
     private EditText mEtRegionZone;
-
     private Spinner mSpinnerWoodCertification;
-
     private EditText mEtObservations;
-
     private EditText mEtDiscountPercentage;
-
     private TextView mTvDiscountValue;
-
     private TextView mTvTotalValue;
-
     private CheckBox mCbNetTotalValue;
-
     private Button mBtnSave;
-
     private Button mBtnDelete;
 
-    private DatabaseHelper mDbHelper;
+    private final DatabaseHelper mDbHelper;
 
     private List<WoodRegion> mWoodRegionList;
     private List<WoodCertification> mWoodCertificationList;
@@ -98,8 +84,6 @@ public class AcquisitionFragment extends Fragment {
 
     public AcquisitionFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
-
-        mIsoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         initDbLists();
     }
@@ -129,9 +113,8 @@ public class AcquisitionFragment extends Fragment {
 
         Bundle args = new Bundle();
 
-        if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
-            args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
-        }
+        args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
+        sCurrentAcquisitionId = acquisitionId;
 
         fragment.setArguments(args);
 
@@ -142,15 +125,15 @@ public class AcquisitionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // inflate the layout for this fragment
-        mFragment = inflater.inflate(R.layout.fragment_acquisition, container, false);
+        mFragmentView = inflater.inflate(R.layout.fragment_acquisition, container, false);
 
         initViews();
         setupOnClickActions();
 
         Bundle args = getArguments();
-        int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM, 0);
+        int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM);
 
-        if (acquisitionId != 0) {
+        if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
             // the user is trying to update an existing object
             setExistingAcquisition(acquisitionId);
         } else {
@@ -159,7 +142,7 @@ public class AcquisitionFragment extends Fragment {
 
         updateDeleteButtonState();
 
-        return mFragment;
+        return mFragmentView;
     }
 
     private void updateDeleteButtonState() {
@@ -167,33 +150,33 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private void initViews() {
-        mEtSerialNumber = mFragment.findViewById(R.id.etSerialNumber);
+        mEtSerialNumber = mFragmentView.findViewById(R.id.etSerialNumber);
         // mEtSerialNumber.setText(String.valueOf(getLastAcquisitionSerialNumber() + 1));
 
-        mSpinnerAcquirer = mFragment.findViewById(R.id.spinnerAcquirer);
+        mSpinnerAcquirer = mFragmentView.findViewById(R.id.spinnerAcquirer);
         ArrayAdapter acquirerAdapter = createDefaultSpinnerAdapter(mAcquirerList);
         mSpinnerAcquirer.setAdapter(acquirerAdapter);
 
 
-        mTvDate = mFragment.findViewById(R.id.tvDate);
+        mTvDate = mFragmentView.findViewById(R.id.tvDate);
 
         // set the first supplier as the default one
-        mTvSupplierName = mFragment.findViewById(R.id.tvSupplierName);
+        mTvSupplierName = mFragmentView.findViewById(R.id.tvSupplierName);
         mTvSupplierName.setText(mSelectedSupplier.getName());
 
-        mSpinnerWoodRegion = mFragment.findViewById(R.id.spinnerWoodRegionSymbol);
+        mSpinnerWoodRegion = mFragmentView.findViewById(R.id.spinnerWoodRegionSymbol);
         ArrayAdapter woodRegionAdapter = createDefaultSpinnerAdapter(mWoodRegionList);
         mSpinnerWoodRegion.setAdapter(woodRegionAdapter);
 
-        mEtRegionZone = mFragment.findViewById(R.id.etRegionZone);
+        mEtRegionZone = mFragmentView.findViewById(R.id.etRegionZone);
 
-        mSpinnerWoodCertification = mFragment.findViewById(R.id.spinnerWoodCertification);
+        mSpinnerWoodCertification = mFragmentView.findViewById(R.id.spinnerWoodCertification);
         ArrayAdapter woodCertificationAdapter = createDefaultSpinnerAdapter(mWoodCertificationList);
         mSpinnerWoodCertification.setAdapter(woodCertificationAdapter);
 
-        mEtObservations = mFragment.findViewById(R.id.edObservations);
+        mEtObservations = mFragmentView.findViewById(R.id.edObservations);
 
-        mEtDiscountPercentage = mFragment.findViewById(R.id.etDiscountPercentage);
+        mEtDiscountPercentage = mFragmentView.findViewById(R.id.etDiscountPercentage);
         mEtDiscountPercentage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -211,17 +194,17 @@ public class AcquisitionFragment extends Fragment {
             }
         });
 
-        mTvDiscountValue = mFragment.findViewById(R.id.tvDiscountValue);
+        mTvDiscountValue = mFragmentView.findViewById(R.id.tvDiscountValue);
 
-        mTvTotalValue = mFragment.findViewById(R.id.tvTotalValue);
+        mTvTotalValue = mFragmentView.findViewById(R.id.tvTotalValue);
 
-        mCbNetTotalValue = mFragment.findViewById(R.id.cbNetTotalValue);
+        mCbNetTotalValue = mFragmentView.findViewById(R.id.cbNetTotalValue);
 
         // TODO update total when the checkbox changes
 
-        mBtnSave = mFragment.findViewById(R.id.btnSave);
+        mBtnSave = mFragmentView.findViewById(R.id.btnSave);
 
-        mBtnDelete = mFragment.findViewById(R.id.btnDelete);
+        mBtnDelete = mFragmentView.findViewById(R.id.btnDelete);
     }
 
     private void setupOnClickActions() {
@@ -416,7 +399,7 @@ public class AcquisitionFragment extends Fragment {
      * @param date the {@link Date} to use when updating the date {@link TextView}
      */
     private void updateUiDate(Date date) {
-        mTvDate.setText(mIsoDateFormat.format(date));
+        mTvDate.setText(ISO_DATE_FORMAT.format(date));
     }
 
     private void persistAcquisitionChanges() {
@@ -430,6 +413,7 @@ public class AcquisitionFragment extends Fragment {
             PopupUtil.snackbar(getView(), "New acquisition persisted");
 
             mExistingAcquisition = acquisition;
+            sCurrentAcquisitionId = acquisition.getId();
 
             updateDeleteButtonState();
         } else {
@@ -460,7 +444,7 @@ public class AcquisitionFragment extends Fragment {
 
     private Date getSelectedDate() {
         try {
-            return mIsoDateFormat.parse(mTvDate.getText().toString());
+            return ISO_DATE_FORMAT.parse(mTvDate.getText().toString());
         } catch (ParseException e) {
             throw new IllegalArgumentException("Programming error!!!");
         }
@@ -572,27 +556,10 @@ public class AcquisitionFragment extends Fragment {
         return 0;
     }
 
-    /**
-     * Called when the visibility of the fragment changes
-     *
-     * @param isVisibleToUser if true, the fragment is visible to the user
-     */
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        /*
-        when isResumed() == false, onCreateView() has yet to run, thus UI objects are not
-        instantiated, thus, there's nothing to update
-        */
-        if (!isResumed()) {
-            return;
-        }
-
-        if (isVisibleToUser) {
-            updateUiDiscountValue();
-            updateTotalValue();
-        }
+    public void onVisible() {
+        updateUiDiscountValue();
+        updateTotalValue();
     }
 
     /**
