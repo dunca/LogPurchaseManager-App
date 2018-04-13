@@ -24,6 +24,7 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
+import dunca.github.io.logpurchasemanager.data.model.LogDiameterClass;
 import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
@@ -251,6 +252,9 @@ public class AcquisitionItemFragment extends Fragment {
 
         acquisitionItem.setAcquisition(mAcquisition);
         acquisitionItem.setAcquirer(mAcquisition.getAcquirer());
+
+        // set to a dummy LogDiameterClass, since the feature is unused
+        acquisitionItem.setLogDiameterClass(new LogDiameterClass("", "", 0, 0));
 
         syncAcquisitionItemWithUi(acquisitionItem);
         return acquisitionItem;
