@@ -113,7 +113,7 @@ public class MainTabbedActivity extends AppCompatActivity {
             if (position == 0) {
                 return AcquisitionFragment.newInstance(mAcquisitionId);
             } else if (position == 2) {
-                return AcquisitionItemFragment.newInstance();
+                return AcquisitionItemFragment.newInstance(mAcquisitionId);
             }
 
             return AcquisitionFragment.newInstance(mAcquisitionId);
