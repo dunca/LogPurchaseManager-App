@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -218,7 +219,6 @@ public class AcquisitionFragment extends Fragment {
         mTvTotalValue = mFragment.findViewById(R.id.tvTotalValue);
 
         mCbNetTotalValue = mFragment.findViewById(R.id.cbNetTotalValue);
-        mCbNetTotalValue.setChecked(true);
 
         // TODO update total when the checkbox changes
 
@@ -305,6 +305,15 @@ public class AcquisitionFragment extends Fragment {
             });
 
             supplierListDialog.show();
+        });
+
+
+        mCbNetTotalValue.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String checkboxLabel = isChecked ? "Net total" : "Gross total";
+                mCbNetTotalValue.setText(checkboxLabel);
+            }
         });
     }
 
