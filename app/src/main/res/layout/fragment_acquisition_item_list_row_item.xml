@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvSpecies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Species" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvQualityClass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="QualityClass" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvLogBarCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LogBarCode" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvNetLength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NetLength" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvNetDiameter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NetDiameter" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvGrossLength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GrossLength" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvGrossDiameter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GrossDiameter" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvNetVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NetVolume" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvGrossVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GrossVolume" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvVolumetricPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VolumetricPrice" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   " />
+
+        <TextView
+            android:id="@+id/tvObservations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Observations" />
+    </LinearLayout>
+</TableRow>

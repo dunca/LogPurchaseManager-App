@@ -16,6 +16,7 @@ import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemFragment;
+import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemListFragment;
 
 public class MainTabbedActivity extends AppCompatActivity {
     public static final String EXTRA_ACQUISITION_ID = "extra_acquisition_id";
@@ -112,6 +113,8 @@ public class MainTabbedActivity extends AppCompatActivity {
 
             if (position == 0) {
                 return AcquisitionFragment.newInstance(mAcquisitionId);
+            } else if (position == 1) {
+                return AcquisitionItemListFragment.newInstance(mAcquisitionId);
             } else if (position == 2) {
                 return AcquisitionItemFragment.newInstance(mAcquisitionId, -1);
             }
