@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -81,6 +82,8 @@ public class AcquisitionFragment extends Fragment {
     private TextView mTvDiscountValue;
 
     private TextView mTvTotalValue;
+
+    private CheckBox mCbNetTotalValue;
 
     private Button mBtnSave;
 
@@ -214,6 +217,11 @@ public class AcquisitionFragment extends Fragment {
 
         mTvTotalValue = mFragment.findViewById(R.id.tvTotalValue);
 
+        mCbNetTotalValue = mFragment.findViewById(R.id.cbNetTotalValue);
+        mCbNetTotalValue.setChecked(true);
+
+        // TODO update total when the checkbox changes
+
         mBtnSave = mFragment.findViewById(R.id.btnSave);
 
         mBtnDelete = mFragment.findViewById(R.id.btnDelete);
@@ -340,6 +348,8 @@ public class AcquisitionFragment extends Fragment {
         updateUiDate(mModifiedAcquisition.getReceptionDate());
 
         mTvSupplierName.setText(mModifiedAcquisition.getSupplier().getName());
+
+        mCbNetTotalValue.setChecked(mModifiedAcquisition.isNet());
     }
 
     /**
@@ -367,7 +377,7 @@ public class AcquisitionFragment extends Fragment {
         acquisition.setTotalNetVolume(0);
         acquisition.setDiscountPercentage(discountPercentage);
         acquisition.setDiscountValue(getDiscountValue());
-        acquisition.setNet(false);
+        acquisition.setNet(mCbNetTotalValue.isChecked());
         acquisition.setSynced(false);
     }
 
