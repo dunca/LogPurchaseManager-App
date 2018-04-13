@@ -83,13 +83,13 @@ public class AcquisitionItemFragment extends Fragment {
 
         Bundle args = new Bundle();
 
-        if (acquisitionId != MethodParameterConstants.NO_ELEMENT_INDEX) {
+        if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
             args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
         } else {
             throw new RuntimeException("Acquisition is required");
         }
 
-        if (acquisitionItemId != MethodParameterConstants.NO_ELEMENT_INDEX) {
+        if (acquisitionItemId != MethodParameterConstants.INVALID_INDEX) {
             args.putInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, acquisitionItemId);
         }
 

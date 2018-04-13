@@ -62,7 +62,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
         if (acquisition != null) {
             id = acquisition.getId();
         } else {
-            id = MethodParameterConstants.NO_ELEMENT_INDEX;
+            id = MethodParameterConstants.INVALID_INDEX;
         }
 
         intent.putExtra(MainTabbedActivity.EXTRA_ACQUISITION_ID, id);

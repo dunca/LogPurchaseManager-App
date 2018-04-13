@@ -96,7 +96,7 @@ public class MainTabbedActivity extends AppCompatActivity {
         super.onResume();
 
         mAcquisitionId = getIntent().getIntExtra(EXTRA_ACQUISITION_ID,
-                MethodParameterConstants.NO_ELEMENT_INDEX);
+                MethodParameterConstants.INVALID_INDEX);
     }
 
     /**

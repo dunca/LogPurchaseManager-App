@@ -38,7 +38,7 @@ public class AcquisitionItemListFragment extends Fragment {
 
         Bundle args = new Bundle();
 
-        if (acquisitionId != MethodParameterConstants.NO_ELEMENT_INDEX) {
+        if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
             args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
         }
 
@@ -61,7 +61,6 @@ public class AcquisitionItemListFragment extends Fragment {
         Bundle args = getArguments();
 
         int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM, 0);
-
 
         if (acquisitionId == 0) {
             throw new RuntimeException("Acquisition id is required");

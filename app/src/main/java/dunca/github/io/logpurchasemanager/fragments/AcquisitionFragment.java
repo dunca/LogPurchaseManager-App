@@ -40,9 +40,7 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
-import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionStatus;
-import dunca.github.io.logpurchasemanager.data.model.LogPrice;
 import dunca.github.io.logpurchasemanager.data.model.Supplier;
 import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
@@ -131,7 +129,7 @@ public class AcquisitionFragment extends Fragment {
 
         Bundle args = new Bundle();
 
-        if (acquisitionId != MethodParameterConstants.NO_ELEMENT_INDEX) {
+        if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
             args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
         }
 
