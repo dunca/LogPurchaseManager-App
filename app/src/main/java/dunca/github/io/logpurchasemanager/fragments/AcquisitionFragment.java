@@ -535,41 +535,43 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private double getTotalValue() {
-        if (mExistingAcquisition == null) {
-            // not yet saved, so there can't be any acquisition items
+        // if (mExistingAcquisition == null) {
+        //     // not yet saved, so there can't be any acquisition items
+        //
+        //     return 0;
+        // }
+        //
+        // List<AcquisitionItem> acquisitionItemList;
+        //
+        // List<LogPrice> logPriceList;
+        //
+        // try {
+        //     acquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
+        //             .where()
+        //             .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
+        //             .and()
+        //             .eq(CommonFieldNames.IS_SPECIAL_PRICE, 0)
+        //             .query();
+        //
+        //     logPriceList = mDbHelper.getLogPriceDao().queryBuilder()
+        //             .where()
+        //             .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
+        //             .query();
+        // } catch (SQLException e) {
+        //     throw new RuntimeException(e);
+        // }
+        //
+        // double totalValue = acquisitionItemList.stream()
+        //         .mapToDouble(AcquisitionItem::getPrice)
+        //         .sum();
+        //
+        // totalValue += logPriceList.stream()
+        //         .mapToDouble(logPrice -> logPrice.getPrice() * logPrice.getQuantity())
+        //         .sum();
+        //
+        // return totalValue;
 
-            return 0;
-        }
-
-        List<AcquisitionItem> acquisitionItemList;
-
-        List<LogPrice> logPriceList;
-
-        try {
-            acquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
-                    .where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
-                    .and()
-                    .eq(CommonFieldNames.IS_SPECIAL_PRICE, 0)
-                    .query();
-
-            logPriceList = mDbHelper.getLogPriceDao().queryBuilder()
-                    .where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
-                    .query();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        double totalValue = acquisitionItemList.stream()
-                .mapToDouble(AcquisitionItem::getPrice)
-                .sum();
-
-        totalValue += logPriceList.stream()
-                .mapToDouble(logPrice -> logPrice.getPrice() * logPrice.getQuantity())
-                .sum();
-
-        return totalValue;
+        return 0;
     }
 
     /**
