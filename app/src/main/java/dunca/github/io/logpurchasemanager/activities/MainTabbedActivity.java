@@ -67,6 +67,7 @@ public class MainTabbedActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.fragment_container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(999);
     }
 
     @Override

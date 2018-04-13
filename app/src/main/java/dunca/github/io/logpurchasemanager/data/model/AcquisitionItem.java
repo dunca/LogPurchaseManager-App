@@ -12,10 +12,10 @@ public final class AcquisitionItem implements Model {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Acquisition acquisition;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Acquirer acquirer;
 
     @DatabaseField(canBeNull = false)
@@ -39,13 +39,13 @@ public final class AcquisitionItem implements Model {
     @DatabaseField(canBeNull = false)
     private double grossVolume;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private LogQualityClass logQualityClass;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private LogDiameterClass logDiameterClass;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private TreeSpecies treeSpecies;
 
     @DatabaseField(canBeNull = false)
