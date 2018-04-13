@@ -117,6 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Gross length (m)"
+                android:inputType="numberDecimal"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="368dp" />
         </android.support.design.widget.TextInputLayout>
@@ -135,7 +136,8 @@
                 android:id="@+id/etGrossDiameter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Gross diameter (cm)" />
+                android:hint="Gross diameter (cm)"
+                android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -153,7 +155,8 @@
                 android:id="@+id/etNetLength"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Net length (m)" />
+                android:hint="Net length (m)"
+                android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -170,7 +173,8 @@
                 android:id="@+id/etNetDiameter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Net diameter (cm)" />
+                android:hint="Net diameter (cm)"
+                android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
 
         <TextView
@@ -230,7 +234,8 @@
                 android:id="@+id/etObservations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Observations" />
+                android:hint="Observations"
+                android:inputType="textMultiLine" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
