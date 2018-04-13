@@ -3,18 +3,18 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.j256.ormlite.table.TableUtils;
-
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
@@ -114,6 +114,38 @@ public class AcquisitionItemListFragment extends Fragment {
             tvObservations.setText(acquisitionItem.getObservations());
 
             mTblAcquisitionItemList.addView(tableRow);
+        }
+
+        Map<Integer, Integer> maxTextViewWidths = new HashMap<>();
+
+        for (int rowIndex = 0; rowIndex < mTblAcquisitionItemList.getChildCount(); rowIndex++) {
+            TableRow tableRow = (TableRow) mTblAcquisitionItemList.getChildAt(rowIndex);
+            LinearLayout layout = (LinearLayout) tableRow.getChildAt(0);
+
+            for (int textViewIndex = 0; textViewIndex < layout.getChildCount(); textViewIndex++) {
+                int lastMaxWidth = maxTextViewWidths.getOrDefault(textViewIndex, 0);
+
+                TextView currentTextView = (TextView) layout.getChildAt(textViewIndex);
+                currentTextView.measure(0, 0);
+                int currentWidth = currentTextView.getMeasuredWidth();
+
+                if (lastMaxWidth <= currentWidth) {
+                    maxTextViewWidths.put(textViewIndex, currentWidth);
+                }
+            }
+        }
+
+        for (int rowIndex = 0; rowIndex < mTblAcquisitionItemList.getChildCount(); rowIndex++) {
+            TableRow tableRow = (TableRow) mTblAcquisitionItemList.getChildAt(rowIndex);
+            LinearLayout layout = (LinearLayout) tableRow.getChildAt(0);
+
+            for (int textViewIndex = 0; textViewIndex < layout.getChildCount(); textViewIndex++) {
+                int maxWidth = maxTextViewWidths.get(textViewIndex);
+
+                TextView currentTextView = (TextView) layout.getChildAt(textViewIndex);
+
+                currentTextView.setWidth(maxWidth);
+            }
         }
     }
 }
