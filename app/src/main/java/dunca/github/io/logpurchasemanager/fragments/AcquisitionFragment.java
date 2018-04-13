@@ -55,7 +55,7 @@ public class AcquisitionFragment extends Fragment {
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
 
 
-    private Acquisition mModifiedAcquisition;
+    private Acquisition mExistingAcquisition;
 
     private DateFormat mIsoDateFormat;
 
@@ -155,7 +155,7 @@ public class AcquisitionFragment extends Fragment {
 
         if (acquisitionId != 0) {
             // the user is trying to update an existing object
-            setModifiedAcquisition(acquisitionId);
+            setExistingAcquisition(acquisitionId);
         } else {
             updateUiWithDefaults();
         }
@@ -166,7 +166,7 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private void updateDeleteButtonState() {
-        mBtnDelete.setEnabled(mModifiedAcquisition != null);
+        mBtnDelete.setEnabled(mExistingAcquisition != null);
     }
 
     private void initViews() {
@@ -321,7 +321,7 @@ public class AcquisitionFragment extends Fragment {
         // TODO show dialog
 
         DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionDao().deleteBuilder();
-        deleteBuilder.where().eq(CommonFieldNames.ID, mModifiedAcquisition.getId());
+        deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisition.getId());
         deleteBuilder.delete();
 
         Intent intent = new Intent(getContext(), AcquisitionListActivity.class);
@@ -329,36 +329,36 @@ public class AcquisitionFragment extends Fragment {
     }
 
     /**
-     * Sets {@link #mModifiedAcquisition} to the {@link Acquisition} instance corresponding to the
+     * Sets {@link #mExistingAcquisition} to the {@link Acquisition} instance corresponding to the
      * given id
      *
      * @param acquisitionId the {@link Acquisition#id} of the {@link Acquisition} instance
      */
-    private void setModifiedAcquisition(int acquisitionId) {
-        mModifiedAcquisition = DatabaseHelper.getLatestInstance().getAcquisitionDao()
+    private void setExistingAcquisition(int acquisitionId) {
+        mExistingAcquisition = DatabaseHelper.getLatestInstance().getAcquisitionDao()
                 .queryForId(acquisitionId);
 
         syncUiWithAcquisition();
     }
 
     /**
-     * Updates the UI inputs based on the values of {@link #mModifiedAcquisition}
+     * Updates the UI inputs based on the values of {@link #mExistingAcquisition}
      */
     private void syncUiWithAcquisition() {
-        mEtSerialNumber.setText(mModifiedAcquisition.getSerialNumber());
-        mEtRegionZone.setText(mModifiedAcquisition.getRegionZone());
-        mEtObservations.setText(mModifiedAcquisition.getObservations());
-        mEtDiscountPercentage.setText(String.valueOf(mModifiedAcquisition.getDiscountPercentage()));
+        mEtSerialNumber.setText(mExistingAcquisition.getSerialNumber());
+        mEtRegionZone.setText(mExistingAcquisition.getRegionZone());
+        mEtObservations.setText(mExistingAcquisition.getObservations());
+        mEtDiscountPercentage.setText(String.valueOf(mExistingAcquisition.getDiscountPercentage()));
 
-        mSpinnerAcquirer.setSelection(mAcquirerList.indexOf(mModifiedAcquisition.getAcquirer()));
-        mSpinnerWoodRegion.setSelection(mWoodRegionList.indexOf(mModifiedAcquisition.getWoodRegion()));
-        mSpinnerWoodCertification.setSelection(mWoodCertificationList.indexOf(mModifiedAcquisition.getWoodCertification()));
+        mSpinnerAcquirer.setSelection(mAcquirerList.indexOf(mExistingAcquisition.getAcquirer()));
+        mSpinnerWoodRegion.setSelection(mWoodRegionList.indexOf(mExistingAcquisition.getWoodRegion()));
+        mSpinnerWoodCertification.setSelection(mWoodCertificationList.indexOf(mExistingAcquisition.getWoodCertification()));
 
-        updateUiDate(mModifiedAcquisition.getReceptionDate());
+        updateUiDate(mExistingAcquisition.getReceptionDate());
 
-        mTvSupplierName.setText(mModifiedAcquisition.getSupplier().getName());
+        mTvSupplierName.setText(mExistingAcquisition.getSupplier().getName());
 
-        mCbNetTotalValue.setChecked(mModifiedAcquisition.isNet());
+        mCbNetTotalValue.setChecked(mExistingAcquisition.isNet());
     }
 
     /**
@@ -425,7 +425,7 @@ public class AcquisitionFragment extends Fragment {
 
     private void persistAcquisitionChanges() {
         // not working with an existing object
-        if (mModifiedAcquisition == null) {
+        if (mExistingAcquisition == null) {
             Acquisition acquisition = createAcquisitionMatchingUi();
             DatabaseHelper.getLatestInstance().getAcquisitionDao().create(acquisition);
 
@@ -433,12 +433,12 @@ public class AcquisitionFragment extends Fragment {
 
             PopupUtil.snackbar(getView(), "New acquisition persisted");
 
-            mModifiedAcquisition = acquisition;
+            mExistingAcquisition = acquisition;
 
             updateDeleteButtonState();
         } else {
-            syncAcquisitionWithUi(mModifiedAcquisition);
-            DatabaseHelper.getLatestInstance().getAcquisitionDao().update(mModifiedAcquisition);
+            syncAcquisitionWithUi(mExistingAcquisition);
+            DatabaseHelper.getLatestInstance().getAcquisitionDao().update(mExistingAcquisition);
 
             PopupUtil.snackbar(getView(), "Updated existing acquisition");
         }
@@ -542,7 +542,7 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private double getTotalValue() {
-        if (mModifiedAcquisition == null) {
+        if (mExistingAcquisition == null) {
             // not yet saved, so there can't be any acquisition items
 
             return 0;
@@ -555,14 +555,14 @@ public class AcquisitionFragment extends Fragment {
         try {
             acquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
                     .where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, mModifiedAcquisition.getId())
+                    .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
                     .and()
                     .eq(CommonFieldNames.IS_SPECIAL_PRICE, 0)
                     .query();
 
             logPriceList = mDbHelper.getLogPriceDao().queryBuilder()
                     .where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, mModifiedAcquisition.getId())
+                    .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
                     .query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
