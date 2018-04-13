@@ -68,11 +68,6 @@ public class AcquisitionItemListFragment extends Fragment {
         }
 
         try {
-            List<String> lll = TableUtils.getCreateTableStatements(mDbHelper.getConnectionSource(),
-                    AcquisitionItem.class);
-
-            System.out.println(TextUtils.join("\n", lll));
-
             mAcquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
                     .where()
                     .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
