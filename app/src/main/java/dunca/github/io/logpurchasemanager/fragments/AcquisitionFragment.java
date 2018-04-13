@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -300,9 +301,20 @@ public class AcquisitionFragment extends SmartFragment {
     private void deleteCurrentAcquisition() throws SQLException {
         // TODO show dialog
 
+        List<DeleteBuilder> deleteBuilderList = Arrays.asList(
+                mDbHelper.getLogPriceDao().deleteBuilder(),
+                mDbHelper.getAcquisitionItemDao().deleteBuilder()
+        );
+
+        for (DeleteBuilder deleteBuilder : deleteBuilderList) {
+            deleteBuilder.where().eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId());
+            deleteBuilder.delete();
+        }
+
         DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionDao().deleteBuilder();
         deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisition.getId());
         deleteBuilder.delete();
+
 
         Intent intent = new Intent(getContext(), AcquisitionListActivity.class);
         startActivity(intent);
