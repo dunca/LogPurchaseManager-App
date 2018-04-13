@@ -34,4 +34,8 @@ public final class TreeSpecies implements Model {
     TreeSpecies() {
 
     }
+
+    public String toString() {
+        return String.format("%s (%s)", symbol, name);
+    }
 }

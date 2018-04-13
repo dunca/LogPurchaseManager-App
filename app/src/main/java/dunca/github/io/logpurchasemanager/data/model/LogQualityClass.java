@@ -26,4 +26,8 @@ public final class LogQualityClass implements Model {
     LogQualityClass() {
 
     }
+
+    public String toString() {
+        return String.format("%s (%s)", symbol, name);
+    }
 }
