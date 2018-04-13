@@ -542,6 +542,12 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private double getTotalValue() {
+        if (mModifiedAcquisition == null) {
+            // not yet saved, so there can't be any acquisition items
+
+            return 0;
+        }
+
         List<AcquisitionItem> acquisitionItemList;
 
         List<LogPrice> logPriceList;
