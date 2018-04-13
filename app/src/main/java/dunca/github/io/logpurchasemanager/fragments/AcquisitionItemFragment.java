@@ -136,7 +136,9 @@ public class AcquisitionItemFragment extends Fragment {
         mEtBarCode = findViewById(R.id.etBarCode);
 
         mCbSpecialPrice = findViewById(R.id.cbSpecialPrice);
+
         mEtVolumetricPrice = findViewById(R.id.etPrice);
+        updateUiPriceFormState();
 
         mEtGrossLength = findViewById(R.id.etGrossLength);
         mEtGrossLength.addTextChangedListener(new TextWatcher() {
@@ -220,6 +222,8 @@ public class AcquisitionItemFragment extends Fragment {
 
     private void setupOnClickActions() {
         mBtnSave.setOnClickListener(v -> persistAcquisitionItemChanges());
+
+        mCbSpecialPrice.setOnCheckedChangeListener((view, state) -> updateUiPriceFormState());
     }
 
     private void persistAcquisitionItemChanges() {
@@ -345,6 +349,10 @@ public class AcquisitionItemFragment extends Fragment {
         }
 
         return calculateVolume(netLength, netDiameter);
+    }
+
+    private void updateUiPriceFormState() {
+        mEtVolumetricPrice.setEnabled(mCbSpecialPrice.isChecked());
     }
 
     /**
