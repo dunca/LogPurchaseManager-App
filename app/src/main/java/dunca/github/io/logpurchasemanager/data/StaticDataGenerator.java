@@ -36,7 +36,7 @@ public final class StaticDataGenerator {
         TreeSpecies treeSpecies1 = new TreeSpecies("bc", "Beech");
         TreeSpecies treeSpecies2 = new TreeSpecies("sp", "Spruce");
 
-        mDatabaseHelper.getWoodSpeciesDao().create(Arrays.asList(treeSpecies1, treeSpecies2));
+        mDatabaseHelper.getTreeSpeciesDao().create(Arrays.asList(treeSpecies1, treeSpecies2));
     }
 
     public void createWoodCertifications() {

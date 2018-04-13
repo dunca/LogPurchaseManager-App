@@ -103,7 +103,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return mWoodRegionDao;
     }
 
-    public RuntimeExceptionDao<TreeSpecies, Integer> getWoodSpeciesDao() {
+    public RuntimeExceptionDao<TreeSpecies, Integer> getTreeSpeciesDao() {
         if (mWoodSpeciesDao == null) {
             mWoodSpeciesDao = getRuntimeExceptionDao(TreeSpecies.class);
         }
