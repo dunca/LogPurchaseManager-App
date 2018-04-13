@@ -48,6 +48,7 @@ import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
+import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionFragment extends Fragment {
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
@@ -510,12 +511,7 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private <T extends Model> ArrayAdapter<T> createDefaultSpinnerAdapter(List<T> modelInstanceList) {
-        ArrayAdapter<T> arrayAdapter = new ArrayAdapter<T>(getContext(),
-                android.R.layout.simple_spinner_item, modelInstanceList);
-
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        return arrayAdapter;
+        return FragmentUtil.createDefaultSpinnerAdapter(getContext(), modelInstanceList);
     }
 
     /**
