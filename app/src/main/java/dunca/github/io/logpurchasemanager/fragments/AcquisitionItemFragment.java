@@ -17,8 +17,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
+import dunca.github.io.logpurchasemanager.data.model.Acquisition;
+import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
@@ -47,6 +50,9 @@ public class AcquisitionItemFragment extends Fragment {
     private List<TreeSpecies> mSpeciesList;
     private List<LogQualityClass> mLogQualityClassList;
 
+    private Acquisition mAcquisition;
+    private AcquisitionItem mExistingAcquisitionItem;
+
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
 
@@ -65,13 +71,19 @@ public class AcquisitionItemFragment extends Fragment {
         }
     }
 
-    public static AcquisitionItemFragment newInstance(int acquisitionId) {
+    public static AcquisitionItemFragment newInstance(int acquisitionId, int acquisitionItemId) {
         AcquisitionItemFragment fragment = new AcquisitionItemFragment();
 
         Bundle args = new Bundle();
 
         if (acquisitionId != MethodParameterConstants.NO_ELEMENT_INDEX) {
             args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
+        } else {
+            throw new RuntimeException("Acquisition is required");
+        }
+
+        if (acquisitionItemId != MethodParameterConstants.NO_ELEMENT_INDEX) {
+            args.putInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, acquisitionItemId);
         }
 
         fragment.setArguments(args);
@@ -94,14 +106,12 @@ public class AcquisitionItemFragment extends Fragment {
         setupOnClickActions();
 
         Bundle args = getArguments();
+
         int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM, 0);
+        mAcquisition = mDbHelper.getAcquisitionDao().queryForId(acquisitionId);
 
-        if (acquisitionId != 0) {
-            // the user is trying to add an item to an existing acquisition
-
-        } else {
-
-        }
+        int acquisitionItemId = args.getInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, 0);
+        mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
 
         return mFragmentView;
     }
@@ -139,7 +149,17 @@ public class AcquisitionItemFragment extends Fragment {
     }
 
     private void persistAcquisitionItemChanges() {
-        // TODO
+        if (mExistingAcquisitionItem == null) {
+            // inserting new acquisition item
+            AcquisitionItem acquisitionItem = createAcquisitionItemMatchingUi();
+
+            mDbHelper.getAcquisitionItemDao().create(acquisitionItem);
+            mExistingAcquisitionItem = acquisitionItem;
+
+            PopupUtil.snackbar(mFragmentView, "New acquisition item persisted");
+        } else {
+
+        }
     }
 
     private <T extends View> T findViewById(int id) {
@@ -149,4 +169,41 @@ public class AcquisitionItemFragment extends Fragment {
     private <T extends Model> ArrayAdapter<T> createDefaultSpinnerAdapter(List<T> modelInstanceList) {
         return FragmentUtil.createDefaultSpinnerAdapter(getContext(), modelInstanceList);
     }
+
+    private AcquisitionItem createAcquisitionItemMatchingUi() {
+        AcquisitionItem acquisitionItem = new AcquisitionItem();
+        syncAcquisitionItemWithUi(acquisitionItem);
+        return acquisitionItem;
+    }
+
+    private void syncAcquisitionItemWithUi(AcquisitionItem acquisitionItem) {
+        acquisitionItem.setTreeSpecies(getSelectedTreeSpecies());
+        acquisitionItem.setLogQualityClass(getSelectedQualityClass());
+
+        acquisitionItem.setLogBarCode(mEtBarCode.getText().toString());
+
+        acquisitionItem.setSpecialPrice(mCbSpecialPrice.isChecked());
+        acquisitionItem.setPrice(Double.valueOf(mEtVolumetricPrice.getText().toString()));
+
+        acquisitionItem.setGrossLength(Double.valueOf(mEtGrossLength.getText().toString()));
+        acquisitionItem.setGrossDiameter(Double.valueOf(mEtGrossDiameter.getText().toString()));
+
+        acquisitionItem.setNetLength(Double.valueOf(mEtNetLength.getText().toString()));
+        acquisitionItem.setNetDiameter(Double.valueOf(mEtNetDiameter.getText().toString()));
+
+        acquisitionItem.setGrossVolume(Double.valueOf(mTvGrossVolume.getText().toString()));
+        acquisitionItem.setNetVolume(Double.valueOf(mTvNetVolume.getText().toString()));
+
+        acquisitionItem.setObservations(mEtObservations.getText().toString());
+    }
+
+    private TreeSpecies getSelectedTreeSpecies() {
+        return (TreeSpecies) mSpinnerSpecies.getSelectedItem();
+    }
+
+    private LogQualityClass getSelectedQualityClass() {
+        return (LogQualityClass) mSpinnerQualityClass.getSelectedItem();
+    }
+
+
 }

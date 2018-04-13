@@ -84,7 +84,7 @@ public final class AcquisitionItem implements Model {
         this.isSynced = isSynced;
     }
 
-    AcquisitionItem() {
+    public AcquisitionItem() {
 
     }
 }
