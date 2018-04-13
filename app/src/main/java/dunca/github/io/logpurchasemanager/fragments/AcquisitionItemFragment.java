@@ -3,6 +3,8 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,9 +113,12 @@ public class AcquisitionItemFragment extends Fragment {
         mAcquisition = mDbHelper.getAcquisitionDao().queryForId(acquisitionId);
 
         int acquisitionItemId = args.getInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, 0);
-        mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
 
-        syncUiWithAcquisitionItem();
+        if (acquisitionItemId != 0) {
+            mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
+
+            syncUiWithAcquisitionItem();
+        }
 
         return mFragmentView;
     }
@@ -133,10 +138,76 @@ public class AcquisitionItemFragment extends Fragment {
         mEtVolumetricPrice = findViewById(R.id.etPrice);
 
         mEtGrossLength = findViewById(R.id.etGrossLength);
+        mEtGrossLength.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateUiGrossVolume();
+            }
+        });
+
         mEtGrossDiameter = findViewById(R.id.etGrossDiameter);
+        mEtGrossDiameter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateUiGrossVolume();
+            }
+        });
 
         mEtNetLength = findViewById(R.id.etNetLength);
+        mEtNetLength.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateUiNetVolume();
+            }
+        });
+
         mEtNetDiameter = findViewById(R.id.etNetDiameter);
+        mEtNetDiameter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateUiNetVolume();
+            }
+        });
 
         mTvGrossVolume = findViewById(R.id.tvGrossVolume);
         mTvNetVolume = findViewById(R.id.tvNetVolume);
@@ -177,6 +248,10 @@ public class AcquisitionItemFragment extends Fragment {
 
     private AcquisitionItem createAcquisitionItemMatchingUi() {
         AcquisitionItem acquisitionItem = new AcquisitionItem();
+
+        acquisitionItem.setAcquisition(mAcquisition);
+        acquisitionItem.setAcquirer(mAcquisition.getAcquirer());
+
         syncAcquisitionItemWithUi(acquisitionItem);
         return acquisitionItem;
     }
@@ -232,5 +307,50 @@ public class AcquisitionItemFragment extends Fragment {
         return (LogQualityClass) mSpinnerQualityClass.getSelectedItem();
     }
 
+    private void updateUiGrossVolume() {
+        mTvGrossVolume.setText(String.valueOf(calculateGrossVolume()));
+    }
 
+    private void updateUiNetVolume() {
+        mTvNetVolume.setText(String.valueOf(calculateNetVolume()));
+    }
+
+    private double calculateGrossVolume() {
+        double grossLength;
+        double grossDiameter;
+
+        try {
+            grossLength = Double.valueOf(mEtGrossLength.getText().toString());
+            grossDiameter = Double.valueOf(mEtGrossDiameter.getText().toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+
+        return calculateVolume(grossLength, grossDiameter);
+    }
+
+    private double calculateNetVolume() {
+        double netLength;
+        double netDiameter;
+
+        try {
+            netLength = Double.valueOf(mEtNetLength.getText().toString());
+            netDiameter = Double.valueOf(mEtNetDiameter.getText().toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+
+        return calculateVolume(netLength, netDiameter);
+    }
+
+    /**
+     * Calculates the log volume using: pi*(diameter*10^2/2)^2*length
+     *
+     * @param length   the log's length
+     * @param diameter the log's diameter
+     * @return the log's volume
+     */
+    private double calculateVolume(double length, double diameter) {
+        return Math.PI * Math.pow(diameter * Math.pow(10, 2) / 2, 2) * length;
+    }
 }
