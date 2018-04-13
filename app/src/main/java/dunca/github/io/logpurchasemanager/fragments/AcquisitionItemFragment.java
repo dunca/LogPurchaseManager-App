@@ -25,6 +25,7 @@ import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.LogDiameterClass;
+import dunca.github.io.logpurchasemanager.data.model.LogPrice;
 import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
@@ -55,6 +56,9 @@ public class AcquisitionItemFragment extends Fragment {
 
     private Acquisition mAcquisition;
     private AcquisitionItem mExistingAcquisitionItem;
+
+    // set to a dummy LogDiameterClass, since the feature is unused
+    private final LogDiameterClass mDummyLogDiameterClass = new LogDiameterClass("", "", 0, 0);
 
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
@@ -234,11 +238,26 @@ public class AcquisitionItemFragment extends Fragment {
             mDbHelper.getAcquisitionItemDao().create(acquisitionItem);
             mExistingAcquisitionItem = acquisitionItem;
 
+            if (!mExistingAcquisitionItem.isSpecialPrice()) {
+                LogPrice logPrice = new LogPrice(mExistingAcquisitionItem.getAcquisition(),
+                        mExistingAcquisitionItem.getAcquirer(),
+                        mExistingAcquisitionItem.getTreeSpecies(),
+                        mExistingAcquisitionItem.getLogQualityClass(),
+                        mDummyLogDiameterClass, 0, 1, false);
+
+                mDbHelper.getLogPriceDao().create(logPrice);
+
+                PopupUtil.snackbar(mFragmentView, "New log price persisted");
+            }
+
             PopupUtil.snackbar(mFragmentView, "New acquisition item persisted");
         } else {
             syncAcquisitionItemWithUi(mExistingAcquisitionItem);
 
             mDbHelper.getAcquisitionItemDao().update(mExistingAcquisitionItem);
+
+            // TODO what if isSpecialPrice changes???
+
             PopupUtil.snackbar(mFragmentView, "Updated existing acquisition item");
         }
     }
@@ -256,9 +275,7 @@ public class AcquisitionItemFragment extends Fragment {
 
         acquisitionItem.setAcquisition(mAcquisition);
         acquisitionItem.setAcquirer(mAcquisition.getAcquirer());
-
-        // set to a dummy LogDiameterClass, since the feature is unused
-        acquisitionItem.setLogDiameterClass(new LogDiameterClass("", "", 0, 0));
+        acquisitionItem.setLogDiameterClass(mDummyLogDiameterClass);
 
         syncAcquisitionItemWithUi(acquisitionItem);
         return acquisitionItem;
@@ -271,7 +288,15 @@ public class AcquisitionItemFragment extends Fragment {
         acquisitionItem.setLogBarCode(mEtBarCode.getText().toString());
 
         acquisitionItem.setSpecialPrice(mCbSpecialPrice.isChecked());
-        acquisitionItem.setPrice(Double.valueOf(mEtVolumetricPrice.getText().toString()));
+
+        double price;
+
+        try {
+            price = Double.valueOf(mEtVolumetricPrice.getText().toString());
+        } catch (NumberFormatException e) {
+            price = 0;
+        }
+        acquisitionItem.setPrice(price);
 
         acquisitionItem.setGrossLength(Double.valueOf(mEtGrossLength.getText().toString()));
         acquisitionItem.setGrossDiameter(Double.valueOf(mEtGrossDiameter.getText().toString()));
