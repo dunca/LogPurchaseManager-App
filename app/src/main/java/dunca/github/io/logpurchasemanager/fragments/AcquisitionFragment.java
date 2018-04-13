@@ -50,8 +50,6 @@ import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 
 public class AcquisitionFragment extends Fragment {
-    public static final String ACQUISITION_ID_PARAM = "acquisition_id_param";
-
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
 
 
@@ -133,7 +131,7 @@ public class AcquisitionFragment extends Fragment {
         Bundle args = new Bundle();
 
         if (acquisitionId != MethodParameterConstants.NO_ELEMENT_INDEX) {
-            args.putInt(ACQUISITION_ID_PARAM, acquisitionId);
+            args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
         }
 
         fragment.setArguments(args);
@@ -151,7 +149,7 @@ public class AcquisitionFragment extends Fragment {
         setupOnClickActions();
 
         Bundle args = getArguments();
-        int acquisitionId = args.getInt(ACQUISITION_ID_PARAM, 0);
+        int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM, 0);
 
         if (acquisitionId != 0) {
             // the user is trying to update an existing object
