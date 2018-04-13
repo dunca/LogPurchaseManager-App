@@ -334,8 +334,7 @@ public class AcquisitionFragment extends Fragment {
      * @param acquisitionId the {@link Acquisition#id} of the {@link Acquisition} instance
      */
     private void setExistingAcquisition(int acquisitionId) {
-        mExistingAcquisition = DatabaseHelper.getLatestInstance().getAcquisitionDao()
-                .queryForId(acquisitionId);
+        mExistingAcquisition = mDbHelper.getAcquisitionDao().queryForId(acquisitionId);
 
         syncUiWithAcquisition();
     }
