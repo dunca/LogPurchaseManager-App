@@ -36,6 +36,7 @@ import java.util.List;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
+import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
@@ -579,11 +580,11 @@ public class AcquisitionFragment extends SmartFragment {
      */
     private void updateUiDiscountValue() {
         double discountValue = getDiscountValue();
-        mTvDiscountValue.setText(String.valueOf(discountValue));
+        mTvDiscountValue.setText(StringFormatUtil.round(discountValue));
     }
 
     private void updateTotalValue() {
-        mTvTotalValue.setText(String.valueOf(getTotalValue()));
+        mTvTotalValue.setText(StringFormatUtil.round(getTotalValue()));
     }
 
     private SharedPreferences getSharedPreferences() {
