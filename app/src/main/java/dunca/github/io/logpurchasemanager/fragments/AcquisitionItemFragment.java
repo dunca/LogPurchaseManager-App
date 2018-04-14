@@ -37,7 +37,7 @@ import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
-import dunca.github.io.logpurchasemanager.fragments.util.AcquisitionItemIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionItemFragment extends SmartFragment {

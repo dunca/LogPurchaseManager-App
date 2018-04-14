@@ -22,8 +22,8 @@ import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
-import dunca.github.io.logpurchasemanager.fragments.util.AcquisitionItemIdEvent;
-import dunca.github.io.logpurchasemanager.fragments.util.SerializableRunnable;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
+import dunca.github.io.logpurchasemanager.util.SerializableRunnable;
 
 public class AcquisitionItemListFragment extends SmartFragment {
     private static final String ACQUISITION_ITEM_TAB_SWITCHED_PARAM =

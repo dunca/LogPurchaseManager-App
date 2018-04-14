@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity;
@@ -50,7 +49,7 @@ import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
-import dunca.github.io.logpurchasemanager.fragments.util.SerializableConsumer;
+import dunca.github.io.logpurchasemanager.util.SerializableConsumer;
 
 public class AcquisitionFragment extends SmartFragment {
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";

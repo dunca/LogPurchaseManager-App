@@ -1,4 +1,4 @@
-package dunca.github.io.logpurchasemanager.fragments.util;
+package dunca.github.io.logpurchasemanager.util;
 
 import java.io.Serializable;
 import java.util.function.Consumer;
