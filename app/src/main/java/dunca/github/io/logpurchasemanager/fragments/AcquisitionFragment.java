@@ -247,7 +247,7 @@ public class AcquisitionFragment extends SmartFragment {
             AlertDialog supplierListDialog = new AlertDialog.Builder(getContext()).create();
             LayoutInflater inflater = getActivity().getLayoutInflater();
 
-            View supplierListDialogView = inflater.inflate(R.layout.supplier_dialog_fragment_acquisition, null);
+            View supplierListDialogView = inflater.inflate(R.layout.fragment_acquisition_supplier_dialog, null);
 
             supplierListDialog.setView(supplierListDialogView);
             supplierListDialog.setTitle("Select the supplier");
