@@ -13,19 +13,19 @@ public class LogPrice implements Model {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Acquisition acquisition;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Acquirer acquirer;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private TreeSpecies treeSpecies;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private LogQualityClass logQualityClass;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private LogDiameterClass logDiameterClass;
 
     @DatabaseField(canBeNull = false)
