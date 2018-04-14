@@ -19,6 +19,7 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemListFragment;
+import dunca.github.io.logpurchasemanager.fragments.AcquisitionLogPriceFragment;
 
 public class MainTabbedActivity extends AppCompatActivity {
     public static final String EXTRA_ACQUISITION_ID = "extra_acquisition_id";
@@ -166,9 +167,11 @@ public class MainTabbedActivity extends AppCompatActivity {
                 return AcquisitionItemListFragment.newInstance(MainTabbedActivity.this::switchToAcquisitionItemTab);
             } else if (position == 2) {
                 return AcquisitionItemFragment.newInstance();
+            } else if (position == 3) {
+                return AcquisitionLogPriceFragment.newInstance();
             }
 
-            return AcquisitionItemListFragment.newInstance(MainTabbedActivity.this::switchToAcquisitionItemTab);
+            throw new IllegalStateException("Invalid tab id");
         }
 
         @Override
