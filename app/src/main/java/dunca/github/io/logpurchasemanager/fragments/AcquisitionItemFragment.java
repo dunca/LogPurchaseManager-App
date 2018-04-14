@@ -19,6 +19,7 @@ import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
+import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
@@ -342,11 +343,11 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     private void updateUiGrossVolume() {
-        mTvGrossVolume.setText(String.valueOf(calculateGrossVolume()));
+        mTvGrossVolume.setText(StringFormatUtil.round(calculateGrossVolume()));
     }
 
     private void updateUiNetVolume() {
-        mTvNetVolume.setText(String.valueOf(calculateNetVolume()));
+        mTvNetVolume.setText(StringFormatUtil.round(calculateNetVolume()));
     }
 
     private double calculateGrossVolume() {
@@ -382,14 +383,15 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     /**
-     * Calculates the log volume using: pi*(diameter*10^2/2)^2*length
+     * Calculates the log volume using: pi*(diameter*10^-2/2)^2*length
      *
      * @param length   the log's length
      * @param diameter the log's diameter
      * @return the log's volume
      */
     private double calculateVolume(double length, double diameter) {
-        return Math.PI * Math.pow(diameter * Math.pow(10, 2) / 2, 2) * length;
+        double meterDiameter = diameter * Math.pow(10, -2);
+        return Math.PI * Math.pow(meterDiameter / 2, 2) * length;
     }
 
     private <T extends View> T findViewById(int id) {
