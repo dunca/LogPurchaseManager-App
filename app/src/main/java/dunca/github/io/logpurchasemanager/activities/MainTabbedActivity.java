@@ -88,7 +88,8 @@ public class MainTabbedActivity extends AppCompatActivity {
     }
 
     private void toggleFabVisibility(int tabId) {
-        int visibility = tabId == 1 ? View.VISIBLE : View.INVISIBLE;
+        int visibility = tabId == 1 && mAcquisitionId != MethodParameterConstants.INVALID_INDEX ?
+                View.VISIBLE : View.INVISIBLE;
 
         mNewAcquisitionItemFab.setVisibility(visibility);
     }
