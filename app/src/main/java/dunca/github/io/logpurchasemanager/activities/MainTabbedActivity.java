@@ -2,6 +2,7 @@ package dunca.github.io.logpurchasemanager.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
@@ -32,6 +34,7 @@ public class MainTabbedActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private int mAcquisitionId;
+    private FloatingActionButton mNewAcquisitionItemFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class MainTabbedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_tabbed);
 
         initViews();
+        setupOnClickActions();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,16 +50,51 @@ public class MainTabbedActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        // FloatingActionButton fab =  findViewById(R.id.fab);
-        // fab.setOnClickListener(new View.OnClickListener() {
-        //     @Override
-        //     public void onClick(View view) {
-        //         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //                 .setAction("Action", null).show();
-        //     }
-        // });
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                toggleFabVisibility(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                toggleFabVisibility(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+    }
+
+    private void toggleFabVisibility(int tabId) {
+        int visibility = tabId == 1 ? View.VISIBLE : View.INVISIBLE;
+
+        mNewAcquisitionItemFab.setVisibility(visibility);
+    }
+
+    private void switchToAcquisitionItemTab() {
+        mViewPager.setCurrentItem(2);
     }
 
     private void initViews() {
@@ -68,6 +107,12 @@ public class MainTabbedActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.fragment_container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(999);
+
+        mNewAcquisitionItemFab = findViewById(R.id.fab);
+    }
+
+    private void setupOnClickActions() {
+        mNewAcquisitionItemFab.setOnClickListener(view -> switchToAcquisitionItemTab());
     }
 
     @Override
