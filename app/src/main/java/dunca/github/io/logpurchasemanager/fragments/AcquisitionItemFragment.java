@@ -2,6 +2,7 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import java.util.List;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
+import dunca.github.io.logpurchasemanager.activities.util.StringValidationUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
@@ -40,6 +42,8 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private Spinner mSpinnerSpecies;
     private Spinner mSpinnerQualityClass;
+
+    private TextInputLayout mTilBarCode;
     private EditText mEtBarCode;
     private CheckBox mCbSpecialPrice;
     private EditText mEtVolumetricPrice;
@@ -147,6 +151,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         ArrayAdapter qualityClassAdapter = createDefaultSpinnerAdapter(mLogQualityClassList);
         mSpinnerQualityClass.setAdapter(qualityClassAdapter);
 
+        mTilBarCode = findViewById(R.id.tilBarCode);
         mEtBarCode = findViewById(R.id.etBarCode);
 
         mCbSpecialPrice = findViewById(R.id.cbSpecialPrice);
@@ -241,6 +246,10 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     private void persistAcquisitionItemChanges() {
+        if (!inputFormsAreValid()) {
+            return;
+        }
+
         if (mExistingAcquisitionItem == null) {
             // inserting new acquisition item
             AcquisitionItem acquisitionItem = createAcquisitionItemMatchingUi();
@@ -270,6 +279,10 @@ public class AcquisitionItemFragment extends SmartFragment {
 
             PopupUtil.snackbar(mFragmentView, "Updated existing acquisition item");
         }
+    }
+
+    private boolean inputFormsAreValid() {
+        return StringValidationUtil.isNotEmpty(mTilBarCode);
     }
 
     private AcquisitionItem createAcquisitionItemMatchingUi() {
