@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity;
@@ -49,9 +50,12 @@ import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
+import dunca.github.io.logpurchasemanager.fragments.util.SerializableConsumer;
 
 public class AcquisitionFragment extends SmartFragment {
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
+    private static final String ACQUISITION_ID_CONSUMPER_PARAM = "acquisition_id_consumer_param";
+
     private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     public static int sCurrentAcquisitionId = MethodParameterConstants.INVALID_INDEX;
@@ -83,6 +87,7 @@ public class AcquisitionFragment extends SmartFragment {
     private List<Supplier> mSupplierList;
 
     private Supplier mSelectedSupplier;
+    private SerializableConsumer<Integer> mAcquisitionIdConsumer;
 
     public AcquisitionFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
@@ -110,12 +115,14 @@ public class AcquisitionFragment extends SmartFragment {
         mSelectedSupplier = mSupplierList.get(0);
     }
 
-    public static AcquisitionFragment newInstance(int acquisitionId) {
+    public static AcquisitionFragment newInstance(int acquisitionId, SerializableConsumer<Integer>
+            acquisitionIdConsumer) {
         AcquisitionFragment fragment = new AcquisitionFragment();
 
         Bundle args = new Bundle();
 
         args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
+        args.putSerializable(ACQUISITION_ID_CONSUMPER_PARAM, acquisitionIdConsumer);
         sCurrentAcquisitionId = acquisitionId;
 
         fragment.setArguments(args);
@@ -134,6 +141,8 @@ public class AcquisitionFragment extends SmartFragment {
 
         Bundle args = getArguments();
         int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM);
+
+        mAcquisitionIdConsumer = (SerializableConsumer<Integer>) args.getSerializable(ACQUISITION_ID_CONSUMPER_PARAM);
 
         if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
             // the user is trying to update an existing object
@@ -427,6 +436,7 @@ public class AcquisitionFragment extends SmartFragment {
 
             mExistingAcquisition = acquisition;
             sCurrentAcquisitionId = acquisition.getId();
+            mAcquisitionIdConsumer.consume(acquisition.getId());
 
             updateDeleteButtonState();
         } else {

@@ -159,14 +159,16 @@ public class MainTabbedActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page
 
             if (position == 0) {
-                return AcquisitionFragment.newInstance(mAcquisitionId);
+                return AcquisitionFragment.newInstance(mAcquisitionId, (acquisitionId) ->
+                        mAcquisitionId = acquisitionId);
+
             } else if (position == 1) {
                 return AcquisitionItemListFragment.newInstance();
             } else if (position == 2) {
                 return AcquisitionItemFragment.newInstance(-1);
             }
 
-            return AcquisitionFragment.newInstance(mAcquisitionId);
+            return AcquisitionItemListFragment.newInstance();
         }
 
         @Override
