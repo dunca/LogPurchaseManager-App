@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.LogPrice;
@@ -228,5 +229,7 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        PopupUtil.snackbar(mFragmentView, "Price updated");
     }
 }
