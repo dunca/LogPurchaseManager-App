@@ -1,6 +1,7 @@
 package dunca.github.io.logpurchasemanager.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
@@ -14,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,8 +36,8 @@ import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
-import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionItemFragment extends SmartFragment {
@@ -74,22 +74,6 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
-
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-    }
-
-    public static AcquisitionItemFragment newInstance(int acquisitionItemId) {
-        AcquisitionItemFragment fragment = new AcquisitionItemFragment();
-
-        Bundle args = new Bundle();
-
-        args.putInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM, acquisitionItemId);
-
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     private void initDbLists() {
@@ -102,6 +86,10 @@ public class AcquisitionItemFragment extends SmartFragment {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static AcquisitionItemFragment newInstance() {
+        return new AcquisitionItemFragment();
     }
 
     @Override
@@ -117,6 +105,10 @@ public class AcquisitionItemFragment extends SmartFragment {
         }
 
         initUi();
+
+        if (mExistingAcquisitionItem != null) {
+            syncUiWithAcquisitionItem();
+        }
 
         return mFragmentView;
     }
@@ -134,20 +126,22 @@ public class AcquisitionItemFragment extends SmartFragment {
         getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        EventBus.getDefault().unregister(this);
-    }
-
     @Subscribe
     public void onAcquisitionItemId(AcquisitionItemIdEvent event) {
         int acquisitionItemId = event.getAcquisitionItemId();
         initExistingAcquisitionItem(acquisitionItemId);
+    }
 
-        // TODO
-        Toast.makeText(getContext(), "YEYE!!!", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initUi() {
@@ -157,13 +151,6 @@ public class AcquisitionItemFragment extends SmartFragment {
         setupOnClickActions();
 
         mAcquisition = mDbHelper.getAcquisitionDao().queryForId(AcquisitionFragment.sCurrentAcquisitionId);
-
-        int acquisitionItemId = getArguments().getInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM);
-
-        if (acquisitionItemId != MethodParameterConstants.INVALID_INDEX) {
-            initExistingAcquisitionItem(acquisitionItemId);
-            syncUiWithAcquisitionItem();
-        }
     }
 
     private void initExistingAcquisitionItem(int acquisitionItemId) {

@@ -165,10 +165,10 @@ public class MainTabbedActivity extends AppCompatActivity {
             } else if (position == 1) {
                 return AcquisitionItemListFragment.newInstance(MainTabbedActivity.this::switchToAcquisitionItemTab);
             } else if (position == 2) {
-                return AcquisitionItemFragment.newInstance(-1);
+                return AcquisitionItemFragment.newInstance();
             }
 
-            return AcquisitionItemFragment.newInstance(-1);
+            return AcquisitionItemListFragment.newInstance(MainTabbedActivity.this::switchToAcquisitionItemTab);
         }
 
         @Override
