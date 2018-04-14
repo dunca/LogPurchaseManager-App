@@ -36,7 +36,7 @@ import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionItemFragment extends SmartFragment {
-    private static final String NO_ACQUISITION_MESSAGE = "Create an acquisition first...";
+    private static final String NO_ACQUISITION_MESSAGE = "Persist the acquisition first...";
 
     private View mFragmentView;
 

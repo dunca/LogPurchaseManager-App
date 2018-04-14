@@ -42,7 +42,7 @@ public class AcquisitionItemListFragment extends SmartFragment {
         mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item_list, null, false);
 
         if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
-            return createPlaceholderView("Create an acquisition first...");
+            return createPlaceholderView("Persist the acquisition first...");
         }
 
         if (!acquisitionHasItems()) {
