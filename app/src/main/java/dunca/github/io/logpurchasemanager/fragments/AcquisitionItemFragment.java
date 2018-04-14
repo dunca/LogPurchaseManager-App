@@ -134,6 +134,13 @@ public class AcquisitionItemFragment extends SmartFragment {
         getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        EventBus.getDefault().unregister(this);
+    }
+
     @Subscribe
     public void onAcquisitionItemId(AcquisitionItemIdEvent event) {
         int acquisitionItemId = event.getAcquisitionItemId();
