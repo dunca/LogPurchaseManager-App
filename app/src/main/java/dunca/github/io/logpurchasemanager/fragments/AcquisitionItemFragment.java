@@ -14,6 +14,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -33,6 +37,7 @@ import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
+import dunca.github.io.logpurchasemanager.fragments.util.AcquisitionItemIdEvent;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionItemFragment extends SmartFragment {
@@ -69,6 +74,10 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     public static AcquisitionItemFragment newInstance(int acquisitionItemId) {
@@ -125,6 +134,15 @@ public class AcquisitionItemFragment extends SmartFragment {
         getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
+    @Subscribe
+    public void onAcquisitionItemId(AcquisitionItemIdEvent event) {
+        int acquisitionItemId = event.getAcquisitionItemId();
+        initExistingAcquisitionItem(acquisitionItemId);
+
+        // TODO
+        Toast.makeText(getContext(), "YEYE!!!", Toast.LENGTH_SHORT).show();
+    }
+
     private void initUi() {
         initDbLists();
 
@@ -136,10 +154,13 @@ public class AcquisitionItemFragment extends SmartFragment {
         int acquisitionItemId = getArguments().getInt(MethodParameterConstants.ACQUISITION_ITEM_ID_PARAM);
 
         if (acquisitionItemId != MethodParameterConstants.INVALID_INDEX) {
-            mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
-
+            initExistingAcquisitionItem(acquisitionItemId);
             syncUiWithAcquisitionItem();
         }
+    }
+
+    private void initExistingAcquisitionItem(int acquisitionItemId) {
+        mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
     }
 
     private void initViews() {

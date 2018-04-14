@@ -163,12 +163,12 @@ public class MainTabbedActivity extends AppCompatActivity {
                         mAcquisitionId = acquisitionId);
 
             } else if (position == 1) {
-                return AcquisitionItemListFragment.newInstance();
+                return AcquisitionItemListFragment.newInstance(MainTabbedActivity.this::switchToAcquisitionItemTab);
             } else if (position == 2) {
                 return AcquisitionItemFragment.newInstance(-1);
             }
 
-            return AcquisitionItemListFragment.newInstance();
+            return AcquisitionItemFragment.newInstance(-1);
         }
 
         @Override

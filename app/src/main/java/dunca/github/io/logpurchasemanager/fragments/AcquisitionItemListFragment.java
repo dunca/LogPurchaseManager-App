@@ -11,6 +11,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,19 +22,33 @@ import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
+import dunca.github.io.logpurchasemanager.fragments.util.AcquisitionItemIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.util.SerializableRunnable;
 
 public class AcquisitionItemListFragment extends SmartFragment {
+    private static final String ACQUISITION_ITEM_TAB_SWITCHED_PARAM =
+            "acquisition_item_tab_switcher_param";
+
     private View mFragmentView;
 
     private final DatabaseHelper mDbHelper;
     private List<AcquisitionItem> mAcquisitionItemList;
 
+    private SerializableRunnable mAcquisitionItemTabSwitcherRunnable;
+
     public AcquisitionItemListFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
     }
 
-    public static AcquisitionItemListFragment newInstance() {
-        return new AcquisitionItemListFragment();
+    public static AcquisitionItemListFragment newInstance(SerializableRunnable acquisitionItemTabSwitcherRunnable) {
+        AcquisitionItemListFragment fragment = new AcquisitionItemListFragment();
+
+        Bundle args = new Bundle();
+        args.putSerializable(ACQUISITION_ITEM_TAB_SWITCHED_PARAM, acquisitionItemTabSwitcherRunnable);
+
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @Override
@@ -50,6 +66,9 @@ public class AcquisitionItemListFragment extends SmartFragment {
         }
 
         initUi();
+
+
+        mAcquisitionItemTabSwitcherRunnable = (SerializableRunnable) getArguments().getSerializable(ACQUISITION_ITEM_TAB_SWITCHED_PARAM);
 
         return mFragmentView;
     }
@@ -101,6 +120,8 @@ public class AcquisitionItemListFragment extends SmartFragment {
         for (AcquisitionItem acquisitionItem : mAcquisitionItemList) {
             TableRow tableRow = (TableRow) getLayoutInflater().inflate(
                     R.layout.fragment_acquisition_item_list_row_item, null, false);
+
+            tableRow.setOnClickListener(view -> switchToAcquisitionItemTab(acquisitionItem.getId()));
 
             TextView tvSpecies = tableRow.findViewById(R.id.tvSpecies);
             TextView tvQualityClass = tableRow.findViewById(R.id.tvQualityClass);
@@ -160,6 +181,11 @@ public class AcquisitionItemListFragment extends SmartFragment {
                 currentTextView.setWidth(maxWidth);
             }
         }
+    }
+
+    private void switchToAcquisitionItemTab(int acquisitionItemId) {
+        EventBus.getDefault().post(new AcquisitionItemIdEvent(acquisitionItemId));
+        mAcquisitionItemTabSwitcherRunnable.run();
     }
 
     private View createPlaceholderView(String message) {
