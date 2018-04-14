@@ -350,36 +350,30 @@ public class AcquisitionItemFragment extends SmartFragment {
         mTvNetVolume.setText(StringFormatUtil.round(calculateNetVolume()));
     }
 
+    private void updateUiPriceFormState() {
+        mEtVolumetricPrice.setEnabled(mCbSpecialPrice.isChecked());
+    }
+
     private double calculateGrossVolume() {
-        double grossLength;
-        double grossDiameter;
-
-        try {
-            grossLength = Double.valueOf(mEtGrossLength.getText().toString());
-            grossDiameter = Double.valueOf(mEtGrossDiameter.getText().toString());
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-
-        return calculateVolume(grossLength, grossDiameter);
+        return calculateVolume(mEtGrossLength, mEtGrossDiameter);
     }
 
     private double calculateNetVolume() {
-        double netLength;
-        double netDiameter;
+        return calculateVolume(mEtNetLength, mEtNetDiameter);
+    }
+
+    private double calculateVolume(EditText etLength, EditText etDiameter) {
+        double length;
+        double diameter;
 
         try {
-            netLength = Double.valueOf(mEtNetLength.getText().toString());
-            netDiameter = Double.valueOf(mEtNetDiameter.getText().toString());
+            length = Double.valueOf(etLength.getText().toString());
+            diameter = Double.valueOf(etDiameter.getText().toString());
         } catch (NumberFormatException e) {
             return 0;
         }
 
-        return calculateVolume(netLength, netDiameter);
-    }
-
-    private void updateUiPriceFormState() {
-        mEtVolumetricPrice.setEnabled(mCbSpecialPrice.isChecked());
+        return calculateVolume(length, diameter);
     }
 
     /**
