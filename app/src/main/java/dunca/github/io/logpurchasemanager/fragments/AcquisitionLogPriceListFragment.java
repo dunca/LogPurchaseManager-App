@@ -1,15 +1,19 @@
 package dunca.github.io.logpurchasemanager.fragments;
 
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.j256.ormlite.stmt.UpdateBuilder;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -41,18 +45,30 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
     }
 
     private void initViews() {
+        if (mLogPriceList.isEmpty()) {
+            return;
+        }
+
         TableLayout tblAcquisitionLogPriceList = mFragmentView.findViewById(R.id
                 .tblAcquisitionLogPriceList);
 
-        if (mLogPriceList.isEmpty()) {
-            return;
+        int tableRowCount = tblAcquisitionLogPriceList.getChildCount();
+
+        if (tableRowCount > 1) {
+            // one row for the header
+
+            /*
+            remove all but the header view, otherwise we'll have duplicates when recalling
+            initViews()
+            */
+            tblAcquisitionLogPriceList.removeViews(1, tableRowCount - 1);
         }
 
         for (LogPrice logPrice : mLogPriceList) {
             TableRow tableRow = (TableRow) getLayoutInflater().inflate(
                     R.layout.fragment_acquisition_log_price_list_row_item, null, false);
 
-            tableRow.setOnClickListener((v) -> System.out.println("hello"));
+            tableRow.setOnClickListener((v) -> showLogPriceDialog(logPrice));
 
             TextView tvSpecies = tableRow.findViewById(R.id.tvSpecies);
             TextView tvQualityClass = tableRow.findViewById(R.id.tvQualityClass);
@@ -162,5 +178,55 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
         since we now have an acquisition id
         */
         getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+    }
+
+    private void showLogPriceDialog(LogPrice logPrice) {
+        AlertDialog.Builder volumetricPriceDialogBuilder = new AlertDialog.Builder(getContext());
+
+        View volumetricPriceDialogView = getLayoutInflater().inflate(
+                R.layout.fragment_acquisition_log_price_list_price_dialog,
+                null);
+
+        EditText etVolumetricPrice = volumetricPriceDialogView.findViewById(
+                R.id.etVolumetricPrice);
+        etVolumetricPrice.setText(String.valueOf(logPrice.getPrice()));
+
+        volumetricPriceDialogBuilder.setTitle("Enter a price:");
+        volumetricPriceDialogBuilder.setView(volumetricPriceDialogView);
+
+        volumetricPriceDialogBuilder.setPositiveButton("Ok", (dialog, buttonId) -> {
+            updateLogPricePrice(logPrice, Double.valueOf(etVolumetricPrice.getText().toString()));
+        });
+
+        volumetricPriceDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
+        });
+
+        volumetricPriceDialogBuilder.create().show();
+    }
+
+    private void updateLogPricePrice(LogPrice logPrice, double price) {
+        logPrice.setPrice(price);
+
+        initViews();
+
+        mDbHelper.getLogPriceDao().update(logPrice);
+
+        int acquisitionId = logPrice.getAcquisition().getId();
+        int logQualityClassId = logPrice.getLogQualityClass().getId();
+        int treeSpeciesId = logPrice.getTreeSpecies().getId();
+
+        try {
+            UpdateBuilder updateBuilder = mDbHelper.getAcquisitionItemDao().updateBuilder();
+            updateBuilder.where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+                    .and()
+                    .eq(CommonFieldNames.LOG_QUALITY_CLASS_ID, logQualityClassId)
+                    .and()
+                    .eq(CommonFieldNames.TREE_SPECIES_ID, treeSpeciesId);
+
+            updateBuilder.updateColumnValue(CommonFieldNames.PRICE, price).update();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

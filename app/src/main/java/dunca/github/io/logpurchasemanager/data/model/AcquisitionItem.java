@@ -42,7 +42,8 @@ public final class AcquisitionItem implements Model {
     @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private LogQualityClass logQualityClass;
 
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true,
+            foreignAutoCreate = true)
     private LogDiameterClass logDiameterClass;
 
     @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
