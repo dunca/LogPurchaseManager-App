@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -41,6 +42,7 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
+import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionStatus;
 import dunca.github.io.logpurchasemanager.data.model.Supplier;
 import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
@@ -210,8 +212,6 @@ public class AcquisitionFragment extends SmartFragment {
 
         mCbNetTotalValue = mFragmentView.findViewById(R.id.cbNetTotalValue);
 
-        // TODO update total when the checkbox changes
-
         mBtnSave = mFragmentView.findViewById(R.id.btnSave);
 
         mBtnDelete = mFragmentView.findViewById(R.id.btnDelete);
@@ -303,6 +303,9 @@ public class AcquisitionFragment extends SmartFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String checkboxLabel = isChecked ? "Net total" : "Gross total";
                 mCbNetTotalValue.setText(checkboxLabel);
+
+                updateUiDiscountValue();
+                updateTotalValue();
             }
         });
     }
@@ -359,6 +362,8 @@ public class AcquisitionFragment extends SmartFragment {
         mTvSupplierName.setText(mExistingAcquisition.getSupplier().getName());
 
         mCbNetTotalValue.setChecked(mExistingAcquisition.isNet());
+
+        mTvTotalValue.setText(StringFormatUtil.round(mExistingAcquisition.getTotalValue()));
     }
 
     /**
@@ -382,8 +387,8 @@ public class AcquisitionFragment extends SmartFragment {
         acquisition.setWoodCertification(getSelectedWoodCertification());
         acquisition.setObservations(observations);
         acquisition.setTotalValue(getTotalValue());
-        acquisition.setTotalGrossVolume(0);
-        acquisition.setTotalNetVolume(0);
+        acquisition.setTotalGrossVolume(getTotalGrossVolume());
+        acquisition.setTotalNetVolume(getTotalNetVolume());
         acquisition.setDiscountPercentage(discountPercentage);
         acquisition.setDiscountValue(getDiscountValue());
         acquisition.setNet(mCbNetTotalValue.isChecked());
@@ -535,7 +540,42 @@ public class AcquisitionFragment extends SmartFragment {
 
         double totalValue = getTotalValue();
 
+        if (totalValue == 0) {
+            return 0;
+        }
+
         return discountPercentage / 100 * totalValue;
+    }
+
+    private double getTotalGrossVolume() {
+        if (mExistingAcquisition == null) {
+            return 0;
+        }
+
+        // TODO redundance...
+        List<AcquisitionItem> acquisitionItemList;
+        try {
+            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return acquisitionItemList.stream().mapToDouble(AcquisitionItem::getGrossVolume).sum();
+    }
+
+    private double getTotalNetVolume() {
+        if (mExistingAcquisition == null) {
+            return 0;
+        }
+
+        List<AcquisitionItem> acquisitionItemList;
+        try {
+            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return acquisitionItemList.stream().mapToDouble(AcquisitionItem::getNetVolume).sum();
     }
 
     private double getTotalValue() {
@@ -575,7 +615,30 @@ public class AcquisitionFragment extends SmartFragment {
         //
         // return totalValue;
 
-        return 0;
+        if (mExistingAcquisition == null) {
+            // not yet saved, so there can't be any acquisition items
+
+            return 0;
+        }
+
+        List<AcquisitionItem> acquisitionItemList;
+
+        try {
+            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        double total = 0;
+
+        for (AcquisitionItem acquisitionItem : acquisitionItemList) {
+            double currentVolume = isNetTotalValueChecked() ? acquisitionItem.getNetVolume()
+                    : acquisitionItem.getGrossVolume();
+
+            total += (acquisitionItem.getPrice() * currentVolume);
+        }
+
+        return total;
     }
 
     @Override
@@ -596,7 +659,22 @@ public class AcquisitionFragment extends SmartFragment {
         mTvTotalValue.setText(StringFormatUtil.round(getTotalValue()));
     }
 
+    private boolean isNetTotalValueChecked() {
+        return mCbNetTotalValue.isChecked();
+    }
+
     private SharedPreferences getSharedPreferences() {
         return getActivity().getPreferences(Context.MODE_PRIVATE);
+    }
+
+    private QueryBuilder<AcquisitionItem, Integer> getAcquisitionItemsQueryBuilder() {
+        QueryBuilder queryBuilder = mDbHelper.getAcquisitionItemDao().queryBuilder();
+        try {
+            queryBuilder.where().eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return queryBuilder;
     }
 }
