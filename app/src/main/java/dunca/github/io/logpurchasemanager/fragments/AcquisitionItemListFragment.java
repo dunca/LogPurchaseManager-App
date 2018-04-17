@@ -2,6 +2,7 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,39 +22,29 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
-import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
-import dunca.github.io.logpurchasemanager.util.SerializableRunnable;
+import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 
 public class AcquisitionItemListFragment extends SmartFragment {
-    private static final String ACQUISITION_ITEM_TAB_SWITCHED_PARAM =
-            "acquisition_item_tab_switcher_param";
-
     private View mFragmentView;
 
+    private ViewPager mViewPager;
     private final DatabaseHelper mDbHelper;
     private List<AcquisitionItem> mAcquisitionItemList;
-
-    private SerializableRunnable mAcquisitionItemTabSwitcherRunnable;
 
     public AcquisitionItemListFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
     }
 
-    public static AcquisitionItemListFragment newInstance(SerializableRunnable acquisitionItemTabSwitcherRunnable) {
-        AcquisitionItemListFragment fragment = new AcquisitionItemListFragment();
-
-        Bundle args = new Bundle();
-        args.putSerializable(ACQUISITION_ITEM_TAB_SWITCHED_PARAM, acquisitionItemTabSwitcherRunnable);
-
-        fragment.setArguments(args);
-
-        return fragment;
+    public static AcquisitionItemListFragment newInstance() {
+        return new AcquisitionItemListFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mViewPager = getActivity().findViewById(R.id.fragment_container);
+
         // inflate the layout for this fragment
         mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item_list, null, false);
 
@@ -66,9 +57,6 @@ public class AcquisitionItemListFragment extends SmartFragment {
         }
 
         initUi();
-
-
-        mAcquisitionItemTabSwitcherRunnable = (SerializableRunnable) getArguments().getSerializable(ACQUISITION_ITEM_TAB_SWITCHED_PARAM);
 
         return mFragmentView;
     }
@@ -185,7 +173,7 @@ public class AcquisitionItemListFragment extends SmartFragment {
 
     private void switchToAcquisitionItemTab(int acquisitionItemId) {
         EventBus.getDefault().post(new AcquisitionItemIdEvent(acquisitionItemId));
-        mAcquisitionItemTabSwitcherRunnable.run();
+        mViewPager.setCurrentItem(2);
     }
 
     private View createPlaceholderView(String message) {

@@ -25,6 +25,8 @@ import android.widget.TextView;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -49,9 +51,9 @@ import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
-import dunca.github.io.logpurchasemanager.util.SerializableConsumer;
 
 public class AcquisitionFragment extends SmartFragment {
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
@@ -88,7 +90,6 @@ public class AcquisitionFragment extends SmartFragment {
     private List<Supplier> mSupplierList;
 
     private Supplier mSelectedSupplier;
-    private SerializableConsumer<Integer> mAcquisitionIdConsumer;
 
     public AcquisitionFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
@@ -116,14 +117,12 @@ public class AcquisitionFragment extends SmartFragment {
         mSelectedSupplier = mSupplierList.get(0);
     }
 
-    public static AcquisitionFragment newInstance(int acquisitionId, SerializableConsumer<Integer>
-            acquisitionIdConsumer) {
+    public static AcquisitionFragment newInstance(int acquisitionId) {
         AcquisitionFragment fragment = new AcquisitionFragment();
 
         Bundle args = new Bundle();
 
         args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
-        args.putSerializable(ACQUISITION_ID_CONSUMPER_PARAM, acquisitionIdConsumer);
         sCurrentAcquisitionId = acquisitionId;
 
         fragment.setArguments(args);
@@ -142,8 +141,6 @@ public class AcquisitionFragment extends SmartFragment {
 
         Bundle args = getArguments();
         int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM);
-
-        mAcquisitionIdConsumer = (SerializableConsumer<Integer>) args.getSerializable(ACQUISITION_ID_CONSUMPER_PARAM);
 
         if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
             // the user is trying to update an existing object
@@ -440,7 +437,10 @@ public class AcquisitionFragment extends SmartFragment {
 
             mExistingAcquisition = acquisition;
             sCurrentAcquisitionId = acquisition.getId();
-            mAcquisitionIdConsumer.consume(acquisition.getId());
+
+            // send the acquisition id to MainTabbedActivity, which needs to know it because it
+            // uses it to figure out if the FAB on the AcquisitionListFragment should show up
+            EventBus.getDefault().post(new AcquisitionIdEvent(acquisition.getId()));
 
             updateDeleteButtonState();
         } else {

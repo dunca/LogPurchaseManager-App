@@ -14,12 +14,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
+import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemListFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionLogPriceListFragment;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
 
 public class MainTabbedActivity extends AppCompatActivity {
     public static final String EXTRA_ACQUISITION_ID = "extra_acquisition_id";
@@ -40,7 +45,10 @@ public class MainTabbedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main_tabbed);
+
+        EventBus.getDefault().register(this);
 
         initViews();
         setupOnClickActions();
@@ -88,6 +96,13 @@ public class MainTabbedActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        EventBus.getDefault().unregister(this);
+    }
+
     private void toggleFabVisibility(int tabId) {
         int visibility = tabId == 1 && mAcquisitionId != MethodParameterConstants.INVALID_INDEX ?
                 View.VISIBLE : View.INVISIBLE;
@@ -108,6 +123,10 @@ public class MainTabbedActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.fragment_container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // keep up to 999 fragments alive. If we don't set this, fragments are destroyed and
+        // recreated (eg.: switching to tab 1 from tab 3, kills the 3rd fragment, but inits the
+        // first and the second
         mViewPager.setOffscreenPageLimit(999);
 
         mNewAcquisitionItemFab = findViewById(R.id.fab);
@@ -148,6 +167,18 @@ public class MainTabbedActivity extends AppCompatActivity {
     }
 
     /**
+     * We subscribe to an {@link AcquisitionIdEvent}. This type of event is sent by
+     * the {@link AcquisitionFragment} fragment when a new {@link Acquisition} instance is saved
+     *
+     * @param event an {@link AcquisitionIdEvent} instance corresponding to the currently selected
+     *              {@link Acquisition} object
+     */
+    @Subscribe
+    public void onAcquisitionId(AcquisitionIdEvent event) {
+        mAcquisitionId = event.getAcquisitionId();
+    }
+
+    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the tabs
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -160,11 +191,10 @@ public class MainTabbedActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page
 
             if (position == 0) {
-                return AcquisitionFragment.newInstance(mAcquisitionId, (acquisitionId) ->
-                        mAcquisitionId = acquisitionId);
+                return AcquisitionFragment.newInstance(mAcquisitionId);
 
             } else if (position == 1) {
-                return AcquisitionItemListFragment.newInstance(MainTabbedActivity.this::switchToAcquisitionItemTab);
+                return AcquisitionItemListFragment.newInstance();
             } else if (position == 2) {
                 return AcquisitionItemFragment.newInstance();
             } else if (position == 3) {
