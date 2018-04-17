@@ -200,12 +200,19 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
         });
 
         volumetricPriceDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
+            PopupUtil.snackbar(mFragmentView, "Price change cancelled");
         });
 
         volumetricPriceDialogBuilder.create().show();
     }
 
     private void updateLogPricePrice(LogPrice logPrice, double price) {
+        if (logPrice.getPrice() == price) {
+            PopupUtil.snackbar(mFragmentView, "Price left unchanged");
+
+            return;
+        }
+
         logPrice.setPrice(price);
 
         initViews();
