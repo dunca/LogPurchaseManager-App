@@ -111,14 +111,16 @@ public class AcquisitionItemFragment extends SmartFragment {
             return;
         }
 
+        mAcquisition = mDbHelper.getAcquisitionDao().queryForId(AcquisitionFragment.sCurrentAcquisitionId);
+
         mTvNoAcquisitionsPlaceholder.setVisibility(View.GONE);
         mRootLayout.setVisibility(View.VISIBLE);
 
         if (mReceivedAcquisitionItemId) {
-            mAcquisition = mDbHelper.getAcquisitionDao().queryForId(AcquisitionFragment.sCurrentAcquisitionId);
             syncUiWithAcquisitionItem();
             mReceivedAcquisitionItemId = false;
         } else {
+            mExistingAcquisitionItem = null;
             resetUi();
         }
     }
