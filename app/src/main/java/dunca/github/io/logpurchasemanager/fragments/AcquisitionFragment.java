@@ -202,7 +202,19 @@ public class AcquisitionFragment extends SmartFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                String discountPercentageString = mEtDiscountPercentage.getText().toString();
+
+                if (discountPercentageString.length() > 0) {
+                    double discountPercentage = Double.valueOf(discountPercentageString);
+
+                    if (discountPercentage > 100) {
+                        s.clear();
+                        s.append("100");
+                    }
+                }
+
                 updateUiDiscountValue();
+                updateUiTotalValue();
             }
         });
 
@@ -305,7 +317,7 @@ public class AcquisitionFragment extends SmartFragment {
                 mCbNetTotalValue.setText(checkboxLabel);
 
                 updateUiDiscountValue();
-                updateTotalValue();
+                updateUiTotalValue();
             }
         });
     }
@@ -386,7 +398,7 @@ public class AcquisitionFragment extends SmartFragment {
         acquisition.setWoodRegion(getSelectedWoodRegion());
         acquisition.setWoodCertification(getSelectedWoodCertification());
         acquisition.setObservations(observations);
-        acquisition.setTotalValue(getTotalValue());
+        acquisition.setTotalValue(getTotalValueWithDiscount());
         acquisition.setTotalGrossVolume(getTotalGrossVolume());
         acquisition.setTotalNetVolume(getTotalNetVolume());
         acquisition.setDiscountPercentage(discountPercentage);
@@ -537,7 +549,7 @@ public class AcquisitionFragment extends SmartFragment {
         try {
             discountPercentage = Double.valueOf(mEtDiscountPercentage.getText().toString());
         } catch (NumberFormatException e) {
-            // happens only when the EditText is empty, since
+            // happens only when the EditText is empty
             return 0;
         }
 
@@ -579,6 +591,10 @@ public class AcquisitionFragment extends SmartFragment {
         }
 
         return acquisitionItemList.stream().mapToDouble(AcquisitionItem::getNetVolume).sum();
+    }
+
+    private double getTotalValueWithDiscount() {
+        return getTotalValue() - getDiscountValue();
     }
 
     private double getTotalValue() {
@@ -647,7 +663,7 @@ public class AcquisitionFragment extends SmartFragment {
     @Override
     public void onVisible() {
         updateUiDiscountValue();
-        updateTotalValue();
+        updateUiTotalValue();
     }
 
     /**
@@ -658,8 +674,8 @@ public class AcquisitionFragment extends SmartFragment {
         mTvDiscountValue.setText(StringFormatUtil.round(discountValue));
     }
 
-    private void updateTotalValue() {
-        mTvTotalValue.setText(StringFormatUtil.round(getTotalValue()));
+    private void updateUiTotalValue() {
+        mTvTotalValue.setText(StringFormatUtil.round(getTotalValueWithDiscount()));
     }
 
     private boolean isNetTotalValueChecked() {
@@ -697,7 +713,7 @@ public class AcquisitionFragment extends SmartFragment {
 
     @Subscribe
     public void onAcquisitionTotalPriceUpdateRequestEvent(AcquisitionTotalPriceUpdateRequestEvent event) {
-        mExistingAcquisition.setTotalValue(getTotalValue());
+        mExistingAcquisition.setTotalValue(getTotalValueWithDiscount());
         syncUiWithAcquisition();
         persistAcquisitionChanges();
     }
