@@ -4,6 +4,7 @@ package dunca.github.io.logpurchasemanager.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.j256.ormlite.stmt.DeleteBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,6 +44,7 @@ import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionItemFragment extends SmartFragment {
+    private ViewPager mViewPager;
     private View mFragmentView;
     private boolean mReceivedAcquisitionItemId;
 
@@ -61,6 +65,7 @@ public class AcquisitionItemFragment extends SmartFragment {
     private TextView mTvNetVolume;
     private EditText mEtObservations;
     private Button mBtnSave;
+    private Button mBtnDelete;
 
     private final DatabaseHelper mDbHelper;
 
@@ -96,6 +101,8 @@ public class AcquisitionItemFragment extends SmartFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mViewPager = getActivity().findViewById(R.id.fragment_container);
+
         mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item, container, false);
 
         initUi();
@@ -123,6 +130,12 @@ public class AcquisitionItemFragment extends SmartFragment {
             mExistingAcquisitionItem = null;
             resetUi();
         }
+
+        updateDeleteButtonState();
+    }
+
+    private void updateDeleteButtonState() {
+        mBtnDelete.setEnabled(mExistingAcquisitionItem != null);
     }
 
     private void resetUi() {
@@ -271,12 +284,27 @@ public class AcquisitionItemFragment extends SmartFragment {
         mEtObservations = findViewById(R.id.etObservations);
 
         mBtnSave = findViewById(R.id.btnSave);
+        mBtnDelete = findViewById(R.id.btnDelete);
     }
 
     private void setupOnClickActions() {
         mBtnSave.setOnClickListener(v -> persistAcquisitionItemChanges());
+        mBtnDelete.setOnClickListener(v -> deleteCurrentAcquisitionItem());
 
         mCbSpecialPrice.setOnCheckedChangeListener((view, state) -> updateUiPriceFormState());
+    }
+
+    private void deleteCurrentAcquisitionItem() {
+        try {
+            DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionItemDao().deleteBuilder();
+            deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisitionItem.getId());
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // switch to the acquisition item list tab
+        mViewPager.setCurrentItem(1);
     }
 
     private void persistAcquisitionItemChanges() {
@@ -304,6 +332,8 @@ public class AcquisitionItemFragment extends SmartFragment {
             }
 
             PopupUtil.snackbar(mFragmentView, "New acquisition item persisted");
+
+            updateDeleteButtonState();
         } else {
             syncAcquisitionItemWithUi(mExistingAcquisitionItem);
 
