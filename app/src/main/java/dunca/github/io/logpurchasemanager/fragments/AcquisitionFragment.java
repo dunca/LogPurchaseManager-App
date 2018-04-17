@@ -3,11 +3,11 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -55,7 +55,6 @@ import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
-import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionFragment extends Fragment {
@@ -80,6 +79,8 @@ public class AcquisitionFragment extends Fragment {
     private EditText mEtDiscountPercentage;
     private TextView mTvDiscountValue;
     private TextView mTvTotalValue;
+    private TextView mTvTotalNetVolume;
+    private TextView mTvTotalGrossVolume;
     private CheckBox mCbNetTotalValue;
     private Button mBtnSave;
     private Button mBtnDelete;
@@ -221,6 +222,10 @@ public class AcquisitionFragment extends Fragment {
         mTvDiscountValue = mFragmentView.findViewById(R.id.tvDiscountValue);
 
         mTvTotalValue = mFragmentView.findViewById(R.id.tvTotalValue);
+
+        mTvTotalNetVolume = mFragmentView.findViewById(R.id.tvTotalNetVolume);
+
+        mTvTotalGrossVolume = mFragmentView.findViewById(R.id.tvTotalGrossVolume);
 
         mCbNetTotalValue = mFragmentView.findViewById(R.id.cbNetTotalValue);
 
@@ -369,6 +374,8 @@ public class AcquisitionFragment extends Fragment {
 
         mTvDiscountValue.setText(StringFormatUtil.round(mExistingAcquisition.getDiscountValue()));
         mTvTotalValue.setText(StringFormatUtil.round(mExistingAcquisition.getTotalValue()));
+        mTvTotalNetVolume.setText(StringFormatUtil.round(mExistingAcquisition.getTotalNetVolume()));
+        mTvTotalGrossVolume.setText(StringFormatUtil.round(mExistingAcquisition.getTotalGrossVolume()));
     }
 
     /**
@@ -382,6 +389,8 @@ public class AcquisitionFragment extends Fragment {
         String observations = mEtObservations.getText().toString();
         double totalValueWithDiscount = Double.valueOf(mTvTotalValue.getText().toString());
         double discountValue = Double.valueOf(mTvDiscountValue.getText().toString());
+        double totalGrossVolume = Double.valueOf(mTvTotalGrossVolume.getText().toString());
+        double totalNetVolume = Double.valueOf(mTvTotalNetVolume.getText().toString());
 
         acquisition.setSerialNumber(serialNumber);
         acquisition.setAcquirer(getSelectedAcquirer());
@@ -393,8 +402,8 @@ public class AcquisitionFragment extends Fragment {
         acquisition.setWoodCertification(getSelectedWoodCertification());
         acquisition.setObservations(observations);
         acquisition.setTotalValue(totalValueWithDiscount);
-        acquisition.setTotalGrossVolume(calculateTotalGrossVolume());
-        acquisition.setTotalNetVolume(calculateTotalNetVolume());
+        acquisition.setTotalGrossVolume(totalGrossVolume);
+        acquisition.setTotalNetVolume(totalNetVolume);
         acquisition.setDiscountPercentage(getDiscountPercentage());
         acquisition.setDiscountValue(discountValue);
         acquisition.setNet(mCbNetTotalValue.isChecked());
@@ -672,16 +681,15 @@ public class AcquisitionFragment extends Fragment {
 
     @Subscribe
     public void onAcquisitionTotalPriceUpdateRequestEvent(AcquisitionTotalPriceUpdateRequestEvent event) {
-        mTvDiscountValue.setText(String.valueOf(calculateDiscountValue()));
-        mTvTotalValue.setText(String.valueOf(calculateTotalValueWithDiscount()));
+        mTvDiscountValue.setText(StringFormatUtil.round(calculateDiscountValue()));
+        mTvTotalValue.setText(StringFormatUtil.round(calculateTotalValueWithDiscount()));
         persistAcquisitionChanges();
     }
 
     @Subscribe
     public void onAcquistionTotalVolumeUpdateRequestEvent(AcquisitionTotalVolumeUpdateRequestEvent event) {
-        // TODO update ui values after adding textviews for volume
-        mExistingAcquisition.setTotalNetVolume(calculateTotalNetVolume());
-        mExistingAcquisition.setTotalGrossVolume(calculateTotalGrossVolume());
+        mTvTotalNetVolume.setText(StringFormatUtil.round(calculateTotalNetVolume()));
+        mTvTotalGrossVolume.setText(StringFormatUtil.round(calculateTotalGrossVolume()));
         persistAcquisitionChanges();
     }
 }
