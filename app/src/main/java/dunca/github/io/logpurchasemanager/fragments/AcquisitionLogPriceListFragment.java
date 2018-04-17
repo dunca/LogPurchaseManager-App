@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.j256.ormlite.stmt.UpdateBuilder;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.LogPrice;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 
 public class AcquisitionLogPriceListFragment extends SmartFragment {
@@ -233,6 +236,8 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
                     .eq(CommonFieldNames.TREE_SPECIES_ID, treeSpeciesId);
 
             updateBuilder.updateColumnValue(CommonFieldNames.PRICE, price).update();
+
+            EventBus.getDefault().post(new AcquisitionTotalPriceUpdateRequestEvent());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
