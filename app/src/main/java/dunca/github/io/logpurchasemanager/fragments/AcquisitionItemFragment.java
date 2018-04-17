@@ -40,6 +40,8 @@ import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
@@ -305,6 +307,8 @@ public class AcquisitionItemFragment extends SmartFragment {
 
         // switch to the acquisition item list tab
         mViewPager.setCurrentItem(1);
+
+        postAcquisitionUpdateEvents();
     }
 
     private void persistAcquisitionItemChanges() {
@@ -343,6 +347,14 @@ public class AcquisitionItemFragment extends SmartFragment {
 
             PopupUtil.snackbar(mFragmentView, "Updated existing acquisition item");
         }
+
+        postAcquisitionUpdateEvents();
+    }
+
+    private void postAcquisitionUpdateEvents() {
+        // the volume should be first, as the total price is calculated based on it
+        EventBus.getDefault().post(new AcquisitionTotalVolumeUpdateRequestEvent());
+        EventBus.getDefault().post(new AcquisitionTotalPriceUpdateRequestEvent());
     }
 
     private boolean inputFormsAreValid() {

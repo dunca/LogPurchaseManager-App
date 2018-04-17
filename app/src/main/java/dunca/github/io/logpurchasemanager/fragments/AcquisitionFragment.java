@@ -26,6 +26,7 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -52,6 +53,8 @@ import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
@@ -676,5 +679,34 @@ public class AcquisitionFragment extends SmartFragment {
         }
 
         return queryBuilder;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().register(this);
+
+        super.onDetach();
+    }
+
+    @Subscribe
+    public void onAcquisitionTotalPriceUpdateRequestEvent(AcquisitionTotalPriceUpdateRequestEvent event) {
+        mExistingAcquisition.setTotalValue(getTotalValue());
+        syncUiWithAcquisition();
+        persistAcquisitionChanges();
+    }
+
+    @Subscribe
+    public void onAcquistionTotalVolumeUpdateRequestEvent(AcquisitionTotalVolumeUpdateRequestEvent event) {
+        mExistingAcquisition.setTotalNetVolume(getTotalNetVolume());
+        mExistingAcquisition.setTotalGrossVolume(getTotalGrossVolume());
+        syncUiWithAcquisition();
+        persistAcquisitionChanges();
     }
 }
