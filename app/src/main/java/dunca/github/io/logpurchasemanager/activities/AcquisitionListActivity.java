@@ -23,8 +23,11 @@ import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 
 public class AcquisitionListActivity extends AppCompatActivity {
     private FloatingActionButton mFab;
+
     private List<Acquisition> mAcquisitionList;
+
     private RecyclerView mRvAcquisitions;
+    private TextView mTvNoAcquisitions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
     private void initViews() {
         mFab = findViewById(R.id.fab);
         mRvAcquisitions = findViewById(R.id.rvAcquisitionList);
+        mTvNoAcquisitions = findViewById(R.id.tvNoAcquisitions);
     }
 
     private void setupOnClickActions() {
@@ -75,7 +79,14 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
         mAcquisitionList = DatabaseHelper.getLatestInstance().getAcquisitionDao().queryForAll();
 
-        setupAcquisitionRecyclerView();
+        if (mAcquisitionList.isEmpty()) {
+            mTvNoAcquisitions.setVisibility(View.VISIBLE);
+            mRvAcquisitions.setVisibility(View.GONE);
+        } else {
+            mTvNoAcquisitions.setVisibility(View.GONE);
+            mRvAcquisitions.setVisibility(View.VISIBLE);
+            setupAcquisitionRecyclerView();
+        }
     }
 
     private void setupAcquisitionRecyclerView() {
