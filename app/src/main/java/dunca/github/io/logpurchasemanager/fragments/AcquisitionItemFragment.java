@@ -41,10 +41,11 @@ import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionItemFragment extends SmartFragment {
-    private static final String NO_ACQUISITION_MESSAGE = "Persist the acquisition first...";
-
     private View mFragmentView;
+    private boolean mReceivedAcquisitionItemId;
 
+    private TextView mTvNoAcquisitionsPlaceholder;
+    private View mRootLayout;
     private Spinner mSpinnerSpecies;
     private Spinner mSpinnerQualityClass;
 
@@ -95,19 +96,9 @@ public class AcquisitionItemFragment extends SmartFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
-            View placeholderView = inflater.inflate(R.layout.placeholder_layout, container, false);
-            ((TextView) placeholderView.findViewById(R.id.tvContent)).setText(NO_ACQUISITION_MESSAGE);
-            return placeholderView;
-        }
-
         mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item, container, false);
 
         initUi();
-
-        if (mExistingAcquisitionItem != null) {
-            syncUiWithAcquisitionItem();
-        }
 
         return mFragmentView;
     }
@@ -115,27 +106,46 @@ public class AcquisitionItemFragment extends SmartFragment {
     @Override
     public void onVisible() {
         if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
+            mTvNoAcquisitionsPlaceholder.setVisibility(View.VISIBLE);
+            mRootLayout.setVisibility(View.GONE);
             return;
         }
 
-        // TODO this doesn't belong here, but it fixes the bug in which clicking a list item
-        // correctly updates the ui in the 3rd tab. This is already done in onCreateView, which
-        // is called after this
-        if (mExistingAcquisitionItem != null){
-            syncUiWithAcquisitionItem();
-        }
+        mTvNoAcquisitionsPlaceholder.setVisibility(View.GONE);
+        mRootLayout.setVisibility(View.VISIBLE);
 
-        /*
-        re-attaching the fragment recreates the view, thus we'll be able to render it properly
-        since we now have an acquisition id
-        */
-        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+        if (mReceivedAcquisitionItemId) {
+            mAcquisition = mDbHelper.getAcquisitionDao().queryForId(AcquisitionFragment.sCurrentAcquisitionId);
+            syncUiWithAcquisitionItem();
+            mReceivedAcquisitionItemId = false;
+        } else {
+            resetUi();
+        }
+    }
+
+    private void resetUi() {
+        mSpinnerSpecies.setSelection(0);
+        mSpinnerQualityClass.setSelection(0);
+
+        mEtBarCode.setText("");
+        mCbSpecialPrice.setChecked(false);
+        mEtVolumetricPrice.setText("");
+        updateUiPriceFormState();
+
+        mEtGrossLength.setText("");
+        mEtGrossDiameter.setText("");
+        mEtNetLength.setText("");
+        mEtNetDiameter.setText("");
+        mTvGrossVolume.setText("0");
+        mTvNetVolume.setText("0");
+        mEtObservations.setText("");
     }
 
     @Subscribe
     public void onAcquisitionItemId(AcquisitionItemIdEvent event) {
         int acquisitionItemId = event.getAcquisitionItemId();
         initExistingAcquisitionItem(acquisitionItemId);
+        mReceivedAcquisitionItemId = true;
     }
 
     @Override
@@ -155,8 +165,6 @@ public class AcquisitionItemFragment extends SmartFragment {
 
         initViews();
         setupOnClickActions();
-
-        mAcquisition = mDbHelper.getAcquisitionDao().queryForId(AcquisitionFragment.sCurrentAcquisitionId);
     }
 
     private void initExistingAcquisitionItem(int acquisitionItemId) {
@@ -164,6 +172,9 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     private void initViews() {
+        mTvNoAcquisitionsPlaceholder = findViewById(R.id.tvNoAcquisitionPlaceholder);
+        mRootLayout = findViewById(R.id.rootLayout);
+
         mSpinnerSpecies = findViewById(R.id.spinnerSpecies);
         ArrayAdapter speciesAdapter = createDefaultSpinnerAdapter(mSpeciesList);
         mSpinnerSpecies.setAdapter(speciesAdapter);
