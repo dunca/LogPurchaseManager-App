@@ -3,6 +3,7 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,11 +13,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -36,6 +35,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity;
@@ -58,9 +58,8 @@ import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolum
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
-public class AcquisitionFragment extends SmartFragment {
+public class AcquisitionFragment extends Fragment {
     private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
-    private static final String ACQUISITION_ID_CONSUMPER_PARAM = "acquisition_id_consumer_param";
 
     private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -146,7 +145,7 @@ public class AcquisitionFragment extends SmartFragment {
         int acquisitionId = args.getInt(MethodParameterConstants.ACQUISITION_ID_PARAM);
 
         if (acquisitionId != MethodParameterConstants.INVALID_INDEX) {
-            // the user is trying to update an existing object
+            // the user is trying to update an existing acquisition
             setExistingAcquisition(acquisitionId);
         } else {
             updateUiWithDefaults();
@@ -157,24 +156,23 @@ public class AcquisitionFragment extends SmartFragment {
         return mFragmentView;
     }
 
+    /**
+     * Enables {@link #mBtnDelete} if {@link #mExistingAcquisition} is not null
+     */
     private void updateDeleteButtonState() {
         mBtnDelete.setEnabled(mExistingAcquisition != null);
     }
 
     private void initViews() {
         mEtSerialNumber = mFragmentView.findViewById(R.id.etSerialNumber);
-        // mEtSerialNumber.setText(String.valueOf(getLastAcquisitionSerialNumber() + 1));
 
         mSpinnerAcquirer = mFragmentView.findViewById(R.id.spinnerAcquirer);
         ArrayAdapter acquirerAdapter = createDefaultSpinnerAdapter(mAcquirerList);
         mSpinnerAcquirer.setAdapter(acquirerAdapter);
 
-
         mTvDate = mFragmentView.findViewById(R.id.tvDate);
 
-        // set the first supplier as the default one
         mTvSupplierName = mFragmentView.findViewById(R.id.tvSupplierName);
-        mTvSupplierName.setText(mSelectedSupplier.getName());
 
         mSpinnerWoodRegion = mFragmentView.findViewById(R.id.spinnerWoodRegionSymbol);
         ArrayAdapter woodRegionAdapter = createDefaultSpinnerAdapter(mWoodRegionList);
@@ -202,6 +200,8 @@ public class AcquisitionFragment extends SmartFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                // don't allow discount values of over 100
+
                 String discountPercentageString = mEtDiscountPercentage.getText().toString();
 
                 if (discountPercentageString.length() > 0) {
@@ -232,13 +232,7 @@ public class AcquisitionFragment extends SmartFragment {
     private void setupOnClickActions() {
         mBtnSave.setOnClickListener((source) -> persistAcquisitionChanges());
 
-        mBtnDelete.setOnClickListener((source) -> {
-            try {
-                deleteCurrentAcquisition();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        mBtnDelete.setOnClickListener((source) -> deleteCurrentAcquisition());
 
 
         DatePickerDialog.OnDateSetListener datePickListener = (view, year, month, dayOfMonth) -> {
@@ -251,45 +245,40 @@ public class AcquisitionFragment extends SmartFragment {
         mTvDate.setOnClickListener(v -> {
             new DatePickerDialog(getContext(), datePickListener, currentCalendar.get(Calendar.YEAR),
                     currentCalendar.get(Calendar.MONTH),
-                    currentCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    currentCalendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
         });
 
 
-        mTvSupplierName.setOnClickListener((source) -> {
-            AlertDialog supplierListDialog = new AlertDialog.Builder(getContext()).create();
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+        mTvSupplierName.setOnClickListener((view) -> {
+            View supplierListDialogView = getLayoutInflater().inflate(R.layout.fragment_acquisition_supplier_dialog, null);
 
-            View supplierListDialogView = inflater.inflate(R.layout.fragment_acquisition_supplier_dialog, null);
+            AlertDialog supplierListDialog = new AlertDialog.Builder(getContext()).create();
 
             supplierListDialog.setView(supplierListDialogView);
-            supplierListDialog.setTitle("Select the supplier");
+            supplierListDialog.setTitle("Select the log supplier");
 
             ListView supplierListView = supplierListDialogView.findViewById(R.id.lvSuppliers);
 
-            supplierListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    supplierListDialog.dismiss();
+            supplierListView.setOnItemClickListener((parent, v, position, id) -> {
+                supplierListDialog.dismiss();
 
-                    // mSelectedSupplier = mSupplierList.get(position);
+                /*
+                we use getItemAtPosition instead of querying the list because the dialog
+                lets the user filter the list
+                */
+                mSelectedSupplier = (Supplier) supplierListView.getItemAtPosition(position);
 
-                    /*
-                    we use getItemAtPosition instead of querying the list because the dialog
-                    lets the user filter the list
-                    */
-                    mSelectedSupplier = (Supplier) supplierListView.getItemAtPosition(position);
-
-                    mTvSupplierName.setText(mSelectedSupplier.getName());
-                }
+                mTvSupplierName.setText(mSelectedSupplier.getName());
             });
 
-            ArrayAdapter<Supplier> arrayAdapter = new ArrayAdapter<>(getActivity(),
+            ArrayAdapter<Supplier> arrayAdapter = new ArrayAdapter<>(getContext(),
                     android.R.layout.simple_list_item_1, mSupplierList);
             supplierListView.setAdapter(arrayAdapter);
 
-            EditText etNamePrefix = supplierListDialogView.findViewById(R.id.etNamePrefix);
+            EditText etNameSupplierPrefix = supplierListDialogView.findViewById(R.id.etSupplierNamePrefix);
 
-            etNamePrefix.addTextChangedListener(new TextWatcher() {
+            etNameSupplierPrefix.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -310,43 +299,46 @@ public class AcquisitionFragment extends SmartFragment {
         });
 
 
-        mCbNetTotalValue.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String checkboxLabel = isChecked ? "Net total" : "Gross total";
-                mCbNetTotalValue.setText(checkboxLabel);
+        mCbNetTotalValue.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            String checkboxLabel = isChecked ? "Net total" : "Gross total";
+            mCbNetTotalValue.setText(checkboxLabel);
 
-                updateUiDiscountValue();
-                updateUiTotalValue();
-            }
+            updateUiDiscountValue();
+            updateUiTotalValue();
         });
     }
 
-    private void deleteCurrentAcquisition() throws SQLException {
-        // TODO show dialog
+    /**
+     * Deletes the {@link Acquisition} instance referenced by the {@link #mExistingAcquisition}
+     * variable. After deletion, the {@link AcquisitionListActivity} activity is started
+     */
+    private void deleteCurrentAcquisition() {
+        try {
+            List<DeleteBuilder> deleteBuilderList = Arrays.asList(
+                    mDbHelper.getLogPriceDao().deleteBuilder(),
+                    mDbHelper.getAcquisitionItemDao().deleteBuilder()
+            );
 
-        List<DeleteBuilder> deleteBuilderList = Arrays.asList(
-                mDbHelper.getLogPriceDao().deleteBuilder(),
-                mDbHelper.getAcquisitionItemDao().deleteBuilder()
-        );
+            for (DeleteBuilder deleteBuilder : deleteBuilderList) {
+                deleteBuilder.where().eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId());
+                deleteBuilder.delete();
+            }
 
-        for (DeleteBuilder deleteBuilder : deleteBuilderList) {
-            deleteBuilder.where().eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId());
+            DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionDao().deleteBuilder();
+            deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisition.getId());
             deleteBuilder.delete();
+
+
+            Intent intent = new Intent(getContext(), AcquisitionListActivity.class);
+            startActivity(intent);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionDao().deleteBuilder();
-        deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisition.getId());
-        deleteBuilder.delete();
-
-
-        Intent intent = new Intent(getContext(), AcquisitionListActivity.class);
-        startActivity(intent);
     }
 
     /**
      * Sets {@link #mExistingAcquisition} to the {@link Acquisition} instance corresponding to the
-     * given id
+     * given id, then calls {@link #syncUiWithAcquisition()} to update the UI
      *
      * @param acquisitionId the {@link Acquisition#id} of the {@link Acquisition} instance
      */
@@ -375,6 +367,7 @@ public class AcquisitionFragment extends SmartFragment {
 
         mCbNetTotalValue.setChecked(mExistingAcquisition.isNet());
 
+        mTvDiscountValue.setText(StringFormatUtil.round(mExistingAcquisition.getDiscountValue()));
         mTvTotalValue.setText(StringFormatUtil.round(mExistingAcquisition.getTotalValue()));
     }
 
@@ -387,7 +380,8 @@ public class AcquisitionFragment extends SmartFragment {
         String serialNumber = mEtSerialNumber.getText().toString();
         String regionZone = mEtRegionZone.getText().toString();
         String observations = mEtObservations.getText().toString();
-        double discountPercentage = Double.valueOf(mEtDiscountPercentage.getText().toString());
+        double totalValueWithDiscount = Double.valueOf(mTvTotalValue.getText().toString());
+        double discountValue = Double.valueOf(mTvDiscountValue.getText().toString());
 
         acquisition.setSerialNumber(serialNumber);
         acquisition.setAcquirer(getSelectedAcquirer());
@@ -398,11 +392,11 @@ public class AcquisitionFragment extends SmartFragment {
         acquisition.setWoodRegion(getSelectedWoodRegion());
         acquisition.setWoodCertification(getSelectedWoodCertification());
         acquisition.setObservations(observations);
-        acquisition.setTotalValue(getTotalValueWithDiscount());
-        acquisition.setTotalGrossVolume(getTotalGrossVolume());
-        acquisition.setTotalNetVolume(getTotalNetVolume());
-        acquisition.setDiscountPercentage(discountPercentage);
-        acquisition.setDiscountValue(getDiscountValue());
+        acquisition.setTotalValue(totalValueWithDiscount);
+        acquisition.setTotalGrossVolume(calculateTotalGrossVolume());
+        acquisition.setTotalNetVolume(calculateTotalNetVolume());
+        acquisition.setDiscountPercentage(getDiscountPercentage());
+        acquisition.setDiscountValue(discountValue);
         acquisition.setNet(mCbNetTotalValue.isChecked());
         acquisition.setSynced(false);
     }
@@ -420,31 +414,32 @@ public class AcquisitionFragment extends SmartFragment {
     }
 
     /**
-     * Updates the UI inputs with default values (current date, a valid acquisition serial number,
+     * Updates some UI inputs with default values (current date, a valid acquisition serial number,
      * etc.)
      */
     private void updateUiWithDefaults() {
         int currentAcquisitionSerialNumber = getLastAcquisitionSerialNumber() + 1;
         mEtSerialNumber.setText(String.valueOf(currentAcquisitionSerialNumber));
 
+        mTvSupplierName.setText(mSelectedSupplier.getName());
+
         updateUiDate(new Date());
     }
 
     /**
-     * Updates the date {@link TextView} from the UI, with information found in the given
-     * {@link Date}
+     * Updates {@link #mTvDate} with information found in the given {@link Date} instance
      *
-     * @param date the {@link Date} to use when updating the date {@link TextView}
+     * @param date the {@link Date} to use when updating {@link #mTvDate}
      */
     private void updateUiDate(Date date) {
         mTvDate.setText(ISO_DATE_FORMAT.format(date));
     }
 
     private void persistAcquisitionChanges() {
-        // not working with an existing object
+        // not working with an existing acquisition item
         if (mExistingAcquisition == null) {
             Acquisition acquisition = createAcquisitionMatchingUi();
-            DatabaseHelper.getLatestInstance().getAcquisitionDao().create(acquisition);
+            mDbHelper.getAcquisitionDao().create(acquisition);
 
             saveAcquisitionSerialNumber(acquisition);
 
@@ -460,7 +455,7 @@ public class AcquisitionFragment extends SmartFragment {
             updateDeleteButtonState();
         } else {
             syncAcquisitionWithUi(mExistingAcquisition);
-            DatabaseHelper.getLatestInstance().getAcquisitionDao().update(mExistingAcquisition);
+            mDbHelper.getAcquisitionDao().update(mExistingAcquisition);
 
             PopupUtil.snackbar(getView(), "Updated existing acquisition");
         }
@@ -471,7 +466,7 @@ public class AcquisitionFragment extends SmartFragment {
     }
 
     private Supplier getSelectedSupplier() {
-        // TODO not ok, there could be suppliers with identical names
+        // TODO this is not ok, there could be suppliers with identical names
 
         String selectedSupplierName = mTvSupplierName.getText().toString();
 
@@ -509,6 +504,14 @@ public class AcquisitionFragment extends SmartFragment {
         return (WoodCertification) mSpinnerWoodCertification.getSelectedItem();
     }
 
+    private double getDiscountPercentage() {
+        try {
+            return Double.valueOf(mEtDiscountPercentage.getText().toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
     /**
      * Sets the value of the {@link #LAST_ACQUISITION_ID_PROP} property to match the
      * {@link Acquisition#serialNumber} of the given {@link Acquisition} instance
@@ -538,22 +541,20 @@ public class AcquisitionFragment extends SmartFragment {
     }
 
     /**
-     * Gets the discount value, based on {@link #mEtDiscountPercentage} and {@link #getTotalValue()}
+     * Calculates the discount value, based on {@link #mEtDiscountPercentage} and
+     * {@link #calculateTotalValue()}
      * If {@link #mEtDiscountPercentage} is empty / null, 0 is returned
      *
-     * @return the discount value, based on {@link #mEtDiscountPercentage} and {@link #getTotalValue()}
+     * @return the discount value, based on {@link #mEtDiscountPercentage} and {@link #calculateTotalValue()}
      */
-    private double getDiscountValue() {
-        double discountPercentage;
+    private double calculateDiscountValue() {
+        double discountPercentage = getDiscountPercentage();
 
-        try {
-            discountPercentage = Double.valueOf(mEtDiscountPercentage.getText().toString());
-        } catch (NumberFormatException e) {
-            // happens only when the EditText is empty
+        if (discountPercentage == 0) {
             return 0;
         }
 
-        double totalValue = getTotalValue();
+        double totalValue = calculateTotalValue();
 
         if (totalValue == 0) {
             return 0;
@@ -562,81 +563,9 @@ public class AcquisitionFragment extends SmartFragment {
         return discountPercentage / 100 * totalValue;
     }
 
-    private double getTotalGrossVolume() {
+    private double calculateTotalValue() {
+        // there can't be any total, since this acquisition has yet to be saved
         if (mExistingAcquisition == null) {
-            return 0;
-        }
-
-        // TODO redundance...
-        List<AcquisitionItem> acquisitionItemList;
-        try {
-            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return acquisitionItemList.stream().mapToDouble(AcquisitionItem::getGrossVolume).sum();
-    }
-
-    private double getTotalNetVolume() {
-        if (mExistingAcquisition == null) {
-            return 0;
-        }
-
-        List<AcquisitionItem> acquisitionItemList;
-        try {
-            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return acquisitionItemList.stream().mapToDouble(AcquisitionItem::getNetVolume).sum();
-    }
-
-    private double getTotalValueWithDiscount() {
-        return getTotalValue() - getDiscountValue();
-    }
-
-    private double getTotalValue() {
-        // if (mExistingAcquisition == null) {
-        //     // not yet saved, so there can't be any acquisition items
-        //
-        //     return 0;
-        // }
-        //
-        // List<AcquisitionItem> acquisitionItemList;
-        //
-        // List<LogPrice> logPriceList;
-        //
-        // try {
-        //     acquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
-        //             .where()
-        //             .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
-        //             .and()
-        //             .eq(CommonFieldNames.IS_SPECIAL_PRICE, 0)
-        //             .query();
-        //
-        //     logPriceList = mDbHelper.getLogPriceDao().queryBuilder()
-        //             .where()
-        //             .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId())
-        //             .query();
-        // } catch (SQLException e) {
-        //     throw new RuntimeException(e);
-        // }
-        //
-        // double totalValue = acquisitionItemList.stream()
-        //         .mapToDouble(AcquisitionItem::getPrice)
-        //         .sum();
-        //
-        // totalValue += logPriceList.stream()
-        //         .mapToDouble(logPrice -> logPrice.getPrice() * logPrice.getQuantity())
-        //         .sum();
-        //
-        // return totalValue;
-
-        if (mExistingAcquisition == null) {
-            // not yet saved, so there can't be any acquisition items
-
             return 0;
         }
 
@@ -660,22 +589,52 @@ public class AcquisitionFragment extends SmartFragment {
         return total;
     }
 
-    @Override
-    public void onVisible() {
-        updateUiDiscountValue();
-        updateUiTotalValue();
+    private double calculateTotalValueWithDiscount() {
+        return calculateTotalValue() - calculateDiscountValue();
+    }
+
+    private double calculateTotalGrossVolume() {
+        return calculateTotalVolume(false);
+    }
+
+    private double calculateTotalNetVolume() {
+        return calculateTotalVolume(true);
+    }
+
+    private double calculateTotalVolume(boolean net) {
+        if (mExistingAcquisition == null) {
+            return 0;
+        }
+
+        List<AcquisitionItem> acquisitionItemList;
+
+        try {
+            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        Stream<AcquisitionItem> stream = acquisitionItemList.stream();
+
+        if (net) {
+            return stream.mapToDouble(AcquisitionItem::getNetVolume).sum();
+        }
+
+        return stream.mapToDouble(AcquisitionItem::getGrossVolume).sum();
     }
 
     /**
-     * Updates {@link #mTvDiscountValue} with the value provided by {@link #getDiscountValue()}
+     * Updates {@link #mTvDiscountValue} with the value provided by {@link #calculateDiscountValue()}
      */
     private void updateUiDiscountValue() {
-        double discountValue = getDiscountValue();
-        mTvDiscountValue.setText(StringFormatUtil.round(discountValue));
+        mTvDiscountValue.setText(StringFormatUtil.round(calculateDiscountValue()));
     }
 
+    /**
+     * Updates {@link #mTvTotalValue} with the value provided by {@link #calculateTotalValueWithDiscount()}
+     */
     private void updateUiTotalValue() {
-        mTvTotalValue.setText(StringFormatUtil.round(getTotalValueWithDiscount()));
+        mTvTotalValue.setText(StringFormatUtil.round(calculateTotalValueWithDiscount()));
     }
 
     private boolean isNetTotalValueChecked() {
@@ -706,23 +665,23 @@ public class AcquisitionFragment extends SmartFragment {
 
     @Override
     public void onDetach() {
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().unregister(this);
 
         super.onDetach();
     }
 
     @Subscribe
     public void onAcquisitionTotalPriceUpdateRequestEvent(AcquisitionTotalPriceUpdateRequestEvent event) {
-        mExistingAcquisition.setTotalValue(getTotalValueWithDiscount());
-        syncUiWithAcquisition();
+        mTvDiscountValue.setText(String.valueOf(calculateDiscountValue()));
+        mTvTotalValue.setText(String.valueOf(calculateTotalValueWithDiscount()));
         persistAcquisitionChanges();
     }
 
     @Subscribe
     public void onAcquistionTotalVolumeUpdateRequestEvent(AcquisitionTotalVolumeUpdateRequestEvent event) {
-        mExistingAcquisition.setTotalNetVolume(getTotalNetVolume());
-        mExistingAcquisition.setTotalGrossVolume(getTotalGrossVolume());
-        syncUiWithAcquisition();
+        // TODO update ui values after adding textviews for volume
+        mExistingAcquisition.setTotalNetVolume(calculateTotalNetVolume());
+        mExistingAcquisition.setTotalGrossVolume(calculateTotalGrossVolume());
         persistAcquisitionChanges();
     }
 }
