@@ -95,14 +95,13 @@ public class AcquisitionItemFragment extends SmartFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item, container, false);
-
         if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
             View placeholderView = inflater.inflate(R.layout.placeholder_layout, container, false);
             ((TextView) placeholderView.findViewById(R.id.tvContent)).setText(NO_ACQUISITION_MESSAGE);
-
             return placeholderView;
         }
+
+        mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item, container, false);
 
         initUi();
 
@@ -117,6 +116,13 @@ public class AcquisitionItemFragment extends SmartFragment {
     public void onVisible() {
         if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
             return;
+        }
+
+        // TODO this doesn't belong here, but it fixes the bug in which clicking a list item
+        // correctly updates the ui in the 3rd tab. This is already done in onCreateView, which
+        // is called after this
+        if (mExistingAcquisitionItem != null){
+            syncUiWithAcquisitionItem();
         }
 
         /*
