@@ -71,15 +71,11 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
+
         mAcquisitionList = DatabaseHelper.getLatestInstance().getAcquisitionDao().queryForAll();
 
-        if (mAcquisitionList.isEmpty()) {
-            startMainActivity(null);
-        }
-
         setupAcquisitionRecyclerView();
-
-        super.onResume();
     }
 
     private void setupAcquisitionRecyclerView() {
