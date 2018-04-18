@@ -304,6 +304,10 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     private void deleteCurrentAcquisitionItem() {
+        if (!mExistingAcquisitionItem.isSpecialPrice()) {
+            decrementLogPriceQuantity();
+        }
+
         try {
             DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionItemDao().deleteBuilder();
             deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisitionItem.getId());
