@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Filter;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -92,17 +91,23 @@ public class AcquisitionListActivity extends AppCompatActivity {
         super.onResume();
 
         mOriginalAcquisitionList = DatabaseHelper.getLatestInstance().getAcquisitionDao().queryForAll();
+        mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
 
-        if (mOriginalAcquisitionList.isEmpty()) {
+        if (!mOriginalAcquisitionList.isEmpty()) {
+            setupAcquisitionRecyclerView();
+        }
+
+        showListPlaceholderIfNecessary();
+    }
+
+    private void showListPlaceholderIfNecessary() {
+        if (mAcquisitionList.isEmpty()) {
             mTvNoAcquisitions.setVisibility(View.VISIBLE);
             mRvAcquisitions.setVisibility(View.GONE);
         } else {
             mTvNoAcquisitions.setVisibility(View.GONE);
             mRvAcquisitions.setVisibility(View.VISIBLE);
-            setupAcquisitionRecyclerView();
         }
-
-        mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
     }
 
     private void setupAcquisitionRecyclerView() {
@@ -227,6 +232,8 @@ public class AcquisitionListActivity extends AppCompatActivity {
                 // cancel all filtering
 
                 mAdapter.useOriginalList();
+                showListPlaceholderIfNecessary();
+                return;
             }
 
             List<Acquisition> filteredAcquisitionList;
@@ -240,6 +247,8 @@ public class AcquisitionListActivity extends AppCompatActivity {
             mAcquisitionList.addAll(filteredAcquisitionList);
 
             mAdapter.notifyDataSetChanged();
+
+            showListPlaceholderIfNecessary();
         });
 
         listFilteringDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
