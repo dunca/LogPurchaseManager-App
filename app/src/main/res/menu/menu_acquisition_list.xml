@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity">
+    <item
+        android:id="@+id/action_filter_list"
+        android:icon="@drawable/ic_filter_list_white_24dp"
+        android:orderInCategory="100"
+        android:title="Filter"
+        app:showAsAction="ifRoom" />
+</menu>
