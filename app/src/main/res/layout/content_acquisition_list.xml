@@ -17,10 +17,10 @@
     </android.support.v7.widget.RecyclerView>
 
     <TextView
-        android:id="@+id/tvNoAcquisitions"
+        android:id="@+id/tvEmptyListPlaceholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="No acquisitions..."
+        android:text="@string/activity_acquisition_list_empty_list_placeholder"
         android:textAppearance="@android:style/TextAppearance.Material.Large" />
 </RelativeLayout>

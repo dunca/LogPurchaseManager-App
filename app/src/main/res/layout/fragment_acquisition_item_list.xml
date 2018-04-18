@@ -29,77 +29,77 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Species"
+                        android:text="@string/fragment_acquisition_item_list_species_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Log quality class"
+                        android:text="@string/fragment_acquisition_item_list_log_quality_class_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Log bar code"
+                        android:text="@string/fragment_acquisition_item_list_log_bar_code_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Net length"
+                        android:text="@string/fragment_acquisition_item_list_net_length_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Net diameter"
+                        android:text="@string/fragment_acquisition_item_list_net_diameter_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Gross length"
+                        android:text="@string/fragment_acquisition_item_list_gross_length_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Gross diameter"
+                        android:text="@string/fragment_acquisition_item_list_gross_diameter_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Net volume"
+                        android:text="@string/fragment_acquisition_item_list_net_volume_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Gross volume"
+                        android:text="@string/fragment_acquisition_item_list_gross_volume_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Volumetric price"
+                        android:text="@string/fragment_acquisition_item_list_volumetric_price_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Observations"
+                        android:text="@string/fragment_acquisition_item_list_observations_label"
                         android:textStyle="bold" />
 
                     <TextView

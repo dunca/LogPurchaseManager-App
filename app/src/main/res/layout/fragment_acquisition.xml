@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".fragments.AcquisitionItemFragment">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,7 +20,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="32dp"
-            android:text="Save"
+            android:text="@string/fragment_acquisition_save_btn_label"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView18" />
@@ -39,7 +40,7 @@
                 android:id="@+id/etSerialNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Serial number"
+                android:hint="@string/fragment_acquisition_serial_number_hint"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
 
@@ -49,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Acquirer:"
+            android:text="@string/fragment_acquisition_acquirer_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
 
@@ -97,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Supplier:"
+            android:text="@string/fragment_acquisition_supplier_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
@@ -107,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Wood region:"
+            android:text="@string/fragment_acquisition_wood_region_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
@@ -137,7 +138,7 @@
                 android:id="@+id/etRegionZone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Additional region information"
+                android:hint="@string/fragment_acquisition_additional_region_information_hint"
                 android:inputType="textMultiLine" />
         </android.support.design.widget.TextInputLayout>
 
@@ -147,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Wood certification:"
+            android:text="@string/fragment_acquisition_wood_certification_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout6" />
 
@@ -177,7 +178,7 @@
                 android:id="@+id/edObservations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Observations"
+                android:hint="@string/fragment_acquisition_observations_hint"
                 android:inputType="textMultiLine" />
         </android.support.design.widget.TextInputLayout>
 
@@ -196,7 +197,7 @@
                 android:id="@+id/etDiscountPercentage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Discount percentage"
+                android:hint="@string/fragment_acquisition_discount_percentage_hint"
                 android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
 
@@ -206,7 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Acquisition date:"
+            android:text="@string/fragment_acquisition_acquisition_date_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinnerAcquirer" />
 
@@ -215,7 +216,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Delete"
+            android:text="@string/fragment_acquisition_delete_btn_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btnSave" />
 
@@ -225,7 +226,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Discount value:"
+            android:text="@string/fragment_acquisition_discount_value_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout8" />
 
@@ -235,7 +236,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:text="0.00"
+            android:text="@string/zero_float"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView11"
             app:layout_constraintTop_toTopOf="@+id/textView11" />
@@ -246,7 +247,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Total value:"
+            android:text="@string/fragment_acquisition_total_value_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
@@ -256,7 +257,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:text="0.00"
+            android:text="@string/zero_float"
             app:layout_constraintEnd_toStartOf="@+id/cbNetTotalValue"
             app:layout_constraintStart_toEndOf="@+id/textView14"
             app:layout_constraintTop_toTopOf="@+id/textView14" />
@@ -267,7 +268,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:checked="true"
-            android:text="Net total"
+            android:text="@string/fragment_acquisition_net_total_checkbox_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvTotalValue" />
 
@@ -277,7 +278,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Total gross volume:"
+            android:text="@string/fragment_acquisition_total_gross_volume_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
@@ -287,7 +288,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Total net volume:"
+            android:text="@string/fragment_acquisition_total_net_volume_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
@@ -297,7 +298,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:text="0.00"
+            android:text="@string/zero_float"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView18"
             app:layout_constraintTop_toTopOf="@+id/textView18" />
@@ -308,7 +309,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:text="0.00"
+            android:text="@string/zero_float"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView20"
             app:layout_constraintTop_toTopOf="@+id/textView20" />

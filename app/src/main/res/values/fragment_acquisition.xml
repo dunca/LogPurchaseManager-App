@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Labels-->
+    <string name="fragment_acquisition_serial_number_hint">Serial number</string>
+    <string name="fragment_acquisition_acquirer_label">Acquirer:</string>
+    <string name="fragment_acquisition_supplier_label">Supplier:</string>
+    <string name="fragment_acquisition_wood_region_label">Wood region:</string>
+    <string name="fragment_acquisition_additional_region_information_hint">Additional region information</string>
+    <string name="fragment_acquisition_wood_certification_label">Wood certification:</string>
+    <string name="fragment_acquisition_observations_hint">Observations</string>
+    <string name="fragment_acquisition_discount_percentage_hint">Discount percentage</string>
+    <string name="fragment_acquisition_acquisition_date_label">Acquisition date:</string>
+    <string name="fragment_acquisition_save_btn_label">Save</string>
+    <string name="fragment_acquisition_delete_btn_label">Delete</string>
+    <string name="fragment_acquisition_discount_value_label">Discount value:</string>
+    <string name="fragment_acquisition_total_value_label">Total value:</string>
+    <string name="fragment_acquisition_net_total_checkbox_label">Net total</string>
+    <string name="fragment_acquisition_total_gross_volume_label">Total gross volume:</string>
+    <string name="fragment_acquisition_total_net_volume_label">Total net volume:</string>
+    <string name="fragment_acquisition_supplier_dialog_title">Select the log supplier</string>
+    <string name="fragment_acquisition_net_total_label">Net total</string>
+    <string name="fragment_acquisition_gross_total_label">Gross total</string>
+    <string name="fragment_acquisition_supplier_name_hint">Supplier name</string>
+
+    <!--Messages-->
+    <string name="fragment_acquisition_new_acquisition_persisted_msg">New acquisition persisted</string>
+    <string name="fragment_acquisition_updated_existing_acquisition_msg">Updated existing acquisition</string>
+</resources>

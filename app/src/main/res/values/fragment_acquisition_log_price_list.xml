@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Labels-->
+    <string name="fragment_acquisition_log_price_no_acquisition_placeholder">Persist the acquisition first...</string>
+    <string name="fragment_acquisition_log_price_no_price_list_placeholder">This acquisition has no price list...</string>
+    <string name="fragment_acquisition_log_price_list_price_dialog_title">Enter a price:</string>
+    <string name="fragment_acquisition_log_price_list_species_label">Species</string>
+    <string name="fragment_acquisition_log_price_list_log_quality_class_label">Log quality class</string>
+    <string name="fragment_acquisition_log_price_list_quantity_label">Quantity</string>
+    <string name="fragment_acquisition_log_price_list_price_label">Price</string>
+    <string name="fragment_acquisition_log_price_list_volumetric_price_hint">Volumetric price</string>
+
+    <!--Messages-->
+    <string name="fragment_acquisition_log_price_list_price_change_cancelled_msg">Price change cancelled</string>
+    <string name="fragment_acquisition_log_price_list_price_left_unchanged_msg">Price left unchanged</string>
+    <string name="fragment_acquisition_log_price_list_price_updated_msg">Price updated</string>
+</resources>

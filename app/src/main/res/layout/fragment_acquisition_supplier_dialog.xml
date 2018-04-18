@@ -13,7 +13,7 @@
             android:id="@+id/etSupplierNamePrefix"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name" />
+            android:hint="@string/fragment_acquisition_supplier_name_hint" />
 
     </android.support.design.widget.TextInputLayout>
 

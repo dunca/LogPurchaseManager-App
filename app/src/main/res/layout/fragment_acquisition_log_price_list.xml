@@ -12,7 +12,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    tools:context=".fragments.AcquisitionItemListFragment">
+    tools:context=".fragments.AcquisitionLogPriceListFragment">
 
     <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -37,28 +37,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Species"
+                        android:text="@string/fragment_acquisition_log_price_list_species_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Log quality class"
+                        android:text="@string/fragment_acquisition_log_price_list_log_quality_class_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Quantity"
+                        android:text="@string/fragment_acquisition_log_price_list_quantity_label"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Price"
+                        android:text="@string/fragment_acquisition_log_price_list_price_label"
                         android:textStyle="bold" />
 
                     <TextView

@@ -58,7 +58,7 @@ import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolum
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionFragment extends Fragment {
-    private static final String LAST_ACQUISITION_ID_PROP = "last_acquisition_id_prop";
+    private static final String PROP_LAST_ACQUISITION_ID = "prop_last_acquisition_id";
 
     private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -261,7 +261,7 @@ public class AcquisitionFragment extends Fragment {
             AlertDialog supplierListDialog = new AlertDialog.Builder(getContext()).create();
 
             supplierListDialog.setView(supplierListDialogView);
-            supplierListDialog.setTitle("Select the log supplier");
+            supplierListDialog.setTitle(getString(R.string.fragment_acquisition_supplier_dialog_title));
 
             ListView supplierListView = supplierListDialogView.findViewById(R.id.lvSuppliers);
 
@@ -305,7 +305,7 @@ public class AcquisitionFragment extends Fragment {
 
 
         mCbNetTotalValue.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            String checkboxLabel = isChecked ? "Net total" : "Gross total";
+            int checkboxLabel = isChecked ? R.string.fragment_acquisition_net_total_label : R.string.fragment_acquisition_gross_total_label;
             mCbNetTotalValue.setText(checkboxLabel);
 
             updateUiDiscountValue();
@@ -452,7 +452,7 @@ public class AcquisitionFragment extends Fragment {
 
             saveAcquisitionSerialNumber(acquisition);
 
-            PopupUtil.snackbar(getView(), "New acquisition persisted");
+            PopupUtil.snackbar(getView(), getString(R.string.fragment_acquisition_new_acquisition_persisted_msg));
 
             mExistingAcquisition = acquisition;
             sCurrentAcquisitionId = acquisition.getId();
@@ -466,7 +466,7 @@ public class AcquisitionFragment extends Fragment {
             syncAcquisitionWithUi(mExistingAcquisition);
             mDbHelper.getAcquisitionDao().update(mExistingAcquisition);
 
-            PopupUtil.snackbar(getView(), "Updated existing acquisition");
+            PopupUtil.snackbar(getView(), getString(R.string.fragment_acquisition_updated_existing_acquisition_msg));
         }
     }
 
@@ -492,7 +492,7 @@ public class AcquisitionFragment extends Fragment {
         try {
             return ISO_DATE_FORMAT.parse(mTvDate.getText().toString());
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Programming error!!!");
+            throw new IllegalArgumentException("Programming error");
         }
     }
 
@@ -522,7 +522,7 @@ public class AcquisitionFragment extends Fragment {
     }
 
     /**
-     * Sets the value of the {@link #LAST_ACQUISITION_ID_PROP} property to match the
+     * Sets the value of the {@link #PROP_LAST_ACQUISITION_ID} property to match the
      * {@link Acquisition#serialNumber} of the given {@link Acquisition} instance
      *
      * @param currentAcquisition the {@link Acquisition} instance to use a the source
@@ -530,19 +530,19 @@ public class AcquisitionFragment extends Fragment {
     private void saveAcquisitionSerialNumber(Acquisition currentAcquisition) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
 
-        editor.putInt(LAST_ACQUISITION_ID_PROP, Integer.valueOf(
+        editor.putInt(PROP_LAST_ACQUISITION_ID, Integer.valueOf(
                 currentAcquisition.getSerialNumber()));
 
         editor.apply();
     }
 
     /**
-     * Gets the value of the {@link #LAST_ACQUISITION_ID_PROP} property
+     * Gets the value of the {@link #PROP_LAST_ACQUISITION_ID} property
      *
-     * @return the value of the {@link #LAST_ACQUISITION_ID_PROP} property
+     * @return the value of the {@link #PROP_LAST_ACQUISITION_ID} property
      */
     private int getLastAcquisitionSerialNumber() {
-        return getSharedPreferences().getInt(LAST_ACQUISITION_ID_PROP, 0);
+        return getSharedPreferences().getInt(PROP_LAST_ACQUISITION_ID, 0);
     }
 
     private <T extends Model> ArrayAdapter<T> createDefaultSpinnerAdapter(List<T> modelInstanceList) {

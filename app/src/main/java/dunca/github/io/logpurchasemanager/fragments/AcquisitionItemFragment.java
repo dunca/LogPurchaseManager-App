@@ -177,8 +177,8 @@ public class AcquisitionItemFragment extends SmartFragment {
         mEtGrossDiameter.setText("");
         mEtNetLength.setText("");
         mEtNetDiameter.setText("");
-        mTvGrossVolume.setText("0");
-        mTvNetVolume.setText("0");
+        mTvGrossVolume.setText(R.string.zero_float);
+        mTvNetVolume.setText(R.string.zero_float);
         mEtObservations.setText("");
     }
 
@@ -365,7 +365,7 @@ public class AcquisitionItemFragment extends SmartFragment {
                 createLogPriceIfNecessary();
             }
 
-            PopupUtil.snackbar(mFragmentView, "New acquisition item persisted");
+            PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_item_new_acquisition_item_persisted_msg));
 
             updateDeleteButtonState();
         } else {
@@ -381,7 +381,7 @@ public class AcquisitionItemFragment extends SmartFragment {
 
             mDbHelper.getAcquisitionItemDao().update(mExistingAcquisitionItem);
 
-            PopupUtil.snackbar(mFragmentView, "Updated existing acquisition item");
+            PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_item_updated_existing_acquisition_item_msg));
         }
 
         postAcquisitionUpdateEvents();
@@ -402,7 +402,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         }
 
         if (logPriceList.size() > 1) {
-            throw new RuntimeException("Programming bug. There should be one, shared, instance");
+            throw new RuntimeException("Programming error");
         }
 
         if (logPriceList.size() == 1) {
@@ -412,7 +412,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             logPrice.setQuantity(logPrice.getQuantity() + 1);
             mDbHelper.getLogPriceDao().update(logPrice);
 
-            PopupUtil.snackbar(mFragmentView, "Updated existing log price");
+            PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_item_updated_existing_log_price_msg));
             return;
         }
 
@@ -424,7 +424,7 @@ public class AcquisitionItemFragment extends SmartFragment {
 
         mDbHelper.getLogPriceDao().create(logPrice);
 
-        PopupUtil.snackbar(mFragmentView, "New log price persisted");
+        PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_item_new_log_price_persisted_msg));
     }
 
     private void decrementLogPriceQuantity() {

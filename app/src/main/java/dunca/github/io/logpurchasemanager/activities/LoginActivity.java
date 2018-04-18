@@ -45,15 +45,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        mRootLayout = findViewById(R.id.rootLayout_login_activity);
+        mRootLayout = findViewById(R.id.rootLayout);
 
-        mEtUsername = findViewById(R.id.etUsername_login_activity);
-        mEtPassword = findViewById(R.id.etPassword_login_activity);
-        mBtnLogin = findViewById(R.id.btnLogin_login_activity);
+        mEtUsername = findViewById(R.id.etUsername);
+        mEtPassword = findViewById(R.id.etPassword);
+        mBtnLogin = findViewById(R.id.btnLogin);
     }
 
     private void setOnClickListeners() {
-        mBtnLogin.setOnClickListener(source -> handleLogin());
+        mBtnLogin.setOnClickListener(view -> handleLogin());
     }
 
     private void handleLogin() {
@@ -63,7 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         Acquirer acquirer;
 
         try {
-            acquirer = mDbHelper.getAcquirerDao().queryBuilder().where()
+            acquirer = mDbHelper.getAcquirerDao().queryBuilder()
+                    .where()
                     .eq(CommonFieldNames.USERNAME, username)
                     .queryForFirst();
         } catch (SQLException e) {

@@ -18,7 +18,7 @@
             android:id="@+id/etVolumetricPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Volumetric price"
+            android:hint="@string/fragment_acquisition_log_price_list_volumetric_price_hint"
             android:inputType="numberDecimal" />
     </android.support.design.widget.TextInputLayout>
 </android.support.constraint.ConstraintLayout>

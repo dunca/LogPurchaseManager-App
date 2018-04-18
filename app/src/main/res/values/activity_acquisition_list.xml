@@ -2,4 +2,14 @@
 <resources>
     <!--Labels-->
     <string name="title_activity_acquisition_list">Acquisitions</string>
+    <string name="activity_acquisition_list_empty_list_placeholder">No acquisitions...</string>
+    <string name="activity_acquisition_filtering_dialog_title">Filter the acquisition list</string>
+    <string name="activity_acquisition_list_serial_number_hint">Serial number</string>
+    <string name="activity_acquisition_list_acquirer_username_hint">Acquirer username</string>
+    <string name="activity_acquisition_list_supplier_name_hint">Supplier name</string>
+    <string name="activity_acquisition_list_filter_by_date_checkbox_label">Filter by date</string>
+    <string name="activity_acquisition_list_serial_number_label">Serial number:</string>
+    <string name="activity_acquisition_list_acquirer_label">Acquirer:</string>
+    <string name="activity_acquisition_list_supplier_label">Supplier:</string>
+    <string name="activity_acquisition_list_acquisition_date_label">Acquisition date:</string>
 </resources>

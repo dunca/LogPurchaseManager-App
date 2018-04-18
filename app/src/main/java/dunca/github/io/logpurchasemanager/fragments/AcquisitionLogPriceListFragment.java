@@ -128,11 +128,11 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
                 container, false);
 
         if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
-            return createPlaceholderView("Persist the acquisition first...");
+            return createPlaceholderView(R.string.fragment_acquisition_log_price_no_acquisition_placeholder);
         }
 
         if (!acquisitionHasPriceList()) {
-            return createPlaceholderView("This acquisition has no price list...");
+            return createPlaceholderView(R.string.fragment_acquisition_log_price_no_price_list_placeholder);
         }
 
         initUi();
@@ -162,11 +162,10 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
         }
     }
 
-    private View createPlaceholderView(String message) {
-        View placeholderView = getLayoutInflater().inflate(R.layout.placeholder_layout, null,
-                false);
+    private View createPlaceholderView(int messageId) {
+        View placeholderView = getLayoutInflater().inflate(R.layout.placeholder_layout, null, false);
 
-        ((TextView) placeholderView.findViewById(R.id.tvContent)).setText(message);
+        ((TextView) placeholderView.findViewById(R.id.tvContent)).setText(getString(messageId));
 
         return placeholderView;
     }
@@ -195,15 +194,15 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
                 R.id.etVolumetricPrice);
         etVolumetricPrice.setText(String.valueOf(logPrice.getPrice()));
 
-        volumetricPriceDialogBuilder.setTitle("Enter a price:");
+        volumetricPriceDialogBuilder.setTitle(R.string.fragment_acquisition_log_price_list_price_dialog_title);
         volumetricPriceDialogBuilder.setView(volumetricPriceDialogView);
 
-        volumetricPriceDialogBuilder.setPositiveButton("Ok", (dialog, buttonId) -> {
+        volumetricPriceDialogBuilder.setPositiveButton(R.string.ok, (dialog, buttonId) -> {
             updateLogPricePrice(logPrice, Double.valueOf(etVolumetricPrice.getText().toString()));
         });
 
-        volumetricPriceDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
-            PopupUtil.snackbar(mFragmentView, "Price change cancelled");
+        volumetricPriceDialogBuilder.setNegativeButton(R.string.cancel, (dialog, buttonId) -> {
+            PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_log_price_list_price_change_cancelled_msg));
         });
 
         volumetricPriceDialogBuilder.create().show();
@@ -211,7 +210,7 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
 
     private void updateLogPricePrice(LogPrice logPrice, double price) {
         if (logPrice.getPrice() == price) {
-            PopupUtil.snackbar(mFragmentView, "Price left unchanged");
+            PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_log_price_list_price_left_unchanged_msg));
 
             return;
         }
@@ -244,6 +243,6 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
             throw new RuntimeException(e);
         }
 
-        PopupUtil.snackbar(mFragmentView, "Price updated");
+        PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_log_price_list_price_updated_msg));
     }
 }

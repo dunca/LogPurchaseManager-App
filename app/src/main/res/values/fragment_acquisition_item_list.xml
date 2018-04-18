@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Labels-->
+
+    <string name="fragment_acquisition_item_list_no_acquisition_placeholder">Persist the acquisition first...</string>
+    <string name="fragment_acquisition_item_list_no_items_placeholder">This acquisition has no items...</string>
+    <string name="fragment_acquisition_item_list_species_label">Species</string>
+    <string name="fragment_acquisition_item_list_log_quality_class_label">Log quality class</string>
+    <string name="fragment_acquisition_item_list_log_bar_code_label">Log bar code</string>
+    <string name="fragment_acquisition_item_list_net_length_label">Net length</string>
+    <string name="fragment_acquisition_item_list_net_diameter_label">Net diameter</string>
+    <string name="fragment_acquisition_item_list_gross_length_label">Gross length</string>
+    <string name="fragment_acquisition_item_list_gross_diameter_label">Gross diameter</string>
+    <string name="fragment_acquisition_item_list_net_volume_label">Net volume</string>
+    <string name="fragment_acquisition_item_list_gross_volume_label">Gross volume</string>
+    <string name="fragment_acquisition_item_list_volumetric_price_label">Volumetric price</string>
+    <string name="fragment_acquisition_item_list_observations_label">Observations</string>
+</resources>

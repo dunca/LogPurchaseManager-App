@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Labels-->
+    <string name="fragment_acquisition_item_species_label">Species:</string>
+    <string name="fragment_acquisition_item_quality_class_label">Quality class:</string>
+    <string name="fragment_acquisition_item_bar_code_hint">Bar code</string>
+    <string name="fragment_acquisition_item_volumetric_price_hint">Volumetric price</string>
+    <string name="fragment_acquisition_item_special_price_checkbox_label">Special price</string>
+    <string name="fragment_acquisition_item_gross_length_hint">Gross length (m)</string>
+    <string name="fragment_acquisition_item_gross_diameter_hint">Gross diameter (cm)</string>
+    <string name="fragment_acquisition_item_net_length_hint">Net length (m)</string>
+    <string name="fragment_acquisition_item_net_diameter_hint">Net diameter (cm)</string>
+    <string name="fragment_acquisition_item_gross_volume_label">Gross volume (m³):</string>
+    <string name="fragment_acquisition_item_net_volume_label">Net volume (m³):</string>
+    <string name="fragment_acquisition_item_observations_hint">Observations</string>
+    <string name="fragment_acquisition_item_save_btn_label">Save</string>
+    <string name="fragment_acquisition_item_delete_btn_label">Delete</string>
+    <string name="fragment_acquisition_item_scan_bar_code_btn_label">Scan bar code</string>
+    <string name="fragment_acquisition_item_no_acquisition_placeholder">Persist the acquisition first...</string>
+
+    <!--Messages-->
+    <string name="fragment_acquisition_item_new_log_price_persisted_msg">New log price persisted</string>
+    <string name="fragment_acquisition_item_updated_existing_log_price_msg">Updated existing log price</string>
+    <string name="fragment_acquisition_item_new_acquisition_item_persisted_msg">New acquisition item persisted</string>
+    <string name="fragment_acquisition_item_updated_existing_acquisition_item_msg">Updated existing acquisition item</string>
+</resources>

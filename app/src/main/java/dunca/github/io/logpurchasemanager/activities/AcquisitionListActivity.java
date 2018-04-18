@@ -67,16 +67,11 @@ public class AcquisitionListActivity extends AppCompatActivity {
     private void initViews() {
         mFab = findViewById(R.id.fab);
         mRvAcquisitions = findViewById(R.id.rvAcquisitionList);
-        mTvNoAcquisitions = findViewById(R.id.tvNoAcquisitions);
+        mTvNoAcquisitions = findViewById(R.id.tvEmptyListPlaceholder);
     }
 
     private void setupOnClickActions() {
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startMainActivity(null);
-            }
-        });
+        mFab.setOnClickListener(view -> startMainActivity(null));
     }
 
     private void startMainActivity(Acquisition acquisition) {
@@ -125,8 +120,6 @@ public class AcquisitionListActivity extends AppCompatActivity {
     }
 
     class AcquisitionListRecyclerViewAdapter extends RecyclerView.Adapter<AcquisitionItemViewHolder> {
-        private final SimpleDateFormat isoDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-
         @NonNull
         @Override
         public AcquisitionItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -145,7 +138,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
             holder.mTvSupplier.setText(acquisition.getSupplier().getName());
 
             Date acquisitionDate = acquisition.getReceptionDate();
-            holder.mTvAcquisitionDate.setText(isoDateFormatter.format(acquisitionDate));
+            holder.mTvAcquisitionDate.setText(ISO_DATE_FORMAT.format(acquisitionDate));
         }
 
         @Override
@@ -245,9 +238,9 @@ public class AcquisitionListActivity extends AppCompatActivity {
         });
 
         listFilteringDialogBuilder.setView(listFilteringDialogView);
-        listFilteringDialogBuilder.setTitle("Filter the acquisition list");
+        listFilteringDialogBuilder.setTitle(R.string.activity_acquisition_filtering_dialog_title);
 
-        listFilteringDialogBuilder.setPositiveButton("OK", (dialog, buttonId) -> {
+        listFilteringDialogBuilder.setPositiveButton(R.string.ok, (dialog, buttonId) -> {
             String serialNumber = etFilterSerialNumber.getText().toString();
             mLastSerialNumberFilteringPart = serialNumber;
 
@@ -286,7 +279,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
             showListPlaceholderIfNecessary();
         });
 
-        listFilteringDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
+        listFilteringDialogBuilder.setNegativeButton(R.string.cancel, (dialog, buttonId) -> {
             mFilteringCancelled = true;
             clearListFiltering();
         });

@@ -49,11 +49,11 @@ public class AcquisitionItemListFragment extends SmartFragment {
         mFragmentView = inflater.inflate(R.layout.fragment_acquisition_item_list, null, false);
 
         if (AcquisitionFragment.sCurrentAcquisitionId == MethodParameterConstants.INVALID_INDEX) {
-            return createPlaceholderView("Persist the acquisition first...");
+            return createPlaceholderView(getString(R.string.fragment_acquisition_item_list_no_acquisition_placeholder));
         }
 
         if (!acquisitionHasItems()) {
-            return createPlaceholderView("This acquisition has no items...");
+            return createPlaceholderView(getString(R.string.fragment_acquisition_item_list_no_items_placeholder));
         }
 
         initUi();
