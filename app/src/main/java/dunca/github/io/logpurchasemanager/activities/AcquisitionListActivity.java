@@ -264,10 +264,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
             if (serialNumber.isEmpty() && acquirer.isEmpty() && supplier.isEmpty()
                     && !cbFilterByDate.isChecked()) {
-                // cancel all filtering
-
-                mAdapter.useOriginalList();
-                showListPlaceholderIfNecessary();
+                clearListFiltering();
                 return;
             }
 
@@ -290,20 +287,16 @@ public class AcquisitionListActivity extends AppCompatActivity {
         });
 
         listFilteringDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
-            // etFilterSerialNumber.setText("");
-            //
-            // etFilterAcquirerUsername.setText("");
-            //
-            // etFilterSupplierName.setText("");
-            //
-            // updateDateInTextView(tvDate, new Date());
-            //
-            // cbFilterByDate.setChecked(false);
-
             mFilteringCancelled = true;
+            clearListFiltering();
         });
 
         listFilteringDialogBuilder.show();
+    }
+
+    private void clearListFiltering() {
+        mAdapter.useOriginalList();
+        showListPlaceholderIfNecessary();
     }
 
     private List<Acquisition> filterBySerialNumber(String serialNumberPart, List<Acquisition> sourceAcquisitionList) {
