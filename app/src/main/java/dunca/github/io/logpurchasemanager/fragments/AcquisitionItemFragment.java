@@ -2,6 +2,7 @@ package dunca.github.io.logpurchasemanager.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
@@ -27,6 +28,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.activities.BarCodeScannerActivity;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringValidationUtil;
@@ -46,7 +48,12 @@ import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolum
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
+import static android.app.Activity.RESULT_OK;
+
 public class AcquisitionItemFragment extends SmartFragment {
+    private static final int BAR_CODE_RESULT = 1;
+    public static final String EXTRA_BAR_CODE = "extra_bar_code";
+
     private ViewPager mViewPager;
     private View mFragmentView;
     private boolean mReceivedAcquisitionItemId;
@@ -58,6 +65,7 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private TextInputLayout mTilBarCode;
     private EditText mEtBarCode;
+    private Button mBtnScanLogBarCode;
     private CheckBox mCbSpecialPrice;
     private EditText mEtVolumetricPrice;
     private EditText mEtGrossLength;
@@ -142,6 +150,16 @@ public class AcquisitionItemFragment extends SmartFragment {
         updateDeleteButtonState();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == BAR_CODE_RESULT) {
+            String scannerBarCode = data.getStringExtra(EXTRA_BAR_CODE);
+            mEtBarCode.setText(scannerBarCode);
+        }
+    }
+
     private void updateDeleteButtonState() {
         mBtnDelete.setEnabled(mExistingAcquisitionItem != null);
     }
@@ -209,6 +227,8 @@ public class AcquisitionItemFragment extends SmartFragment {
 
         mTilBarCode = findViewById(R.id.tilBarCode);
         mEtBarCode = findViewById(R.id.etBarCode);
+
+        mBtnScanLogBarCode = findViewById(R.id.btnScanLogBarCode);
 
         mCbSpecialPrice = findViewById(R.id.cbSpecialPrice);
 
@@ -297,10 +317,17 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     private void setupOnClickActions() {
+        mBtnScanLogBarCode.setOnClickListener(v -> showBarCodeScanningDialog());
+
         mBtnSave.setOnClickListener(v -> persistAcquisitionItemChanges());
         mBtnDelete.setOnClickListener(v -> deleteCurrentAcquisitionItem());
 
         mCbSpecialPrice.setOnCheckedChangeListener((view, state) -> updateUiPriceFormState());
+    }
+
+    private void showBarCodeScanningDialog() {
+        Intent intent = new Intent(getContext(), BarCodeScannerActivity.class);
+        startActivityForResult(intent, BAR_CODE_RESULT);
     }
 
     private void deleteCurrentAcquisitionItem() {
