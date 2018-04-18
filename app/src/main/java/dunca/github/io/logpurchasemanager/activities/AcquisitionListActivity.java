@@ -16,10 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,10 +36,12 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
     private FloatingActionButton mFab;
 
+    private List<Acquisition> mOriginalAcquisitionList;
     private List<Acquisition> mAcquisitionList;
 
     private RecyclerView mRvAcquisitions;
     private TextView mTvNoAcquisitions;
+    private AcquisitionListRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +91,9 @@ public class AcquisitionListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        mAcquisitionList = DatabaseHelper.getLatestInstance().getAcquisitionDao().queryForAll();
+        mOriginalAcquisitionList = DatabaseHelper.getLatestInstance().getAcquisitionDao().queryForAll();
 
-        if (mAcquisitionList.isEmpty()) {
+        if (mOriginalAcquisitionList.isEmpty()) {
             mTvNoAcquisitions.setVisibility(View.VISIBLE);
             mRvAcquisitions.setVisibility(View.GONE);
         } else {
@@ -97,11 +101,14 @@ public class AcquisitionListActivity extends AppCompatActivity {
             mRvAcquisitions.setVisibility(View.VISIBLE);
             setupAcquisitionRecyclerView();
         }
+
+        mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
     }
 
     private void setupAcquisitionRecyclerView() {
         mRvAcquisitions.setLayoutManager(new LinearLayoutManager(this));
-        mRvAcquisitions.setAdapter(new AcquisitionListRecyclerViewAdapter());
+        mAdapter = new AcquisitionListRecyclerViewAdapter();
+        mRvAcquisitions.setAdapter(mAdapter);
     }
 
     class AcquisitionListRecyclerViewAdapter extends RecyclerView.Adapter<AcquisitionItemViewHolder> {
@@ -132,6 +139,11 @@ public class AcquisitionListActivity extends AppCompatActivity {
         public int getItemCount() {
             return mAcquisitionList.size();
         }
+
+        void useOriginalList() {
+            mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
+            notifyDataSetChanged();
+        }
     }
 
     class AcquisitionItemViewHolder extends RecyclerView.ViewHolder {
@@ -149,7 +161,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
             mTvAcquisitionDate = itemView.findViewById(R.id.tvAcquisitionDate);
 
             itemView.setOnClickListener(v -> {
-                startMainActivity(mAcquisitionList.get(getAdapterPosition()));
+                startMainActivity(mOriginalAcquisitionList.get(getAdapterPosition()));
             });
         }
     }
@@ -182,7 +194,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
         TextView tvDate = listFilteringDialogView.findViewById(R.id.tvDate);
         EditText etFilterSerialNumber = listFilteringDialogView.findViewById(R.id.etFilterSerialNumber);
-        EditText etFilterAcquisitor = listFilteringDialogView.findViewById(R.id.etFilterAcquisitor);
+        EditText etFilterAcquirer = listFilteringDialogView.findViewById(R.id.etFilterAcquirer);
         EditText etFilterSupplier = listFilteringDialogView.findViewById(R.id.etFilterSupplier);
         CheckBox cbFilterByDate = listFilteringDialogView.findViewById(R.id.cbFilterByDate);
 
@@ -192,7 +204,6 @@ public class AcquisitionListActivity extends AppCompatActivity {
             DatePickerDialog.OnDateSetListener datePickListener = (v, year, month, dayOfMonth) -> {
                 Date pickedDate = new Date(year - 1900, month, dayOfMonth);
                 updateDateInTextView(tvDate, pickedDate);
-                // TODO do something with the date
             };
 
             Calendar currentCalendar = Calendar.getInstance();
@@ -207,7 +218,28 @@ public class AcquisitionListActivity extends AppCompatActivity {
         listFilteringDialogBuilder.setTitle("Filter the acquisition list");
 
         listFilteringDialogBuilder.setPositiveButton("OK", (dialog, buttonId) -> {
-            // TODO filter the list
+            String serialNumber = etFilterSerialNumber.getText().toString();
+            String acquirer = etFilterAcquirer.getText().toString();
+            String supplier = etFilterSupplier.getText().toString();
+
+            if (serialNumber.isEmpty() && acquirer.isEmpty() && supplier.isEmpty()
+                    && cbFilterByDate.isChecked()) {
+                // cancel all filtering
+
+                mAdapter.useOriginalList();
+            }
+
+            List<Acquisition> filteredAcquisitionList;
+
+            filteredAcquisitionList = filterBySerialNumber(serialNumber, mOriginalAcquisitionList);
+            filteredAcquisitionList = filterByAcquirer(acquirer, filteredAcquisitionList);
+            filteredAcquisitionList = filterBySupplier(supplier, filteredAcquisitionList);
+            filteredAcquisitionList = filterByDate(tvDate.getText().toString(), filteredAcquisitionList);
+
+            mAcquisitionList.clear();
+            mAcquisitionList.addAll(filteredAcquisitionList);
+
+            mAdapter.notifyDataSetChanged();
         });
 
         listFilteringDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
@@ -215,6 +247,55 @@ public class AcquisitionListActivity extends AppCompatActivity {
         });
 
         listFilteringDialogBuilder.show();
+    }
+
+    private List<Acquisition> filterBySerialNumber(String serialNumberPart, List<Acquisition> sourceAcquisitionList) {
+        List<Acquisition> filteredAcquisitionList = new ArrayList<>();
+
+        for (Acquisition acquisition : sourceAcquisitionList) {
+            if (acquisition.getSerialNumber().toLowerCase().startsWith(serialNumberPart)) {
+                filteredAcquisitionList.add(acquisition);
+            }
+        }
+
+        return filteredAcquisitionList;
+    }
+
+    private List<Acquisition> filterByAcquirer(String acquirerUsernamePart, List<Acquisition> sourceAcquisitionList) {
+        List<Acquisition> filteredAcquisitionList = new ArrayList<>();
+
+        for (Acquisition acquisition : sourceAcquisitionList) {
+            if (acquisition.getAcquirer().getUsername().toLowerCase().startsWith(acquirerUsernamePart.toLowerCase())) {
+                filteredAcquisitionList.add(acquisition);
+            }
+        }
+
+        return filteredAcquisitionList;
+    }
+
+    private List<Acquisition> filterBySupplier(String supplierNamePart, List<Acquisition> sourceAcquisitionList) {
+        List<Acquisition> filteredAcquisitionList = new ArrayList<>();
+
+        for (Acquisition acquisition : sourceAcquisitionList) {
+            if (acquisition.getSupplier().getName().toLowerCase().startsWith(supplierNamePart.toLowerCase())) {
+                filteredAcquisitionList.add(acquisition);
+            }
+        }
+
+        return filteredAcquisitionList;
+    }
+
+    private List<Acquisition> filterByDate(String exactDate, List<Acquisition> sourceAcquisitionList) {
+        List<Acquisition> filteredAcquisitionList = new ArrayList<>();
+
+        for (Acquisition acquisition : sourceAcquisitionList) {
+            String receptionDate = ISO_DATE_FORMAT.format(acquisition.getReceptionDate());
+            if (receptionDate.equals(exactDate)) {
+                filteredAcquisitionList.add(acquisition);
+            }
+        }
+
+        return filteredAcquisitionList;
     }
 
     private void updateDateInTextView(TextView textView, Date date) {
