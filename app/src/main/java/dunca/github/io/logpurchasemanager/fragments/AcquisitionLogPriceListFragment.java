@@ -233,7 +233,9 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
                     .and()
                     .eq(CommonFieldNames.LOG_QUALITY_CLASS_ID, logQualityClassId)
                     .and()
-                    .eq(CommonFieldNames.TREE_SPECIES_ID, treeSpeciesId);
+                    .eq(CommonFieldNames.TREE_SPECIES_ID, treeSpeciesId)
+                    .and()
+                    .eq(CommonFieldNames.IS_SPECIAL_PRICE, false);
 
             updateBuilder.updateColumnValue(CommonFieldNames.PRICE, price).update();
 
