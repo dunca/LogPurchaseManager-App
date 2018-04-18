@@ -32,8 +32,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.BarCodeScannerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activities.MainTabbedActivity"/>
+            android:parentActivityName=".activities.MainTabbedActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.PrintingActivity"></activity>
     </application>
 
 </manifest>
