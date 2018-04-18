@@ -72,6 +72,11 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private final DatabaseHelper mDbHelper;
 
+    /**
+     * Stores the value of {@link AcquisitionItem#isSpecialPrice} before the instance is updated
+     */
+    private boolean mExistingAcquisitionHadSpecialPrice;
+
     private List<TreeSpecies> mSpeciesList;
     private List<LogQualityClass> mLogQualityClassList;
 
@@ -187,6 +192,7 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private void initExistingAcquisitionItem(int acquisitionItemId) {
         mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
+        mExistingAcquisitionHadSpecialPrice = mExistingAcquisitionItem.isSpecialPrice();
     }
 
     private void initViews() {
@@ -334,9 +340,15 @@ public class AcquisitionItemFragment extends SmartFragment {
         } else {
             syncAcquisitionItemWithUi(mExistingAcquisitionItem);
 
-            mDbHelper.getAcquisitionItemDao().update(mExistingAcquisitionItem);
+            // the user switched from special price, for which the price is entered as is, to a
+            // not so special price, for which LogPrice entry is required
+            if (mExistingAcquisitionHadSpecialPrice && !mExistingAcquisitionItem.isSpecialPrice()) {
+                createLogPriceIfNecessary();
+            } else if (!mExistingAcquisitionHadSpecialPrice && mExistingAcquisitionItem.isSpecialPrice()) {
+                decrementLogPriceQuantity();
+            }
 
-            // TODO what if isSpecialPrice changes???
+            mDbHelper.getAcquisitionItemDao().update(mExistingAcquisitionItem);
 
             PopupUtil.snackbar(mFragmentView, "Updated existing acquisition item");
         }
@@ -350,19 +362,10 @@ public class AcquisitionItemFragment extends SmartFragment {
      * existing one
      */
     private void createLogPriceIfNecessary() {
-        QueryBuilder<LogPrice, Integer> queryBuilder = mDbHelper.getLogPriceDao().queryBuilder();
-
         List<LogPrice> logPriceList;
 
         try {
-            queryBuilder.where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId())
-                    .and()
-                    .eq(CommonFieldNames.TREE_SPECIES_ID, mExistingAcquisitionItem.getTreeSpecies().getId())
-                    .and()
-                    .eq(CommonFieldNames.LOG_QUALITY_CLASS_ID, mExistingAcquisitionItem.getLogQualityClass().getId());
-
-            logPriceList = queryBuilder.query();
+            logPriceList = getLogPriceQueryBuilder().query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -391,6 +394,43 @@ public class AcquisitionItemFragment extends SmartFragment {
         mDbHelper.getLogPriceDao().create(logPrice);
 
         PopupUtil.snackbar(mFragmentView, "New log price persisted");
+    }
+
+    private void decrementLogPriceQuantity() {
+        LogPrice logPrice;
+
+        try {
+            logPrice = getLogPriceQueryBuilder().queryForFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        logPrice.setQuantity(logPrice.getQuantity() - 1);
+        mDbHelper.getLogPriceDao().update(logPrice);
+    }
+
+    /**
+     * Gets a {@link QueryBuilder} instance that is set to query for {@link LogPrice} instances
+     * associated with the current {@link Acquisition} instance ({@link #mAcquisition}) and the
+     * current {@link AcquisitionItem} instance ({@link #mExistingAcquisitionItem})
+     *
+     * @return as above
+     */
+    private QueryBuilder<LogPrice, Integer> getLogPriceQueryBuilder() {
+        QueryBuilder<LogPrice, Integer> queryBuilder = mDbHelper.getLogPriceDao().queryBuilder();
+
+        try {
+            queryBuilder.where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId())
+                    .and()
+                    .eq(CommonFieldNames.TREE_SPECIES_ID, mExistingAcquisitionItem.getTreeSpecies().getId())
+                    .and()
+                    .eq(CommonFieldNames.LOG_QUALITY_CLASS_ID, mExistingAcquisitionItem.getLogQualityClass().getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return queryBuilder;
     }
 
     private void postAcquisitionUpdateEvents() {
