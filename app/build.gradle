@@ -49,4 +49,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.greenrobot/eventbus
     implementation group: 'org.greenrobot', name: 'eventbus', version: '3.1.1'
+
+    implementation 'me.dm7.barcodescanner:zxing:1.9.8'
 }
