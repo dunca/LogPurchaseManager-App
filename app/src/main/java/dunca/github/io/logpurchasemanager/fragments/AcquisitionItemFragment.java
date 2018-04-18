@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -324,15 +325,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             mExistingAcquisitionItem = acquisitionItem;
 
             if (!mExistingAcquisitionItem.isSpecialPrice()) {
-                LogPrice logPrice = new LogPrice(mExistingAcquisitionItem.getAcquisition(),
-                        mExistingAcquisitionItem.getAcquirer(),
-                        mExistingAcquisitionItem.getTreeSpecies(),
-                        mExistingAcquisitionItem.getLogQualityClass(),
-                        mDummyLogDiameterClass, 0, 1, false);
-
-                mDbHelper.getLogPriceDao().create(logPrice);
-
-                PopupUtil.snackbar(mFragmentView, "New log price persisted");
+                createLogPriceIfNecessary();
             }
 
             PopupUtil.snackbar(mFragmentView, "New acquisition item persisted");
@@ -349,6 +342,55 @@ public class AcquisitionItemFragment extends SmartFragment {
         }
 
         postAcquisitionUpdateEvents();
+    }
+
+    /**
+     * Creates a new {@link LogPrice} entry with the underlying {@link TreeSpecies} and
+     * {@link LogQualityClass} combination, or updates the {@link LogPrice#quantity} on the
+     * existing one
+     */
+    private void createLogPriceIfNecessary() {
+        QueryBuilder<LogPrice, Integer> queryBuilder = mDbHelper.getLogPriceDao().queryBuilder();
+
+        List<LogPrice> logPriceList;
+
+        try {
+            queryBuilder.where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId())
+                    .and()
+                    .eq(CommonFieldNames.TREE_SPECIES_ID, mExistingAcquisitionItem.getTreeSpecies().getId())
+                    .and()
+                    .eq(CommonFieldNames.LOG_QUALITY_CLASS_ID, mExistingAcquisitionItem.getLogQualityClass().getId());
+
+            logPriceList = queryBuilder.query();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (logPriceList.size() > 1) {
+            throw new RuntimeException("Programming bug. There should be one, shared, instance");
+        }
+
+        if (logPriceList.size() == 1) {
+            // a log price with these specs exists, update the quantity
+
+            LogPrice logPrice = logPriceList.get(0);
+            logPrice.setQuantity(logPrice.getQuantity() + 1);
+            mDbHelper.getLogPriceDao().update(logPrice);
+
+            PopupUtil.snackbar(mFragmentView, "Updated existing log price");
+            return;
+        }
+
+        LogPrice logPrice = new LogPrice(mExistingAcquisitionItem.getAcquisition(),
+                mExistingAcquisitionItem.getAcquirer(),
+                mExistingAcquisitionItem.getTreeSpecies(),
+                mExistingAcquisitionItem.getLogQualityClass(),
+                mDummyLogDiameterClass, 0, 1, false);
+
+        mDbHelper.getLogPriceDao().create(logPrice);
+
+        PopupUtil.snackbar(mFragmentView, "New log price persisted");
     }
 
     private void postAcquisitionUpdateEvents() {
