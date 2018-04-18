@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +42,13 @@ public class AcquisitionListActivity extends AppCompatActivity {
     private RecyclerView mRvAcquisitions;
     private TextView mTvNoAcquisitions;
     private AcquisitionListRecyclerViewAdapter mAdapter;
+
+    private String mLastSerialNumberFilteringPart;
+    private String mLastAcquirerUsernameFilteringPart;
+    private String mLastSupplierNameFilteringPart;
+    private String mLastFilteringDate;
+    private boolean mLastFilterByDateCheckboxState;
+    private boolean mFilteringCancelled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,12 +206,29 @@ public class AcquisitionListActivity extends AppCompatActivity {
         View listFilteringDialogView = getLayoutInflater().inflate(R.layout.activity_acquisition_list_filtering_dialog, null);
 
         TextView tvDate = listFilteringDialogView.findViewById(R.id.tvDate);
+
         EditText etFilterSerialNumber = listFilteringDialogView.findViewById(R.id.etFilterSerialNumber);
-        EditText etFilterAcquirer = listFilteringDialogView.findViewById(R.id.etFilterAcquirer);
-        EditText etFilterSupplier = listFilteringDialogView.findViewById(R.id.etFilterSupplier);
+
+        EditText etFilterAcquirerUsername = listFilteringDialogView.findViewById(R.id.etFilterAcquirerUsername);
+
+        EditText etFilterSupplierName = listFilteringDialogView.findViewById(R.id.etFilterSupplierName);
+
         CheckBox cbFilterByDate = listFilteringDialogView.findViewById(R.id.cbFilterByDate);
 
-        updateDateInTextView(tvDate, new Date());
+        if (mFilteringCancelled || TextUtils.isEmpty(mLastFilteringDate)) {
+            updateDateInTextView(tvDate, new Date());
+        } else if (!mFilteringCancelled) {
+            tvDate.setText(mLastFilteringDate);
+        }
+
+        if (!mFilteringCancelled) {
+            etFilterSerialNumber.setText(mLastSerialNumberFilteringPart);
+            etFilterAcquirerUsername.setText(mLastAcquirerUsernameFilteringPart);
+            etFilterSupplierName.setText(mLastSupplierNameFilteringPart);
+            cbFilterByDate.setChecked(mLastFilterByDateCheckboxState);
+        }
+
+        mFilteringCancelled = false;
 
         tvDate.setOnClickListener(view -> {
             DatePickerDialog.OnDateSetListener datePickListener = (v, year, month, dayOfMonth) -> {
@@ -224,11 +249,21 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
         listFilteringDialogBuilder.setPositiveButton("OK", (dialog, buttonId) -> {
             String serialNumber = etFilterSerialNumber.getText().toString();
-            String acquirer = etFilterAcquirer.getText().toString();
-            String supplier = etFilterSupplier.getText().toString();
+            mLastSerialNumberFilteringPart = serialNumber;
+
+            String acquirer = etFilterAcquirerUsername.getText().toString();
+            mLastAcquirerUsernameFilteringPart = acquirer;
+
+            String supplier = etFilterSupplierName.getText().toString();
+            mLastSupplierNameFilteringPart = supplier;
+
+            String date = tvDate.getText().toString();
+            mLastFilteringDate = date;
+
+            mLastFilterByDateCheckboxState = cbFilterByDate.isChecked();
 
             if (serialNumber.isEmpty() && acquirer.isEmpty() && supplier.isEmpty()
-                    && cbFilterByDate.isChecked()) {
+                    && !cbFilterByDate.isChecked()) {
                 // cancel all filtering
 
                 mAdapter.useOriginalList();
@@ -241,7 +276,10 @@ public class AcquisitionListActivity extends AppCompatActivity {
             filteredAcquisitionList = filterBySerialNumber(serialNumber, mOriginalAcquisitionList);
             filteredAcquisitionList = filterByAcquirer(acquirer, filteredAcquisitionList);
             filteredAcquisitionList = filterBySupplier(supplier, filteredAcquisitionList);
-            filteredAcquisitionList = filterByDate(tvDate.getText().toString(), filteredAcquisitionList);
+
+            if (cbFilterByDate.isChecked()) {
+                filteredAcquisitionList = filterByDate(date, filteredAcquisitionList);
+            }
 
             mAcquisitionList.clear();
             mAcquisitionList.addAll(filteredAcquisitionList);
@@ -252,7 +290,17 @@ public class AcquisitionListActivity extends AppCompatActivity {
         });
 
         listFilteringDialogBuilder.setNegativeButton("Cancel", (dialog, buttonId) -> {
+            // etFilterSerialNumber.setText("");
+            //
+            // etFilterAcquirerUsername.setText("");
+            //
+            // etFilterSupplierName.setText("");
+            //
+            // updateDateInTextView(tvDate, new Date());
+            //
+            // cbFilterByDate.setChecked(false);
 
+            mFilteringCancelled = true;
         });
 
         listFilteringDialogBuilder.show();
