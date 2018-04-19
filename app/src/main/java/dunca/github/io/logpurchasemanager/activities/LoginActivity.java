@@ -16,8 +16,8 @@ import java.sql.SQLException;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.data.model.Acquirer;
-import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 
 public class LoginActivity extends AppCompatActivity {
     private final String PROP_USERNAME = "prop_username";

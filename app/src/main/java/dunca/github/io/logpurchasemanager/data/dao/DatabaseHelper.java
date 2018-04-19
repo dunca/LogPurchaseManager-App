@@ -12,16 +12,16 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 import dunca.github.io.logpurchasemanager.data.StaticDataGenerator;
-import dunca.github.io.logpurchasemanager.data.model.Acquirer;
-import dunca.github.io.logpurchasemanager.data.model.Acquisition;
-import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
-import dunca.github.io.logpurchasemanager.data.model.LogPrice;
-import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
-import dunca.github.io.logpurchasemanager.data.model.Supplier;
-import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
-import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
-import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
-import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
+import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
+import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
+import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
+import io.github.dunca.logpurchasemanager.shared.model.LogPrice;
+import io.github.dunca.logpurchasemanager.shared.model.LogQualityClass;
+import io.github.dunca.logpurchasemanager.shared.model.Supplier;
+import io.github.dunca.logpurchasemanager.shared.model.TreeSpecies;
+import io.github.dunca.logpurchasemanager.shared.model.WoodCertification;
+import io.github.dunca.logpurchasemanager.shared.model.WoodRegion;
+import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getName();

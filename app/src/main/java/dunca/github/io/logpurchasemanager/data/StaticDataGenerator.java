@@ -3,12 +3,12 @@ package dunca.github.io.logpurchasemanager.data;
 import java.util.Arrays;
 
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.data.model.Acquirer;
-import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
-import dunca.github.io.logpurchasemanager.data.model.Supplier;
-import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
-import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
-import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
+import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
+import io.github.dunca.logpurchasemanager.shared.model.LogQualityClass;
+import io.github.dunca.logpurchasemanager.shared.model.Supplier;
+import io.github.dunca.logpurchasemanager.shared.model.TreeSpecies;
+import io.github.dunca.logpurchasemanager.shared.model.WoodCertification;
+import io.github.dunca.logpurchasemanager.shared.model.WoodRegion;
 
 public final class StaticDataGenerator {
     private DatabaseHelper mDatabaseHelper;

@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
-import dunca.github.io.logpurchasemanager.data.model.Acquisition;
+import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemListFragment;

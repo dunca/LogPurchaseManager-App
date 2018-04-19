@@ -31,8 +31,8 @@ import java.util.List;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.data.model.Acquisition;
-import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 
 public class AcquisitionListActivity extends AppCompatActivity {
     private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");

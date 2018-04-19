@@ -33,11 +33,11 @@ import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.data.model.Acquirer;
-import dunca.github.io.logpurchasemanager.data.model.Acquisition;
-import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
-import dunca.github.io.logpurchasemanager.data.model.Supplier;
-import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
+import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
+import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
+import io.github.dunca.logpurchasemanager.shared.model.Supplier;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 
 public class PrintingActivity extends AppCompatActivity {
     public static final int ACTION_REQUEST_FILE_STORAGE_PERMISSIONS = 1;

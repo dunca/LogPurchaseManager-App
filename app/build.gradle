@@ -22,6 +22,10 @@ android {
     }
 }
 
+repositories {
+    mavenLocal()
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -54,4 +58,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.3'
+
+    implementation 'io.github.dunca.logpurchasemanager.shared:LogPurchaseManager-Shared:1.0-SNAPSHOT'
 }

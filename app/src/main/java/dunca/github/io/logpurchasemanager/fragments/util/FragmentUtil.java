@@ -5,7 +5,7 @@ import android.widget.ArrayAdapter;
 
 import java.util.List;
 
-import dunca.github.io.logpurchasemanager.data.model.interfaces.Model;
+import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
 
 /**
  * Helper class with methods helpful to fragment classes

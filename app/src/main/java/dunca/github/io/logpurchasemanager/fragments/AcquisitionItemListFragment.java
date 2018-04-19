@@ -20,8 +20,8 @@ import java.util.List;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
-import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 

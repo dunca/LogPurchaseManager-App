@@ -24,8 +24,8 @@ import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.data.model.LogPrice;
-import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.LogPrice;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 
