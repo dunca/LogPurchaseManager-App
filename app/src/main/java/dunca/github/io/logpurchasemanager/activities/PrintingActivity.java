@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.function.ToDoubleFunction;
 
 import dunca.github.io.logpurchasemanager.R;
+import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
@@ -69,9 +71,11 @@ public class PrintingActivity extends AppCompatActivity {
 
     private DatabaseHelper mDbHelper;
 
+    private View mRootLayout;
     private Button mBtnGeneratePdf;
     private TextView mTvInvoiceContent;
     private CheckBox mCbPrintUsingNetValues;
+
     private List<AcquisitionItem> mAcquisitionItemList;
 
     @Override
@@ -94,6 +98,7 @@ public class PrintingActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        mRootLayout = findViewById(R.id.rootLayout);
         mBtnGeneratePdf = findViewById(R.id.btnGeneratePdf);
         mTvInvoiceContent = findViewById(R.id.tvInvoiceContent);
         mCbPrintUsingNetValues = findViewById(R.id.cbPrintUsingNetValues);
@@ -286,23 +291,31 @@ public class PrintingActivity extends AppCompatActivity {
             promptForFileStoragePermissions();
         }
 
-        // TODO error handling
-
         File pdfInvoiceDirectory = new File(Environment.getExternalStorageDirectory(), INVOICE_DIRECTORY_NAME);
-        pdfInvoiceDirectory.mkdirs();
+
+        Boolean rootDirectoryCreated = true;
+
+        if (!pdfInvoiceDirectory.exists()) {
+            rootDirectoryCreated = pdfInvoiceDirectory.mkdirs();
+
+            if (!rootDirectoryCreated) {
+                PopupUtil.snackbar(mRootLayout, R.string.activity_printing_could_not_create_invoice_directory_msg);
+                return;
+            }
+        }
 
         String acquisitionReceptionNumber = mAcquisition.getAcquirer().getUsername() + mAcquisition.getSerialNumber();
 
         String pdfFileName = String.format("invoice-%s.pdf", acquisitionReceptionNumber);
         File pdfInvoiceFile = new File(pdfInvoiceDirectory.getPath(), pdfFileName);
 
-        try {
-            pdfInvoiceFile.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (pdfInvoiceFile.exists()) {
+            pdfInvoiceFile.delete();
         }
 
         try (FileOutputStream fos = new FileOutputStream(pdfInvoiceFile)) {
+            pdfInvoiceFile.createNewFile();
+
             PdfDocument pdfDocument = new PdfDocument();
 
             mTvInvoiceContent.measure(0, 0);
@@ -318,8 +331,10 @@ public class PrintingActivity extends AppCompatActivity {
             pdfDocument.writeTo(fos);
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            PopupUtil.snackbar(mRootLayout, R.string.activity_printing_pdf_not_generated_msg);
         }
+
+        PopupUtil.snackbar(mRootLayout, R.string.activity_printing_pdf_generated_msg);
     }
 
     @Override
