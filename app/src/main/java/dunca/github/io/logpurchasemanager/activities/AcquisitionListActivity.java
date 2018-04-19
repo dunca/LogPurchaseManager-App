@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -157,6 +158,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
         private TextView mTvAcquirer;
         private TextView mTvSupplier;
         private TextView mTvAcquisitionDate;
+        private ImageButton mBtnPrint;
 
         AcquisitionItemViewHolder(View itemView) {
             super(itemView);
@@ -165,10 +167,21 @@ public class AcquisitionListActivity extends AppCompatActivity {
             mTvAcquirer = itemView.findViewById(R.id.tvAcquirer);
             mTvSupplier = itemView.findViewById(R.id.tvSupplierName);
             mTvAcquisitionDate = itemView.findViewById(R.id.tvAcquisitionDate);
+            mBtnPrint = itemView.findViewById(R.id.btnPrint);
 
             itemView.setOnClickListener(v -> {
                 startMainActivity(mOriginalAcquisitionList.get(getAdapterPosition()));
             });
+
+            mBtnPrint.setOnClickListener(v -> startPrintingActivity());
+        }
+
+        private void startPrintingActivity() {
+            Acquisition acquisition = mAcquisitionList.get(getAdapterPosition());
+
+            Intent intent = new Intent(AcquisitionListActivity.this, PrintingActivity.class);
+            intent.putExtra(PrintingActivity.EXTRA_ACQUISITION_ID, acquisition.getId());
+            startActivity(intent);
         }
     }
 
