@@ -15,8 +15,6 @@ import dunca.github.io.logpurchasemanager.data.StaticDataGenerator;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
-import dunca.github.io.logpurchasemanager.data.model.AcquisitionStatus;
-import dunca.github.io.logpurchasemanager.data.model.LogDiameterClass;
 import dunca.github.io.logpurchasemanager.data.model.LogPrice;
 import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.Supplier;
@@ -41,7 +39,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private RuntimeExceptionDao<TreeSpecies, Integer> mWoodSpeciesDao;
     private RuntimeExceptionDao<WoodCertification, Integer> mWoodCertificationDao;
     private RuntimeExceptionDao<LogQualityClass, Integer> mLogQualityClassDao;
-    private RuntimeExceptionDao<AcquisitionStatus, Integer> mAcquisitionStatusDao;
     private RuntimeExceptionDao<Supplier, Integer> mSupplierDao;
     private RuntimeExceptionDao<Acquisition, Integer> mAcquisitionDao;
     private RuntimeExceptionDao<AcquisitionItem, Integer> mAcquisitionItemDao;
@@ -77,7 +74,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         staticDataGenerator.createLogQualityClasses();
 
-        staticDataGenerator.createAcquisitionStatuses();
         staticDataGenerator.createSuppliers();
     }
 
@@ -125,14 +121,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         return mLogQualityClassDao;
-    }
-
-    public RuntimeExceptionDao<AcquisitionStatus, Integer> getAcquisitionStatusDao() {
-        if (mAcquisitionStatusDao == null) {
-            mAcquisitionStatusDao = getRuntimeExceptionDao(AcquisitionStatus.class);
-        }
-
-        return mAcquisitionStatusDao;
     }
 
     public RuntimeExceptionDao<Supplier, Integer> getSupplierDao() {
@@ -185,8 +173,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         createDatabaseTable(Acquirer.class);
         createDatabaseTable(Acquisition.class);
         createDatabaseTable(AcquisitionItem.class);
-        createDatabaseTable(AcquisitionStatus.class);
-        createDatabaseTable(LogDiameterClass.class);
         createDatabaseTable(LogPrice.class);
         createDatabaseTable(LogQualityClass.class);
         createDatabaseTable(Supplier.class);

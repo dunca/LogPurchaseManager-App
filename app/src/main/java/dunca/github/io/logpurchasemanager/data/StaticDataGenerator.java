@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
-import dunca.github.io.logpurchasemanager.data.model.AcquisitionStatus;
 import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.Supplier;
 import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
@@ -51,12 +50,6 @@ public final class StaticDataGenerator {
         LogQualityClass lc2 = new LogQualityClass("LQ", "Low Quality");
 
         mDatabaseHelper.getLogQualityClassDao().create(Arrays.asList(lc1, lc2));
-    }
-
-    public void createAcquisitionStatuses() {
-        AcquisitionStatus as1 = new AcquisitionStatus("Accepted");
-
-        mDatabaseHelper.getAcquisitionStatusDao().create(as1);
     }
 
     public void createSuppliers() {

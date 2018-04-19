@@ -26,9 +26,6 @@ public final class Acquisition implements Model {
     @DatabaseField(canBeNull = false)
     private Date receptionDate;
 
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-    private AcquisitionStatus acquisitionStatus;
-
     @DatabaseField(canBeNull = false)
     private String regionZone;
 
@@ -62,16 +59,18 @@ public final class Acquisition implements Model {
     @DatabaseField(canBeNull = false)
     private boolean isSynced;
 
+    @DatabaseField(canBeNull = false, defaultValue = "0")
+    private int serverAllocatedId;
+
     public Acquisition(String serialNumber, Acquirer acquirer, Supplier supplier,
-                       Date receptionDate, AcquisitionStatus acquisitionStatus, String regionZone,
-                       WoodRegion woodRegion, WoodCertification woodCertification,
-                       String observations, double totalValue, double totalGrossVolume, double totalNetVolume,
-                       double discountPercentage, double discountValue, boolean net, boolean isSynced) {
+                       Date receptionDate, String regionZone, WoodRegion woodRegion,
+                       WoodCertification woodCertification, String observations, double totalValue,
+                       double totalGrossVolume, double totalNetVolume, double discountPercentage,
+                       double discountValue, boolean net, boolean isSynced) {
         this.serialNumber = serialNumber;
         this.acquirer = acquirer;
         this.supplier = supplier;
         this.receptionDate = receptionDate;
-        this.acquisitionStatus = acquisitionStatus;
         this.regionZone = regionZone;
         this.woodRegion = woodRegion;
         this.woodCertification = woodCertification;

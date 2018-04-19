@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 @DatabaseTable
 public class LogPrice implements Model {
-    // TODO: switch to id if this is synced with the service
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -25,9 +24,6 @@ public class LogPrice implements Model {
     @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private LogQualityClass logQualityClass;
 
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-    private LogDiameterClass logDiameterClass;
-
     @DatabaseField(canBeNull = false)
     private double price;
 
@@ -37,14 +33,15 @@ public class LogPrice implements Model {
     @DatabaseField(canBeNull = false)
     private boolean isSynced;
 
+    @DatabaseField(canBeNull = false, defaultValue = "0")
+    private int serverAllocatedId;
+
     public LogPrice(Acquisition acquisition, Acquirer acquirer, TreeSpecies treeSpecies,
-                    LogQualityClass logQualityClass, LogDiameterClass logDiameterClass,
-                    double price, int quantity, boolean isSynced) {
+                    LogQualityClass logQualityClass, double price, int quantity, boolean isSynced) {
         this.acquisition = acquisition;
         this.acquirer = acquirer;
         this.treeSpecies = treeSpecies;
         this.logQualityClass = logQualityClass;
-        this.logDiameterClass = logDiameterClass;
         this.price = price;
         this.quantity = quantity;
         this.isSynced = isSynced;

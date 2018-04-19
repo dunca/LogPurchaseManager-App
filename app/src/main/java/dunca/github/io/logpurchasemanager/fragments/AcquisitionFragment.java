@@ -46,7 +46,6 @@ import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquirer;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
-import dunca.github.io.logpurchasemanager.data.model.AcquisitionStatus;
 import dunca.github.io.logpurchasemanager.data.model.Supplier;
 import dunca.github.io.logpurchasemanager.data.model.WoodCertification;
 import dunca.github.io.logpurchasemanager.data.model.WoodRegion;
@@ -396,7 +395,6 @@ public class AcquisitionFragment extends Fragment {
         acquisition.setAcquirer(getSelectedAcquirer());
         acquisition.setSupplier(getSelectedSupplier());
         acquisition.setReceptionDate(getSelectedDate());
-        acquisition.setAcquisitionStatus(getAcquisitionStatus());
         acquisition.setRegionZone(regionZone);
         acquisition.setWoodRegion(getSelectedWoodRegion());
         acquisition.setWoodCertification(getSelectedWoodCertification());
@@ -493,15 +491,6 @@ public class AcquisitionFragment extends Fragment {
             return ISO_DATE_FORMAT.parse(mTvDate.getText().toString());
         } catch (ParseException e) {
             throw new IllegalArgumentException("Programming error");
-        }
-    }
-
-    private AcquisitionStatus getAcquisitionStatus() {
-        // statuses seem to be unused, so pick the first one
-        try {
-            return mDbHelper.getAcquisitionStatusDao().queryBuilder().queryForFirst();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 

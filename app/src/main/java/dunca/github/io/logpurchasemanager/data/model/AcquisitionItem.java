@@ -42,10 +42,6 @@ public final class AcquisitionItem implements Model {
     @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private LogQualityClass logQualityClass;
 
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true,
-            foreignAutoCreate = true)
-    private LogDiameterClass logDiameterClass;
-
     @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private TreeSpecies treeSpecies;
 
@@ -61,12 +57,14 @@ public final class AcquisitionItem implements Model {
     @DatabaseField(canBeNull = false)
     private boolean isSynced;
 
+    @DatabaseField(canBeNull = false, defaultValue = "0")
+    private int serverAllocatedId;
+
     public AcquisitionItem(Acquisition acquisition, Acquirer acquirer, String logBarCode,
                            double netDiameter, double grossDiameter, double netLength,
                            double grossLength, double netVolume, double grossVolume,
-                           LogQualityClass logQualityClass, LogDiameterClass logDiameterClass,
-                           TreeSpecies treeSpecies, String observations, double price,
-                           boolean isSpecialPrice, boolean isSynced) {
+                           LogQualityClass logQualityClass, TreeSpecies treeSpecies,
+                           String observations, double price, boolean isSpecialPrice, boolean isSynced) {
         this.acquisition = acquisition;
         this.acquirer = acquirer;
         this.logBarCode = logBarCode;
@@ -77,7 +75,6 @@ public final class AcquisitionItem implements Model {
         this.netVolume = netVolume;
         this.grossVolume = grossVolume;
         this.logQualityClass = logQualityClass;
-        this.logDiameterClass = logDiameterClass;
         this.treeSpecies = treeSpecies;
         this.observations = observations;
         this.price = price;

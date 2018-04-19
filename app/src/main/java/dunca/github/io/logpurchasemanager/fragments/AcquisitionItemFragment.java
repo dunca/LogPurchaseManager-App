@@ -36,7 +36,6 @@ import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
 import dunca.github.io.logpurchasemanager.data.model.AcquisitionItem;
-import dunca.github.io.logpurchasemanager.data.model.LogDiameterClass;
 import dunca.github.io.logpurchasemanager.data.model.LogPrice;
 import dunca.github.io.logpurchasemanager.data.model.LogQualityClass;
 import dunca.github.io.logpurchasemanager.data.model.TreeSpecies;
@@ -90,9 +89,6 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private Acquisition mAcquisition;
     private AcquisitionItem mExistingAcquisitionItem;
-
-    // set to a dummy LogDiameterClass, since the feature is unused
-    private final LogDiameterClass mDummyLogDiameterClass = new LogDiameterClass("", "", 0, 0);
 
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
@@ -419,8 +415,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         LogPrice logPrice = new LogPrice(mExistingAcquisitionItem.getAcquisition(),
                 mExistingAcquisitionItem.getAcquirer(),
                 mExistingAcquisitionItem.getTreeSpecies(),
-                mExistingAcquisitionItem.getLogQualityClass(),
-                mDummyLogDiameterClass, 0, 1, false);
+                mExistingAcquisitionItem.getLogQualityClass(), 0, 1, false);
 
         mDbHelper.getLogPriceDao().create(logPrice);
 
@@ -479,7 +474,6 @@ public class AcquisitionItemFragment extends SmartFragment {
 
         acquisitionItem.setAcquisition(mAcquisition);
         acquisitionItem.setAcquirer(mAcquisition.getAcquirer());
-        acquisitionItem.setLogDiameterClass(mDummyLogDiameterClass);
 
         syncAcquisitionItemWithUi(acquisitionItem);
         return acquisitionItem;
