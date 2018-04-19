@@ -1,0 +1,32 @@
+${company_name}
+${company_fiscal_code}, ${company_country}, ${company_state}, ${company_city}, ${company_address}
+Tel.: ${company_tel}   Fax: ${company_fax}
+
+
+Specification for:${net_or_gross}
+Reception number :${acquirer_username}${acquisition_serial_number}
+Date             :${acquisition_date}
+
+Supplier         :${supplier_code}
+Name             :${supplier_name}
+Country          :${supplier_country}
+Address          :${supplier_address}
+Street           :${supplier_street}
+
+Observations     :${acquisition_observations}
+
+
+Acquirer         :${acquirer_username} ${acquirer_first_name} ${acquirer_last_name}
+
+-------------------------------------------------------------------------------------------
+Log code       Species        Quality class  Length         Diameter       Volume
+-------------------------------------------------------------------------------------------
+${acquisition_lines}
+-------------------------------------------------------------------------------------------
+
+Log count       :${log_count}
+Total volume    :${total_log_volume}
+Length average  :${length_average} 
+Diameter average:${diameter_average}
+Volume average  :${volume_average}
+                       

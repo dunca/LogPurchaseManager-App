@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Labels-->
+    <string name="activity_printing_net_value">net</string>
+    <string name="activity_printing_gross_value">gross</string>
+</resources>

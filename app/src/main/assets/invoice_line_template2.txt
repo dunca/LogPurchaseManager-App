@@ -1,0 +1,2 @@
+${log_code}${species}${quality_class}${length}${diameter}${volume}
+${log_observations}
