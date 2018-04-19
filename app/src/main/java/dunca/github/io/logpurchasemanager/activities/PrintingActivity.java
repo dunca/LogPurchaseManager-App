@@ -1,13 +1,21 @@
 package dunca.github.io.logpurchasemanager.activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-
-import com.google.zxing.common.StringUtils;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
 import org.apache.commons.text.StringSubstitutor;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.ToDoubleFunction;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
@@ -29,6 +38,8 @@ import dunca.github.io.logpurchasemanager.data.model.Supplier;
 import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 
 public class PrintingActivity extends AppCompatActivity {
+    public static final int ACTION_REQUEST_FILE_STORAGE_PERMISSIONS = 1;
+
     private static final String COMPANY_NAME = "S.C Example S.R.L";
     private static final String COMPANY_FISCAL_CODE = "RO 123456";
     private static final String COMPANY_COUNTRY = "Romania";
@@ -48,18 +59,28 @@ public class PrintingActivity extends AppCompatActivity {
 
     private static final int ACQUISITION_LINE_ELEMENT_WIDTH = 15;
 
+    private String INVOICE_DIRECTORY_NAME;
+
     private String mInvoiceTemplate;
     private String mInvoiceLineTemplate;
+
+    private boolean mNetInvoice;
     private Acquisition mAcquisition;
 
     private DatabaseHelper mDbHelper;
 
-    private boolean mNetInvoice;
+    private Button mBtnGeneratePdf;
+    private TextView mTvInvoiceContent;
+    private CheckBox mCbPrintUsingNetValues;
+    private List<AcquisitionItem> mAcquisitionItemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_printing);
+
+        initViews();
+        setupOnClickActions();
 
         try {
             mInvoiceTemplate = readResourceFile(TEMPLATE_INVOICE);
@@ -68,7 +89,28 @@ public class PrintingActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+        INVOICE_DIRECTORY_NAME = getApplicationInfo().loadLabel(getPackageManager()).toString();
         mDbHelper = DatabaseHelper.getLatestInstance();
+    }
+
+    private void initViews() {
+        mBtnGeneratePdf = findViewById(R.id.btnGeneratePdf);
+        mTvInvoiceContent = findViewById(R.id.tvInvoiceContent);
+        mCbPrintUsingNetValues = findViewById(R.id.cbPrintUsingNetValues);
+    }
+
+    private void setupOnClickActions() {
+        mCbPrintUsingNetValues.setOnCheckedChangeListener((view, isChecked) -> {
+            int labelId = isChecked ? R.string.activity_printing_use_net_values_label
+                    : R.string.activity_printing_use_gross_values_label;
+            mCbPrintUsingNetValues.setText(labelId);
+
+            mNetInvoice = isChecked;
+
+            updateInvoiceTextView();
+        });
+
+        mBtnGeneratePdf.setOnClickListener(view -> generatePdfDocument());
     }
 
     @Override
@@ -82,14 +124,28 @@ public class PrintingActivity extends AppCompatActivity {
         }
 
         initAcquisition(acquisitionId);
+        initAcquisitionItemList(acquisitionId);
 
-        String invoice = getInvoice();
+        updateInvoiceTextView();
+    }
 
-        System.out.println(invoice);
+    private void updateInvoiceTextView() {
+        mTvInvoiceContent.setText(getInvoice());
     }
 
     private void initAcquisition(int acquisitionId) {
         mAcquisition = mDbHelper.getAcquisitionDao().queryForId(acquisitionId);
+    }
+
+    private void initAcquisitionItemList(int acquisitionId) {
+        try {
+            mAcquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
+                    .where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+                    .query();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String getInvoice() {
@@ -116,13 +172,13 @@ public class PrintingActivity extends AppCompatActivity {
         values.put("company_tel", COMPANY_TEL);
         values.put("company_fax", COMPANY_FAX);
 
-        String netOrGross = getString(mNetInvoice ? R.string.activity_printing_net_value : R.string.activity_printing_gross_value);
+        String netOrGross = getString(mNetInvoice ? R.string.activity_printing_net_placeholder
+                : R.string.activity_printing_gross_placeholder);
         values.put("net_or_gross", netOrGross);
 
         values.put("acquirer_username", mAcquisition.getAcquirer().getUsername());
         values.put("acquisition_serial_number", mAcquisition.getSerialNumber());
         values.put("acquisition_date", ISO_DATE_FORMAT.format(mAcquisition.getReceptionDate()));
-
 
         Supplier supplier = mAcquisition.getSupplier();
         values.put("supplier_code", supplier.getCode());
@@ -138,11 +194,11 @@ public class PrintingActivity extends AppCompatActivity {
         values.put("acquirer_first_name", acquirer.getFirstName());
         values.put("acquirer_last_name", acquirer.getLastName());
 
-        values.put("log_count", "XX");
-        values.put("total_log_volume", "XX");
-        values.put("length_average", "XX");
-        values.put("diameter_average", "XX");
-        values.put("volume_average", "XX");
+        values.put("log_count", String.valueOf(getLogCount()));
+        values.put("total_log_volume", StringFormatUtil.round(getTotalVolume()));
+        values.put("length_average", StringFormatUtil.round(getLengthAverage()));
+        values.put("diameter_average", StringFormatUtil.round(getDiameterAverage()));
+        values.put("volume_average", StringFormatUtil.round(getVolumeAverage()));
 
         return new StringSubstitutor(values).replace(mInvoiceTemplate);
     }
@@ -168,22 +224,10 @@ public class PrintingActivity extends AppCompatActivity {
         return new StringSubstitutor(values).replace(mInvoiceLineTemplate);
     }
 
-
     public String getInvoiceLines() {
         StringBuilder invoiceLines = new StringBuilder();
 
-        List<AcquisitionItem> acquisitionItemList;
-
-        try {
-            acquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
-                    .where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId())
-                    .query();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        for (AcquisitionItem acquisitionItem : acquisitionItemList) {
+        for (AcquisitionItem acquisitionItem : mAcquisitionItemList) {
             String invoiceLine = getInvoiceLine(acquisitionItem);
 
             invoiceLines.append(invoiceLine).append(NEW_LINE).append(NEW_LINE);
@@ -211,5 +255,88 @@ public class PrintingActivity extends AppCompatActivity {
 
             return lines.toString();
         }
+    }
+
+    private int getLogCount() {
+        return mAcquisitionItemList.size();
+    }
+
+    private double getTotalVolume() {
+        return mNetInvoice ? mAcquisition.getTotalNetVolume() : mAcquisition.getTotalGrossVolume();
+    }
+
+    private double getLengthAverage() {
+        return getAverageOf(item -> mNetInvoice ? item.getNetLength() : item.getGrossLength());
+    }
+
+    private double getDiameterAverage() {
+        return getAverageOf(item -> mNetInvoice ? item.getNetDiameter() : item.getGrossDiameter());
+    }
+
+    private double getVolumeAverage() {
+        return getAverageOf(item -> mNetInvoice ? item.getNetVolume() : item.getGrossVolume());
+    }
+
+    private double getAverageOf(ToDoubleFunction<AcquisitionItem> doublePropertyGetter) {
+        return mAcquisitionItemList.stream().mapToDouble(doublePropertyGetter).average().getAsDouble();
+    }
+
+    private void generatePdfDocument() {
+        if (!hasFileStoragePermissions()) {
+            promptForFileStoragePermissions();
+        }
+
+        // TODO error handling
+
+        File pdfInvoiceDirectory = new File(Environment.getExternalStorageDirectory(), INVOICE_DIRECTORY_NAME);
+        pdfInvoiceDirectory.mkdirs();
+
+        String acquisitionReceptionNumber = mAcquisition.getAcquirer().getUsername() + mAcquisition.getSerialNumber();
+
+        String pdfFileName = String.format("invoice-%s.pdf", acquisitionReceptionNumber);
+        File pdfInvoiceFile = new File(pdfInvoiceDirectory.getPath(), pdfFileName);
+
+        try {
+            pdfInvoiceFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(pdfInvoiceFile)) {
+            PdfDocument pdfDocument = new PdfDocument();
+
+            mTvInvoiceContent.measure(0, 0);
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(mTvInvoiceContent.getMeasuredWidth(),
+                    mTvInvoiceContent.getMeasuredHeight(), 1).create();
+
+            PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+
+            mTvInvoiceContent.draw(page.getCanvas());
+
+            pdfDocument.finishPage(page);
+
+            pdfDocument.writeTo(fos);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == ACTION_REQUEST_FILE_STORAGE_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            generatePdfDocument();
+        }
+    }
+
+    private boolean hasFileStoragePermissions() {
+        return checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void promptForFileStoragePermissions() {
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, ACTION_REQUEST_FILE_STORAGE_PERMISSIONS);
     }
 }
