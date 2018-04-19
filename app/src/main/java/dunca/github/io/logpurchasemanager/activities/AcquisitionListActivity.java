@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.data.model.Acquisition;
+import dunca.github.io.logpurchasemanager.data.model.constants.CommonFieldNames;
 
 public class AcquisitionListActivity extends AppCompatActivity {
     private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,10 +53,14 @@ public class AcquisitionListActivity extends AppCompatActivity {
     private boolean mLastFilterByDateCheckboxState;
     private boolean mFilteringCancelled;
 
+    private DatabaseHelper mDbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_acquisition_list);
+
+        mDbHelper = DatabaseHelper.getLatestInstance();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,7 +100,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        mOriginalAcquisitionList = DatabaseHelper.getLatestInstance().getAcquisitionDao().queryForAll();
+        mOriginalAcquisitionList =mDbHelper.getAcquisitionDao().queryForAll();
         mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
 
         if (!mOriginalAcquisitionList.isEmpty()) {
@@ -133,6 +139,10 @@ public class AcquisitionListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull AcquisitionItemViewHolder holder, int position) {
             Acquisition acquisition = mAcquisitionList.get(position);
+
+            if (!acquisitionHasItems(acquisition.getId())) {
+                holder.mBtnPrint.setVisibility(View.GONE);
+            }
 
             holder.mTvSerialNumber.setText(acquisition.getSerialNumber());
             holder.mTvAcquirer.setText(acquisition.getAcquirer().getUsername());
@@ -356,5 +366,15 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
     private void updateDateInTextView(TextView textView, Date date) {
         textView.setText(ISO_DATE_FORMAT.format(date));
+    }
+
+    private boolean acquisitionHasItems(int acquisitionId) {
+        try {
+            return mDbHelper.getAcquisitionItemDao().queryBuilder().where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+                    .countOf() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
