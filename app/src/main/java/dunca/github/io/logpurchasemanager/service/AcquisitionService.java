@@ -4,6 +4,7 @@ import java.util.List;
 
 import dunca.github.io.logpurchasemanager.service.inferfaces.Service;
 import io.github.dunca.logpurchasemanager.shared.model.custom.FullAcquisition;
+import io.github.dunca.logpurchasemanager.shared.model.custom.FullAggregation;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -29,8 +30,15 @@ public class AcquisitionService extends Service {
         sendRequest(mService.postFullAcquisitionList(fullAcquisitionList), callback);
     }
 
+    public void postAggregation(Callback<FullAggregation> callback, FullAggregation aggregation) {
+        sendRequest(mService.patchAggregation(aggregation), callback);
+    }
+
     interface AcquisitionServiceImpl {
         @POST("fullacquisition")
         Call<List<FullAcquisition>> postFullAcquisitionList(@Body List<FullAcquisition> fullAcquisitionList);
+
+        @POST("aggregation")
+        Call<FullAggregation> patchAggregation(@Body FullAggregation aggregation);
     }
 }
