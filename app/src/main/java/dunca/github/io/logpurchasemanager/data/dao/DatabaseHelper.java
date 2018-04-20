@@ -11,7 +11,6 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-import dunca.github.io.logpurchasemanager.data.StaticDataGenerator;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
 import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
@@ -63,24 +62,12 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             throw new RuntimeException(message);
         }
-
-        StaticDataGenerator staticDataGenerator = new StaticDataGenerator(this);
-
-        staticDataGenerator.createAcquirers();
-
-        staticDataGenerator.createWoodRegions();
-        staticDataGenerator.createTreeSpecies();
-        staticDataGenerator.createWoodCertifications();
-
-        staticDataGenerator.createLogQualityClasses();
-
-        staticDataGenerator.createSuppliers();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource,
                           int oldVersion, int newVersion) {
-        // TODO
+
     }
 
     public RuntimeExceptionDao<Acquirer, Integer> getAcquirerDao() {
@@ -183,5 +170,9 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private <T extends Model> void createDatabaseTable(Class<T> modelClass) throws SQLException {
         TableUtils.createTable(mConnectionSource, modelClass);
+    }
+
+    public <T extends Model> void clearTable(Class<T> modelClass) throws SQLException {
+        TableUtils.clearTable(mConnectionSource, modelClass);
     }
 }
