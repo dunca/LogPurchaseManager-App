@@ -210,4 +210,22 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 .eq(CommonFieldNames.IS_SYNCED, isSynced)
                 .query();
     }
+
+    public void markFullAcquisitionsAsSynced(List<FullAcquisition> fullAcquisitionList) {
+        for (FullAcquisition fullAcquisition : fullAcquisitionList) {
+            Acquisition acquisition = fullAcquisition.getAcquisition();
+            acquisition.setSynced(true);
+            getAcquisitionDao().update(acquisition);
+
+            for (AcquisitionItem acquisitionItem : fullAcquisition.getAcquisitionItemList()) {
+                acquisitionItem.setSynced(true);
+                getAcquisitionItemDao().update(acquisitionItem);
+            }
+
+            for (LogPrice logPrice : fullAcquisition.getLogPriceList()) {
+                logPrice.setSynced(true);
+                getLogPriceDao().update(logPrice);
+            }
+        }
+    }
 }
