@@ -34,6 +34,11 @@ import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringValidationUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
+import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
+import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
 import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
 import io.github.dunca.logpurchasemanager.shared.model.LogPrice;
@@ -41,11 +46,6 @@ import io.github.dunca.logpurchasemanager.shared.model.LogQualityClass;
 import io.github.dunca.logpurchasemanager.shared.model.TreeSpecies;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
-import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
-import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
-import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
-import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
-import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -355,6 +355,9 @@ public class AcquisitionItemFragment extends SmartFragment {
             AcquisitionItem acquisitionItem = createAcquisitionItemMatchingUi();
 
             mDbHelper.getAcquisitionItemDao().create(acquisitionItem);
+            acquisitionItem.setAppAllocatedId(acquisitionItem.getId());
+            mDbHelper.getAcquisitionItemDao().update(acquisitionItem);
+
             mExistingAcquisitionItem = acquisitionItem;
 
             if (!mExistingAcquisitionItem.isSpecialPrice()) {
@@ -418,6 +421,8 @@ public class AcquisitionItemFragment extends SmartFragment {
                 mExistingAcquisitionItem.getLogQualityClass(), 0, 1, false);
 
         mDbHelper.getLogPriceDao().create(logPrice);
+        logPrice.setAppAllocatedId(logPrice.getId());
+        mDbHelper.getLogPriceDao().update(logPrice);
 
         PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_item_new_log_price_persisted_msg));
     }

@@ -43,6 +43,10 @@ import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
+import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
 import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
@@ -51,10 +55,6 @@ import io.github.dunca.logpurchasemanager.shared.model.WoodCertification;
 import io.github.dunca.logpurchasemanager.shared.model.WoodRegion;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
-import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
-import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
-import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
-import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 
 public class AcquisitionFragment extends Fragment {
     private static final String PROP_LAST_ACQUISITION_ID = "prop_last_acquisition_id";
@@ -446,7 +446,10 @@ public class AcquisitionFragment extends Fragment {
         // not working with an existing acquisition item
         if (mExistingAcquisition == null) {
             Acquisition acquisition = createAcquisitionMatchingUi();
+
             mDbHelper.getAcquisitionDao().create(acquisition);
+            acquisition.setAppAllocatedId(acquisition.getId());
+            mDbHelper.getAcquisitionDao().update(acquisition);
 
             saveAcquisitionSerialNumber(acquisition);
 
