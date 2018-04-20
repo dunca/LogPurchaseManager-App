@@ -12,4 +12,5 @@
     <string name="activity_acquisition_list_acquirer_label">Acquirer:</string>
     <string name="activity_acquisition_list_supplier_label">Supplier:</string>
     <string name="activity_acquisition_list_acquisition_date_label">Acquisition date:</string>
+    <string name="activity_acquisition_list_filtering_menu_label">Filter</string>
 </resources>
