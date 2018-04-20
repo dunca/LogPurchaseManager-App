@@ -27,6 +27,7 @@ import dunca.github.io.logpurchasemanager.service.StaticDataService;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import io.github.dunca.logpurchasemanager.shared.model.custom.FullAcquisition;
+import io.github.dunca.logpurchasemanager.shared.model.custom.FullAggregation;
 import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
 import retrofit2.Response;
 
@@ -186,7 +187,8 @@ public class LoginActivity extends AppCompatActivity {
         if (id == R.id.action_sync_static_data) {
             syncStaticData();
         } else if (id == R.id.action_sync_acquisitions) {
-            syncAcquisitions();
+            syncNewAcquisitions();
+            syncModifiedAcquisitions();
         }
 
         return super.onOptionsItemSelected(item);
@@ -221,27 +223,18 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void syncAcquisitions() {
-        long unsyncedAcquisitions;
-
-        try {
-            unsyncedAcquisitions = mDbHelper.getAcquisitionDao().queryBuilder()
-                    .where().eq(CommonFieldNames.IS_SYNCED, false).countOf();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (unsyncedAcquisitions == 0) {
-            PopupUtil.snackbar(mRootLayout, R.string.activity_login_no_acquisitions_to_sync);
-            return;
-        }
-
+    private void syncNewAcquisitions() {
         List<FullAcquisition> fullAcquisitionList;
 
         try {
-            fullAcquisitionList = mDbHelper.getUnsyncedAcquisitions();
+            fullAcquisitionList = mDbHelper.getNeverSyncedAcquisitions();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+
+        if (fullAcquisitionList.isEmpty()) {
+            PopupUtil.snackbar(mRootLayout, R.string.activity_login_no_acquisitions_to_sync);
+            return;
         }
 
         AcquisitionService.getInstance().postFullAcquisitionList(new Callback<List<FullAcquisition>>(this) {
@@ -251,7 +244,7 @@ public class LoginActivity extends AppCompatActivity {
                     List<FullAcquisition> list = response.body();
                     mDbHelper.markFullAcquisitionsAsSynced(list);
 
-                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_acquisitions_msg);
+                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_new_acquisitions_msg);
                 } else {
                     PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
                 }
@@ -263,6 +256,38 @@ public class LoginActivity extends AppCompatActivity {
                 PopupUtil.serviceUnreachableSnackbar(mRootLayout);
             }
         }, fullAcquisitionList);
+    }
+
+    private void syncModifiedAcquisitions() {
+        FullAggregation aggregation;
+
+        try {
+            aggregation = mDbHelper.getPreviouslySyncedUnsyncedData();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (aggregation.getAcquisitionItemList().isEmpty() ||
+                aggregation.getAcquisitionList().isEmpty() ||
+                aggregation.getLogPriceList().isEmpty()) {
+            return;
+        }
+
+        AcquisitionService.getInstance().postAggregation(new Callback<FullAggregation>(this) {
+            @Override
+            public void onResponse(Response<FullAggregation> response) {
+                if (response.isSuccessful()) {
+                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_acquisitions_msg);
+                } else {
+                    PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                PopupUtil.serviceUnreachableSnackbar(mRootLayout);
+            }
+        }, aggregation);
     }
 
     /**

@@ -14,7 +14,8 @@
     <string name="activity_login_invalid_credentials_msg">Invalid credentials</string>
     <string name="activity_login_successfully_logged_in_msg">Successfully logged in</string>
     <string name="activity_login_successfully_synced_static_data_msg">Successfully synced static data</string>
-    <string name="activity_login_successfully_synced_acquisitions_msg">Successfully synced acquisition</string>
+    <string name="activity_login_successfully_synced_new_acquisitions_msg">Successfully synced new acquisitions</string>
+    <string name="activity_login_successfully_synced_acquisitions_msg">Successfully synced existing acquisitions</string>
     <string name="activity_login_cannot_save_static_data_msg">Cannot save static data</string>
     <string name="activity_login_sync_static_data_placeholder">Empty database. Sync with the service to continue</string>
     <string name="activity_login_no_acquisitions_to_sync">No acquisitions to sync</string>
