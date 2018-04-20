@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.sql.SQLException;
 
@@ -37,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mEtPassword;
     private Button mBtnLogin;
     private View mRootLayout;
+    private View mLoginLayout;
+    private TextView mTvSyncStaticDataPlaceholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +54,35 @@ public class LoginActivity extends AppCompatActivity {
         retrievePreviousUsername();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateLoginViewVisibility();
+    }
+
+    private void updateLoginViewVisibility() {
+        if (!dbHasAcquirers()) {
+            mLoginLayout.setVisibility(View.GONE);
+            mTvSyncStaticDataPlaceholder.setVisibility(View.VISIBLE);
+        } else {
+            mLoginLayout.setVisibility(View.VISIBLE);
+            mTvSyncStaticDataPlaceholder.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean dbHasAcquirers() {
+        return mDbHelper.getAcquirerDao().countOf() > 0;
+    }
+
     private void initViews() {
         mRootLayout = findViewById(R.id.rootLayout);
-
+        mLoginLayout = findViewById(R.id.loginLayout);
         mEtUsername = findViewById(R.id.etUsername);
         mEtPassword = findViewById(R.id.etPassword);
         mBtnLogin = findViewById(R.id.btnLogin);
+
+        mTvSyncStaticDataPlaceholder = findViewById(R.id.tvSyncStaticDataPlaceholder);
     }
 
     private void setOnClickListeners() {
@@ -177,6 +203,7 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
 
+                    updateLoginViewVisibility();
                     PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_static_data_msg);
                 } else {
                     PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
