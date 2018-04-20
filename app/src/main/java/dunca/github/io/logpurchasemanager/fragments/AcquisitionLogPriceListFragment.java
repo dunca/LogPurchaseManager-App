@@ -219,6 +219,7 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
 
         initViews();
 
+        logPrice.setSynced(false);
         mDbHelper.getLogPriceDao().update(logPrice);
 
         int acquisitionId = logPrice.getAcquisition().getId();

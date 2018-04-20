@@ -378,6 +378,7 @@ public class AcquisitionItemFragment extends SmartFragment {
                 decrementLogPriceQuantity();
             }
 
+            mExistingAcquisitionItem.setSynced(false);
             mDbHelper.getAcquisitionItemDao().update(mExistingAcquisitionItem);
 
             PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_item_updated_existing_acquisition_item_msg));
@@ -409,6 +410,7 @@ public class AcquisitionItemFragment extends SmartFragment {
 
             LogPrice logPrice = logPriceList.get(0);
             logPrice.setQuantity(logPrice.getQuantity() + 1);
+            logPrice.setSynced(false);
             mDbHelper.getLogPriceDao().update(logPrice);
 
             PopupUtil.snackbar(mFragmentView, getString(R.string.fragment_acquisition_item_updated_existing_log_price_msg));
@@ -437,6 +439,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         }
 
         logPrice.setQuantity(logPrice.getQuantity() - 1);
+        logPrice.setSynced(false);
         mDbHelper.getLogPriceDao().update(logPrice);
     }
 

@@ -465,6 +465,7 @@ public class AcquisitionFragment extends Fragment {
             updateDeleteButtonState();
         } else {
             syncAcquisitionWithUi(mExistingAcquisition);
+            mExistingAcquisition.setSynced(false);
             mDbHelper.getAcquisitionDao().update(mExistingAcquisition);
 
             PopupUtil.snackbar(getView(), getString(R.string.fragment_acquisition_updated_existing_acquisition_msg));
