@@ -169,10 +169,10 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     private <T extends Model> void createDatabaseTable(Class<T> modelClass) throws SQLException {
-        TableUtils.createTable(mConnectionSource, modelClass);
+        TableUtils.createTable(getConnectionSource(), modelClass);
     }
 
     public <T extends Model> void clearTable(Class<T> modelClass) throws SQLException {
-        TableUtils.clearTable(mConnectionSource, modelClass);
+        TableUtils.clearTable(getConnectionSource(), modelClass);
     }
 }
