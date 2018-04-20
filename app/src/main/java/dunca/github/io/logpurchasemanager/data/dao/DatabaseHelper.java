@@ -10,6 +10,8 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
@@ -20,6 +22,8 @@ import io.github.dunca.logpurchasemanager.shared.model.Supplier;
 import io.github.dunca.logpurchasemanager.shared.model.TreeSpecies;
 import io.github.dunca.logpurchasemanager.shared.model.WoodCertification;
 import io.github.dunca.logpurchasemanager.shared.model.WoodRegion;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.custom.FullAcquisition;
 import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
@@ -174,5 +178,36 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public <T extends Model> void clearTable(Class<T> modelClass) throws SQLException {
         TableUtils.clearTable(getConnectionSource(), modelClass);
+    }
+
+    public List<FullAcquisition> getUnsyncedAcquisitions() throws SQLException {
+        List<FullAcquisition> fullAcquisitionList = new ArrayList<>();
+
+        List<Acquisition> acquisitions = getAcquisitionDao().queryForEq(CommonFieldNames.IS_SYNCED, false);
+
+        for (Acquisition acquisition : acquisitions) {
+            List<AcquisitionItem> acquisitionItems = getAcquisitionItems(acquisition.getId(), false);
+            List<LogPrice> logPrices = getLogPrices(acquisition.getId(), false);
+
+            fullAcquisitionList.add(new FullAcquisition(acquisition, acquisitionItems, logPrices));
+        }
+
+        return fullAcquisitionList;
+    }
+
+    public List<AcquisitionItem> getAcquisitionItems(int acquisitionId, boolean isSynced) throws SQLException {
+        return getAcquisitionItemDao().queryBuilder().where()
+                .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+                .and()
+                .eq(CommonFieldNames.IS_SYNCED, isSynced)
+                .query();
+    }
+
+    public List<LogPrice> getLogPrices(int acquisitionId, boolean isSynced) throws SQLException {
+        return getLogPriceDao().queryBuilder().where()
+                .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+                .and()
+                .eq(CommonFieldNames.IS_SYNCED, isSynced)
+                .query();
     }
 }
