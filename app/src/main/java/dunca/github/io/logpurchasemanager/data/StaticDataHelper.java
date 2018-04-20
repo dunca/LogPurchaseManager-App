@@ -1,5 +1,7 @@
 package dunca.github.io.logpurchasemanager.data;
 
+import android.util.Log;
+
 import java.sql.SQLException;
 
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
@@ -12,6 +14,8 @@ import io.github.dunca.logpurchasemanager.shared.model.WoodRegion;
 import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
 
 public final class StaticDataHelper {
+    private static final String TAG = StaticDataHelper.class.getName();
+
     private DatabaseHelper mDbHelper;
 
     public StaticDataHelper(DatabaseHelper dbHelper) {
@@ -27,6 +31,8 @@ public final class StaticDataHelper {
         mDbHelper.getTreeSpeciesDao().create(staticData.getTreeSpecies());
         mDbHelper.getWoodCertificationDao().create(staticData.getWoodCertifications());
         mDbHelper.getWoodRegionDao().create(staticData.getWoodRegions());
+
+        Log.i(TAG, "Replaced static data");
     }
 
     private void clearStaticTables() throws SQLException {
@@ -36,5 +42,7 @@ public final class StaticDataHelper {
         mDbHelper.clearTable(TreeSpecies.class);
         mDbHelper.clearTable(WoodCertification.class);
         mDbHelper.clearTable(WoodRegion.class);
+
+        Log.i(TAG, "Cleared static data tables");
     }
 }
