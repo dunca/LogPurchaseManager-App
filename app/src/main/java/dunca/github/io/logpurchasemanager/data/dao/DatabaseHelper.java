@@ -214,16 +214,22 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void markFullAcquisitionsAsSynced(List<FullAcquisition> fullAcquisitionList) {
         for (FullAcquisition fullAcquisition : fullAcquisitionList) {
             Acquisition acquisition = fullAcquisition.getAcquisition();
+            acquisition.setId(acquisition.getAppAllocatedId());
             acquisition.setSynced(true);
+
             getAcquisitionDao().update(acquisition);
 
             for (AcquisitionItem acquisitionItem : fullAcquisition.getAcquisitionItemList()) {
+                acquisitionItem.setId(acquisitionItem.getAppAllocatedId());
                 acquisitionItem.setSynced(true);
+
                 getAcquisitionItemDao().update(acquisitionItem);
             }
 
             for (LogPrice logPrice : fullAcquisition.getLogPriceList()) {
+                logPrice.setId(logPrice.getAppAllocatedId());
                 logPrice.setSynced(true);
+
                 getLogPriceDao().update(logPrice);
             }
         }
