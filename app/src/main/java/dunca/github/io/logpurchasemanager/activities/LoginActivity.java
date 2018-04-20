@@ -15,15 +15,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.data.StaticDataHelper;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
+import dunca.github.io.logpurchasemanager.service.AcquisitionService;
 import dunca.github.io.logpurchasemanager.service.Callback;
 import dunca.github.io.logpurchasemanager.service.StaticDataService;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.custom.FullAcquisition;
 import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
 import retrofit2.Response;
 
@@ -211,15 +214,55 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                t.printStackTrace();
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
                 PopupUtil.serviceUnreachableSnackbar(mRootLayout);
             }
         });
     }
 
     private void syncAcquisitions() {
+        long unsyncedAcquisitions;
 
+        try {
+            unsyncedAcquisitions = mDbHelper.getAcquisitionDao().queryBuilder()
+                    .where().eq(CommonFieldNames.IS_SYNCED, false).countOf();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (unsyncedAcquisitions == 0) {
+            PopupUtil.snackbar(mRootLayout, R.string.activity_login_no_acquisitions_to_sync);
+            return;
+        }
+
+        List<FullAcquisition> fullAcquisitionList;
+
+        try {
+            fullAcquisitionList = mDbHelper.getUnsyncedAcquisitions();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        AcquisitionService.getInstance().postFullAcquisitionList(new Callback<List<FullAcquisition>>(this) {
+            @Override
+            public void onResponse(Response<List<FullAcquisition>> response) {
+                if (response.isSuccessful()) {
+                    List<FullAcquisition> list = response.body();
+                    mDbHelper.markFullAcquisitionsAsSynced(list);
+
+                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_acquisitions_msg);
+                } else {
+                    PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
+                PopupUtil.serviceUnreachableSnackbar(mRootLayout);
+            }
+        }, fullAcquisitionList);
     }
 
     /**
