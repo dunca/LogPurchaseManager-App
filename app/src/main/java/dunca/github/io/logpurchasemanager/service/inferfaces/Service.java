@@ -4,7 +4,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public abstract class Service {
-    private static final String SERVER_URL = "10.24.145.98";
+    private static final String SERVER_URL = "http://10.24.145.98";
     protected static final Retrofit RETROFIT;
 
     static {
