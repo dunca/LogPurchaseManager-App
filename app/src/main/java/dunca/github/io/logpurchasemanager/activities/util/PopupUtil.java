@@ -36,14 +36,14 @@ public final class PopupUtil {
     }
 
     public static void serviceErrorSnackbar(View view, int statusCode) {
-        Snackbar.make(view, getString(R.string.service_error_message_template, statusCode), Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar.make(view, getString(view, R.string.service_error_message_template, statusCode), Snackbar.LENGTH_INDEFINITE).show();
     }
 
     public static void serviceUnreachableSnackbar(View view) {
-        Snackbar.make(view, getString(R.string.service_unreachable), Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar.make(view, getString(view, R.string.service_unreachable), Snackbar.LENGTH_INDEFINITE).show();
     }
 
-    private static String getString(int stringId, Object... params) {
-        return Resources.getSystem().getString(stringId, params);
+    private static String getString(View view, int stringId, Object... params) {
+        return view.getContext().getString(stringId, params);
     }
 }
