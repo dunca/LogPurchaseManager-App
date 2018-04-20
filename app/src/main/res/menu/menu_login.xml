@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity">
+    <item
+        android:id="@+id/action_sync_static_data"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:orderInCategory="100"
+        android:title="@string/activity_login_sync_static_data_menu_label"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_sync_acquisitions"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:orderInCategory="100"
+        android:title="@string/activity_login_sync_acquisitions_menu_label"
+        app:showAsAction="never" />
+</menu>

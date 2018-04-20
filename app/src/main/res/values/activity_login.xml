@@ -5,6 +5,9 @@
     <string name="activity_login_username_label">Username</string>
     <string name="activity_login_password_label">Password</string>
     <string name="activity_login_button_label">Login</string>
+    <string name="activity_login_sync_static_data_menu_label">Sync static data</string>
+    <string name="activity_login_sync_acquisitions_menu_label">Sync acquisitions</string>
+
 
     <!--Messages-->
     <string name="activity_login_cannot_read_credentials_msg">Cannot read the user credentials</string>
