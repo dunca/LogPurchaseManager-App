@@ -13,6 +13,7 @@
     <string name="activity_login_cannot_read_credentials_msg">Cannot read the user credentials</string>
     <string name="activity_login_invalid_credentials_msg">Invalid credentials</string>
     <string name="activity_login_successfully_logged_in_msg">Successfully logged in</string>
-    <string name="activity_login_successfully_static_data_msg">Successfully synced static data</string>
+    <string name="activity_login_successfully_synced_static_data_msg">Successfully synced static data</string>
     <string name="activity_login_successfully_acquisitions_msg">Successfully synced %1$d acquisition(s)</string>
+    <string name="activity_login_cannot_save_static_data_msg">Cannot save static data</string>
 </resources>

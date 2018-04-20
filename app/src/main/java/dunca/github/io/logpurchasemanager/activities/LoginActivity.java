@@ -17,6 +17,7 @@ import java.sql.SQLException;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
+import dunca.github.io.logpurchasemanager.data.StaticDataHelper;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.service.StaticDataService;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
@@ -168,7 +169,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<StaticData> call, Response<StaticData> response) {
                 if (response.isSuccessful()) {
-                    // TODO
+                    StaticData staticData = response.body();
+
+                    try {
+                        new StaticDataHelper(mDbHelper).replaceWith(staticData);
+                    } catch (SQLException e) {
+                        PopupUtil.snackbar(mRootLayout, R.string.activity_login_cannot_save_static_data_msg);
+                        return;
+                    }
+
+                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_static_data_msg);
                 } else {
                     PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
                 }
@@ -176,6 +186,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StaticData> call, Throwable t) {
+                t.printStackTrace();
                 PopupUtil.serviceUnreachableSnackbar(mRootLayout);
             }
         });
