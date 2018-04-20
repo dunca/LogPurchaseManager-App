@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,8 +18,13 @@ import java.sql.SQLException;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
+import dunca.github.io.logpurchasemanager.service.StaticDataService;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
+import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     private final String PROP_USERNAME = "prop_username";
@@ -131,6 +138,51 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         mEtUsername.setText(username);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_sync_static_data) {
+            syncStaticData();
+        } else if (id == R.id.action_sync_acquisitions) {
+            syncAcquisitions();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void syncStaticData() {
+        StaticDataService.getInstance().getStaticData(new Callback<StaticData>() {
+            @Override
+            public void onResponse(Call<StaticData> call, Response<StaticData> response) {
+                if (response.isSuccessful()) {
+                    // TODO
+                } else {
+                    PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StaticData> call, Throwable t) {
+                PopupUtil.serviceUnreachableSnackbar(mRootLayout);
+            }
+        });
+    }
+
+    private void syncAcquisitions() {
+
     }
 
     /**

@@ -18,7 +18,7 @@ public final class StaticDataService extends Service {
         service.getStaticData().enqueue(callback);
     }
 
-    private synchronized static StaticDataService getInstance() {
+    public synchronized static StaticDataService getInstance() {
         if (instance == null) {
             instance = new StaticDataService();
         }

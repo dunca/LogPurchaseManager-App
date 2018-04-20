@@ -1,7 +1,12 @@
 <resources>
     <!--Labels-->
     <string name="app_name">Log purchase manager</string>
+
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="zero_float">0.00</string>
+
+    <!--Messages-->
+    <string name="service_error_message_template">Service error: %1$d</string>
+    <string name="service_unreachable">Service unreachable</string>
 </resources>
