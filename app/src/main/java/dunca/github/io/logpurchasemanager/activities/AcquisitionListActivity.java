@@ -210,7 +210,9 @@ public class AcquisitionListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_filter_list) {
-            openAcquisitionListFilteringDialog();
+            if (!mOriginalAcquisitionList.isEmpty()) {
+                openAcquisitionListFilteringDialog();
+            }
         }
 
         return super.onOptionsItemSelected(item);
