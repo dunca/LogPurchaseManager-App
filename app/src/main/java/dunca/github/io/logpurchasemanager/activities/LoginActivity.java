@@ -19,12 +19,11 @@ import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.data.StaticDataHelper;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
+import dunca.github.io.logpurchasemanager.service.Callback;
 import dunca.github.io.logpurchasemanager.service.StaticDataService;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
@@ -165,9 +164,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void syncStaticData() {
-        StaticDataService.getInstance().getStaticData(new Callback<StaticData>() {
+        StaticDataService.getInstance().getStaticData(new Callback<StaticData>(this) {
             @Override
-            public void onResponse(Call<StaticData> call, Response<StaticData> response) {
+            public void onResponse(Response<StaticData> response) {
                 if (response.isSuccessful()) {
                     StaticData staticData = response.body();
 
@@ -185,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<StaticData> call, Throwable t) {
+            public void onFailure(Throwable t) {
                 t.printStackTrace();
                 PopupUtil.serviceUnreachableSnackbar(mRootLayout);
             }

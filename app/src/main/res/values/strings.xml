@@ -9,4 +9,6 @@
     <!--Messages-->
     <string name="service_error_message_template">Service error: %1$d</string>
     <string name="service_unreachable">Service unreachable</string>
+    <string name="service_call_dialog_title">Please wait</string>
+    <string name="service_call_dialog_content">Talking to the service</string>
 </resources>

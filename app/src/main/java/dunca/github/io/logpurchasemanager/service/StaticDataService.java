@@ -3,7 +3,6 @@ package dunca.github.io.logpurchasemanager.service;
 import dunca.github.io.logpurchasemanager.service.inferfaces.Service;
 import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.http.GET;
 
 public final class StaticDataService extends Service {
@@ -15,7 +14,7 @@ public final class StaticDataService extends Service {
     }
 
     public void getStaticData(Callback<StaticData> callback) {
-        service.getStaticData().enqueue(callback);
+        sendRequest(service.getStaticData(), callback);
     }
 
     public synchronized static StaticDataService getInstance() {
