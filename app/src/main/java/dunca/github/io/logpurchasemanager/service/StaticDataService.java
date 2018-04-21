@@ -26,7 +26,7 @@ public final class StaticDataService extends Service {
     }
 
     interface StaticDataServiceImpl {
-        @GET("staticdata")
+        @GET("static_data")
         Call<StaticData> getStaticData();
     }
 }
