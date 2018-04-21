@@ -267,8 +267,8 @@ public class LoginActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        if (aggregation.getAcquisitionItemList().isEmpty() ||
-                aggregation.getAcquisitionList().isEmpty() ||
+        if (aggregation.getAcquisitionItemList().isEmpty() &&
+                aggregation.getAcquisitionList().isEmpty() &&
                 aggregation.getLogPriceList().isEmpty()) {
             return;
         }
@@ -277,6 +277,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response<FullAggregation> response) {
                 if (response.isSuccessful()) {
+                    FullAggregation list = response.body();
+                    mDbHelper.markAggregationAsSynced(list);
+
                     PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_acquisitions_msg);
                 } else {
                     PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());

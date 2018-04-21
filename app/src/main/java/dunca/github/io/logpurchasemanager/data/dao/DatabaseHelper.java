@@ -256,6 +256,29 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    public void markAggregationAsSynced(FullAggregation aggregation) {
+        for (Acquisition acquisition : aggregation.getAcquisitionList()) {
+            acquisition.setId(acquisition.getAppAllocatedId());
+            acquisition.setSynced(true);
+
+            getAcquisitionDao().update(acquisition);
+        }
+
+        for (AcquisitionItem acquisitionItem : aggregation.getAcquisitionItemList()) {
+            acquisitionItem.setId(acquisitionItem.getAppAllocatedId());
+            acquisitionItem.setSynced(true);
+
+            getAcquisitionItemDao().update(acquisitionItem);
+        }
+
+        for (LogPrice logPrice : aggregation.getLogPriceList()) {
+            logPrice.setId(logPrice.getAppAllocatedId());
+            logPrice.setSynced(true);
+
+            getLogPriceDao().update(logPrice);
+        }
+    }
+
     public FullAggregation getPreviouslySyncedUnsyncedData() throws SQLException {
         List<Acquisition> acquisitionList = getAcquisitionDao().queryBuilder().where()
                 .not().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0)
