@@ -4,8 +4,8 @@ import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 
-public class StringValidationUtil {
-    private StringValidationUtil() {
+public class InputValidationUtil {
+    private InputValidationUtil() {
 
     }
 
@@ -19,5 +19,15 @@ public class StringValidationUtil {
 
         textInputLayout.setError(null);
         return true;
+    }
+
+    public static boolean areNotEmpty(TextInputLayout... textInputLayouts) {
+        boolean allAreValid = true;
+
+        for (TextInputLayout textInputLayout : textInputLayouts) {
+            allAreValid &= isNotEmpty(textInputLayout);
+        }
+
+        return allAreValid;
     }
 }

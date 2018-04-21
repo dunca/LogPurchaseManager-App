@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,6 +39,7 @@ import java.util.stream.Stream;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.AcquisitionListActivity;
+import dunca.github.io.logpurchasemanager.activities.util.InputValidationUtil;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
@@ -82,6 +84,11 @@ public class AcquisitionFragment extends Fragment {
     private CheckBox mCbNetTotalValue;
     private Button mBtnSave;
     private Button mBtnDelete;
+
+    private TextInputLayout mTilSerialNumber;
+    private TextInputLayout mTilRegionZone;
+    private TextInputLayout mTilObservations;
+    private TextInputLayout mTilDiscountPercentage;
 
     private final DatabaseHelper mDbHelper;
 
@@ -163,6 +170,7 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private void initViews() {
+        mTilSerialNumber = mFragmentView.findViewById(R.id.tilSerialNumber);
         mEtSerialNumber = mFragmentView.findViewById(R.id.etSerialNumber);
 
         mSpinnerAcquirer = mFragmentView.findViewById(R.id.spinnerAcquirer);
@@ -177,14 +185,17 @@ public class AcquisitionFragment extends Fragment {
         ArrayAdapter woodRegionAdapter = createDefaultSpinnerAdapter(mWoodRegionList);
         mSpinnerWoodRegion.setAdapter(woodRegionAdapter);
 
+        mTilRegionZone = mFragmentView.findViewById(R.id.tilRegionZone);
         mEtRegionZone = mFragmentView.findViewById(R.id.etRegionZone);
 
         mSpinnerWoodCertification = mFragmentView.findViewById(R.id.spinnerWoodCertification);
         ArrayAdapter woodCertificationAdapter = createDefaultSpinnerAdapter(mWoodCertificationList);
         mSpinnerWoodCertification.setAdapter(woodCertificationAdapter);
 
+        mTilObservations = mFragmentView.findViewById(R.id.tilObservations);
         mEtObservations = mFragmentView.findViewById(R.id.edObservations);
 
+        mTilDiscountPercentage = mFragmentView.findViewById(R.id.tilDiscountPercentage);
         mEtDiscountPercentage = mFragmentView.findViewById(R.id.etDiscountPercentage);
         mEtDiscountPercentage.addTextChangedListener(new TextWatcher() {
             @Override
@@ -441,6 +452,10 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private void persistAcquisitionChanges() {
+        if (!inputFormsAreValid()) {
+            return;
+        }
+
         // not working with an existing acquisition item
         if (mExistingAcquisition == null) {
             Acquisition acquisition = createAcquisitionMatchingUi();
@@ -468,6 +483,10 @@ public class AcquisitionFragment extends Fragment {
 
             PopupUtil.snackbar(getView(), getString(R.string.fragment_acquisition_updated_existing_acquisition_msg));
         }
+    }
+
+    private boolean inputFormsAreValid() {
+        return InputValidationUtil.areNotEmpty(mTilSerialNumber, mTilRegionZone, mTilObservations, mTilDiscountPercentage);
     }
 
     private Acquirer getSelectedAcquirer() {

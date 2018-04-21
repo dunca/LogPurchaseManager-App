@@ -26,7 +26,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayout3"
+            android:id="@+id/tilSerialNumber"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -52,7 +52,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/fragment_acquisition_acquirer_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+            app:layout_constraintTop_toBottomOf="@+id/tilSerialNumber" />
 
         <Spinner
             android:id="@+id/spinnerAcquirer"
@@ -63,7 +63,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+            app:layout_constraintTop_toBottomOf="@+id/tilSerialNumber" />
 
         <TextView
             android:id="@+id/tvDate"
@@ -124,7 +124,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tvSupplierName" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayout6"
+            android:id="@+id/tilRegionZone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -150,7 +150,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/fragment_acquisition_wood_certification_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout6" />
+            app:layout_constraintTop_toBottomOf="@+id/tilRegionZone" />
 
         <Spinner
             android:id="@+id/spinnerWoodCertification"
@@ -161,10 +161,10 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView8"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout6" />
+            app:layout_constraintTop_toBottomOf="@+id/tilRegionZone" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayout7"
+            android:id="@+id/tilObservations"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -183,7 +183,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayout8"
+            android:id="@+id/tilDiscountPercentage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -191,7 +191,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout7">
+            app:layout_constraintTop_toBottomOf="@+id/tilObservations">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/etDiscountPercentage"
@@ -228,7 +228,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/fragment_acquisition_discount_value_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout8" />
+            app:layout_constraintTop_toBottomOf="@+id/tilDiscountPercentage" />
 
         <TextView
             android:id="@+id/tvDiscountValue"
