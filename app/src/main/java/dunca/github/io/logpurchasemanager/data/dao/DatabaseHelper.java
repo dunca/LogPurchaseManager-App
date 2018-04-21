@@ -165,7 +165,8 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     private <T extends Model> void clearTable(Class<T> modelClass) throws SQLException {
-        TableUtils.clearTable(getConnectionSource(), modelClass);
+        TableUtils.dropTable(getConnectionSource(), modelClass, true);
+        createTable(modelClass);
     }
 
     public void markAcquisitionDataAsSynced(AcquisitionData acquisitionData) {
