@@ -10,8 +10,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import org.greenrobot.eventbus.EventBus;
@@ -19,12 +17,12 @@ import org.greenrobot.eventbus.Subscribe;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
-import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemListFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionLogPriceListFragment;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
+import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
 
 public class MainTabbedActivity extends AppCompatActivity {
     public static final String EXTRA_ACQUISITION_ID = "extra_acquisition_id";

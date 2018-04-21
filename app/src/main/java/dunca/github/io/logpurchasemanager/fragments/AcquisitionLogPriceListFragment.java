@@ -30,9 +30,8 @@ import io.github.dunca.logpurchasemanager.shared.model.LogPrice;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 
 public class AcquisitionLogPriceListFragment extends SmartFragment {
-    private View mFragmentView;
-
     private final DatabaseHelper mDbHelper;
+    private View mFragmentView;
     private List<LogPrice> mLogPriceList;
 
     public AcquisitionLogPriceListFragment() {

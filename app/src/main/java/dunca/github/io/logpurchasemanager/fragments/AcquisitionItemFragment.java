@@ -49,18 +49,16 @@ import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
 import static android.app.Activity.RESULT_OK;
 
 public class AcquisitionItemFragment extends SmartFragment {
-    private static final int BAR_CODE_RESULT = 1;
     public static final String EXTRA_BAR_CODE = "extra_bar_code";
-
+    private static final int BAR_CODE_RESULT = 1;
+    private final DatabaseHelper mDbHelper;
     private ViewPager mViewPager;
     private View mFragmentView;
     private boolean mReceivedAcquisitionItemId;
-
     private TextView mTvNoAcquisitionsPlaceholder;
     private View mRootLayout;
     private Spinner mSpinnerSpecies;
     private Spinner mSpinnerQualityClass;
-
     private TextInputLayout mTilBarCode;
     private TextInputLayout mTilVolumetricPrice;
     private TextInputLayout mTilGrossLength;
@@ -68,7 +66,6 @@ public class AcquisitionItemFragment extends SmartFragment {
     private TextInputLayout mTilNetLength;
     private TextInputLayout mTilNetDiameter;
     private TextInputLayout mTilObservations;
-
     private EditText mEtBarCode;
     private Button mBtnScanLogBarCode;
     private CheckBox mCbSpecialPrice;
@@ -82,9 +79,6 @@ public class AcquisitionItemFragment extends SmartFragment {
     private EditText mEtObservations;
     private Button mBtnSave;
     private Button mBtnDelete;
-
-    private final DatabaseHelper mDbHelper;
-
     private List<TreeSpecies> mSpeciesList;
     private List<LogQualityClass> mLogQualityClassList;
 
@@ -93,6 +87,10 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
+    }
+
+    public static AcquisitionItemFragment newInstance() {
+        return new AcquisitionItemFragment();
     }
 
     private void initDbLists() {
@@ -104,10 +102,6 @@ public class AcquisitionItemFragment extends SmartFragment {
         }
 
         mLogQualityClassList = mDbHelper.getLogQualityClassDao().queryForAll();
-    }
-
-    public static AcquisitionItemFragment newInstance() {
-        return new AcquisitionItemFragment();
     }
 
     @Override

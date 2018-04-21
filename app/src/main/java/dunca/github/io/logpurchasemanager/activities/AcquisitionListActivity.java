@@ -126,75 +126,6 @@ public class AcquisitionListActivity extends AppCompatActivity {
         mRvAcquisitions.setAdapter(mAdapter);
     }
 
-    class AcquisitionListRecyclerViewAdapter extends RecyclerView.Adapter<AcquisitionItemViewHolder> {
-        @NonNull
-        @Override
-        public AcquisitionItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = getLayoutInflater().inflate(
-                    R.layout.activity_acquisition_list_acquisition_list_item, parent, false);
-
-            return new AcquisitionItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull AcquisitionItemViewHolder holder, int position) {
-            Acquisition acquisition = mAcquisitionList.get(position);
-
-            if (!acquisitionHasItems(acquisition.getId())) {
-                holder.mBtnPrint.setVisibility(View.GONE);
-            }
-
-            holder.mTvSerialNumber.setText(acquisition.getSerialNumber());
-            holder.mTvAcquirer.setText(acquisition.getAcquirer().getUsername());
-            holder.mTvSupplier.setText(acquisition.getSupplier().getName());
-
-            Date acquisitionDate = acquisition.getReceptionDate();
-            holder.mTvAcquisitionDate.setText(ISO_DATE_FORMAT.format(acquisitionDate));
-        }
-
-        @Override
-        public int getItemCount() {
-            return mAcquisitionList.size();
-        }
-
-        void useOriginalList() {
-            mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
-            notifyDataSetChanged();
-        }
-    }
-
-    class AcquisitionItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView mTvSerialNumber;
-        private TextView mTvAcquirer;
-        private TextView mTvSupplier;
-        private TextView mTvAcquisitionDate;
-        private ImageButton mBtnPrint;
-
-        AcquisitionItemViewHolder(View itemView) {
-            super(itemView);
-
-            mTvSerialNumber = itemView.findViewById(R.id.tvSerialNumber);
-            mTvAcquirer = itemView.findViewById(R.id.tvAcquirer);
-            mTvSupplier = itemView.findViewById(R.id.tvSupplierName);
-            mTvAcquisitionDate = itemView.findViewById(R.id.tvAcquisitionDate);
-            mBtnPrint = itemView.findViewById(R.id.btnPrint);
-
-            itemView.setOnClickListener(v -> {
-                startMainTabbedActivity(mOriginalAcquisitionList.get(getAdapterPosition()));
-            });
-
-            mBtnPrint.setOnClickListener(v -> startPrintingActivity());
-        }
-
-        private void startPrintingActivity() {
-            Acquisition acquisition = mAcquisitionList.get(getAdapterPosition());
-
-            Intent intent = new Intent(AcquisitionListActivity.this, PrintingActivity.class);
-            intent.putExtra(PrintingActivity.EXTRA_ACQUISITION_ID, acquisition.getId());
-            startActivity(intent);
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_acquisition_list, menu);
@@ -373,6 +304,75 @@ public class AcquisitionListActivity extends AppCompatActivity {
                     .countOf() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    class AcquisitionListRecyclerViewAdapter extends RecyclerView.Adapter<AcquisitionItemViewHolder> {
+        @NonNull
+        @Override
+        public AcquisitionItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = getLayoutInflater().inflate(
+                    R.layout.activity_acquisition_list_acquisition_list_item, parent, false);
+
+            return new AcquisitionItemViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull AcquisitionItemViewHolder holder, int position) {
+            Acquisition acquisition = mAcquisitionList.get(position);
+
+            if (!acquisitionHasItems(acquisition.getId())) {
+                holder.mBtnPrint.setVisibility(View.GONE);
+            }
+
+            holder.mTvSerialNumber.setText(acquisition.getSerialNumber());
+            holder.mTvAcquirer.setText(acquisition.getAcquirer().getUsername());
+            holder.mTvSupplier.setText(acquisition.getSupplier().getName());
+
+            Date acquisitionDate = acquisition.getReceptionDate();
+            holder.mTvAcquisitionDate.setText(ISO_DATE_FORMAT.format(acquisitionDate));
+        }
+
+        @Override
+        public int getItemCount() {
+            return mAcquisitionList.size();
+        }
+
+        void useOriginalList() {
+            mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
+            notifyDataSetChanged();
+        }
+    }
+
+    class AcquisitionItemViewHolder extends RecyclerView.ViewHolder {
+        private TextView mTvSerialNumber;
+        private TextView mTvAcquirer;
+        private TextView mTvSupplier;
+        private TextView mTvAcquisitionDate;
+        private ImageButton mBtnPrint;
+
+        AcquisitionItemViewHolder(View itemView) {
+            super(itemView);
+
+            mTvSerialNumber = itemView.findViewById(R.id.tvSerialNumber);
+            mTvAcquirer = itemView.findViewById(R.id.tvAcquirer);
+            mTvSupplier = itemView.findViewById(R.id.tvSupplierName);
+            mTvAcquisitionDate = itemView.findViewById(R.id.tvAcquisitionDate);
+            mBtnPrint = itemView.findViewById(R.id.btnPrint);
+
+            itemView.setOnClickListener(v -> {
+                startMainTabbedActivity(mOriginalAcquisitionList.get(getAdapterPosition()));
+            });
+
+            mBtnPrint.setOnClickListener(v -> startPrintingActivity());
+        }
+
+        private void startPrintingActivity() {
+            Acquisition acquisition = mAcquisitionList.get(getAdapterPosition());
+
+            Intent intent = new Intent(AcquisitionListActivity.this, PrintingActivity.class);
+            intent.putExtra(PrintingActivity.EXTRA_ACQUISITION_ID, acquisition.getId());
+            startActivity(intent);
         }
     }
 }

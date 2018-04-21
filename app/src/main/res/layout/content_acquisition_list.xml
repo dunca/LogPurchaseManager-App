@@ -12,7 +12,7 @@
         android:id="@+id/rvAcquisitionList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/activity_acquisition_list_acquisition_list_item" >
+        tools:listitem="@layout/activity_acquisition_list_acquisition_list_item">
 
     </android.support.v7.widget.RecyclerView>
 

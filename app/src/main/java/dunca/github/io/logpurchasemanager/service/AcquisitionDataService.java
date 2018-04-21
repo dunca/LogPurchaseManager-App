@@ -7,8 +7,8 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public class AcquisitionDataService extends Service {
-    private AcquisitionDataServiceImpl mService = RETROFIT.create(AcquisitionDataServiceImpl.class);
     private static AcquisitionDataService sInstance;
+    private AcquisitionDataServiceImpl mService = RETROFIT.create(AcquisitionDataServiceImpl.class);
 
     private AcquisitionDataService() {
 

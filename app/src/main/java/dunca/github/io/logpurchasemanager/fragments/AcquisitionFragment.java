@@ -63,11 +63,9 @@ public class AcquisitionFragment extends Fragment {
     private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     public static int sCurrentAcquisitionId = MethodParameterConstants.INVALID_INDEX;
-
+    private final DatabaseHelper mDbHelper;
     private Acquisition mExistingAcquisition;
-
     private View mFragmentView;
-
     private EditText mEtSerialNumber;
     private Spinner mSpinnerAcquirer;
     private TextView mTvDate;
@@ -84,14 +82,10 @@ public class AcquisitionFragment extends Fragment {
     private CheckBox mCbNetTotalValue;
     private Button mBtnSave;
     private Button mBtnDelete;
-
     private TextInputLayout mTilSerialNumber;
     private TextInputLayout mTilRegionZone;
     private TextInputLayout mTilObservations;
     private TextInputLayout mTilDiscountPercentage;
-
-    private final DatabaseHelper mDbHelper;
-
     private List<WoodRegion> mWoodRegionList;
     private List<WoodCertification> mWoodCertificationList;
     private List<Acquirer> mAcquirerList;
@@ -103,6 +97,19 @@ public class AcquisitionFragment extends Fragment {
         mDbHelper = DatabaseHelper.getLatestInstance();
 
         initDbLists();
+    }
+
+    public static AcquisitionFragment newInstance(int acquisitionId) {
+        AcquisitionFragment fragment = new AcquisitionFragment();
+
+        Bundle args = new Bundle();
+
+        args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
+        sCurrentAcquisitionId = acquisitionId;
+
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     /**
@@ -123,19 +130,6 @@ public class AcquisitionFragment extends Fragment {
 
         mSupplierList = mDbHelper.getSupplierDao().queryForAll();
         mSelectedSupplier = mSupplierList.get(0);
-    }
-
-    public static AcquisitionFragment newInstance(int acquisitionId) {
-        AcquisitionFragment fragment = new AcquisitionFragment();
-
-        Bundle args = new Bundle();
-
-        args.putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisitionId);
-        sCurrentAcquisitionId = acquisitionId;
-
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     @Override

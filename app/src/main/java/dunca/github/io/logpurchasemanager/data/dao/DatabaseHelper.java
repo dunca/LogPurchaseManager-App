@@ -52,6 +52,14 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         sLatestInstance = this;
     }
 
+    public static DatabaseHelper getLatestInstance() {
+        if (sLatestInstance == null) {
+            throw new IllegalStateException(DatabaseHelper.class.getSimpleName() + " has not been initialized");
+        }
+
+        return sLatestInstance;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
@@ -139,14 +147,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         return mLogPriceDao;
-    }
-
-    public static DatabaseHelper getLatestInstance() {
-        if (sLatestInstance == null) {
-            throw new IllegalStateException(DatabaseHelper.class.getSimpleName() + " has not been initialized");
-        }
-
-        return sLatestInstance;
     }
 
     private void createDatabaseTables() throws SQLException {

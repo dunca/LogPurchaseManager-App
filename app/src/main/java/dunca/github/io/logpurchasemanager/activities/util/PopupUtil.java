@@ -1,6 +1,5 @@
 package dunca.github.io.logpurchasemanager.activities.util;
 
-import android.content.res.Resources;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 

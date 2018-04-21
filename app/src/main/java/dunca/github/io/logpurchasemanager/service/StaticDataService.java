@@ -13,16 +13,16 @@ public final class StaticDataService extends Service {
 
     }
 
-    public void getStaticData(Callback<StaticData> callback) {
-        sendRequest(service.getStaticData(), callback);
-    }
-
     public synchronized static StaticDataService getInstance() {
         if (instance == null) {
             instance = new StaticDataService();
         }
 
         return instance;
+    }
+
+    public void getStaticData(Callback<StaticData> callback) {
+        sendRequest(service.getStaticData(), callback);
     }
 
     interface StaticDataServiceImpl {

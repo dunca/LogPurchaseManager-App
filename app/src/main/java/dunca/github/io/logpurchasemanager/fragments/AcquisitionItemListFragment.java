@@ -20,16 +20,15 @@ import java.util.List;
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
-import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
+import io.github.dunca.logpurchasemanager.shared.model.AcquisitionItem;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 
 public class AcquisitionItemListFragment extends SmartFragment {
-    private View mFragmentView;
-
-    private ViewPager mViewPager;
     private final DatabaseHelper mDbHelper;
+    private View mFragmentView;
+    private ViewPager mViewPager;
     private List<AcquisitionItem> mAcquisitionItemList;
 
     public AcquisitionItemListFragment() {
