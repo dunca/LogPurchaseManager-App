@@ -75,14 +75,13 @@ public class AcquisitionItemListFragment extends SmartFragment {
     }
 
     public void initUi() {
-        initAcquisitionItemList(AcquisitionFragment.sCurrentAcquisitionId);
+        initAcquisitionItemList();
         initViews();
     }
 
     private boolean acquisitionHasItems() {
         try {
-            return mDbHelper.getAcquisitionItemDao().queryBuilder()
-                    .where()
+            return mDbHelper.getAcquisitionItemDao().queryBuilder().where()
                     .eq(CommonFieldNames.ACQUISITION_ID, AcquisitionFragment.sCurrentAcquisitionId)
                     .countOf() > 0;
         } catch (SQLException e) {
@@ -90,11 +89,10 @@ public class AcquisitionItemListFragment extends SmartFragment {
         }
     }
 
-    private void initAcquisitionItemList(int acquisitionId) {
+    private void initAcquisitionItemList() {
         try {
-            mAcquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
-                    .where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+            mAcquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder().where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, AcquisitionFragment.sCurrentAcquisitionId)
                     .query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
