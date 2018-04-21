@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -41,6 +42,14 @@ import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldName
 
 public class PrintingActivity extends AppCompatActivity {
     public static final int ACTION_REQUEST_FILE_STORAGE_PERMISSIONS = 1;
+    public static final String EXTRA_ACQUISITION_ID = "extra_acquisition_id";
+
+    private static final String TAG = PrintingActivity.class.getName();
+    private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final String NEW_LINE = System.lineSeparator();
+    private static final String TEMPLATE_INVOICE = "invoice_template2.txt";
+    private static final String TEMPLATE_INVOICE_LINE = "invoice_line_template2.txt";
+    private static final int ACQUISITION_LINE_ELEMENT_WIDTH = 15;
 
     private static final String COMPANY_NAME = "S.C Example S.R.L";
     private static final String COMPANY_FISCAL_CODE = "RO 123456";
@@ -50,16 +59,6 @@ public class PrintingActivity extends AppCompatActivity {
     private static final String COMPANY_ADDRESS = "Programmer's street, no. 10a";
     private static final String COMPANY_TEL = "+40 0700123456";
     private static final String COMPANY_FAX = "+40 0700654321";
-
-    private static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final String NEW_LINE = System.lineSeparator();
-
-    public static final String EXTRA_ACQUISITION_ID = "extra_acquisition_id";
-
-    private static final String TEMPLATE_INVOICE = "invoice_template2.txt";
-    private static final String TEMPLATE_INVOICE_LINE = "invoice_line_template2.txt";
-
-    private static final int ACQUISITION_LINE_ELEMENT_WIDTH = 15;
 
     private String INVOICE_DIRECTORY_NAME;
 
@@ -87,13 +86,16 @@ public class PrintingActivity extends AppCompatActivity {
         setupOnClickActions();
 
         try {
-            mInvoiceTemplate = readResourceFile(TEMPLATE_INVOICE);
-            mInvoiceLineTemplate = readResourceFile(TEMPLATE_INVOICE_LINE);
+            mInvoiceTemplate = readAssetAsString(TEMPLATE_INVOICE);
+            mInvoiceLineTemplate = readAssetAsString(TEMPLATE_INVOICE_LINE);
         } catch (IOException e) {
+            Log.e(TAG, "Cannot read invoice templates");
             throw new RuntimeException(e);
         }
 
+        // points to the application's name
         INVOICE_DIRECTORY_NAME = getApplicationInfo().loadLabel(getPackageManager()).toString();
+
         mDbHelper = DatabaseHelper.getLatestInstance();
     }
 
@@ -125,7 +127,7 @@ public class PrintingActivity extends AppCompatActivity {
         int acquisitionId = getIntent().getIntExtra(EXTRA_ACQUISITION_ID, MethodParameterConstants.INVALID_INDEX);
 
         if (acquisitionId == MethodParameterConstants.INVALID_INDEX) {
-            throw new RuntimeException("Invalid acquisition index");
+            throw new RuntimeException("Invalid acquisition id");
         }
 
         initAcquisition(acquisitionId);
@@ -134,23 +136,21 @@ public class PrintingActivity extends AppCompatActivity {
         updateInvoiceTextView();
     }
 
-    private void updateInvoiceTextView() {
-        mTvInvoiceContent.setText(getInvoice());
-    }
-
     private void initAcquisition(int acquisitionId) {
         mAcquisition = mDbHelper.getAcquisitionDao().queryForId(acquisitionId);
     }
 
     private void initAcquisitionItemList(int acquisitionId) {
         try {
-            mAcquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder()
-                    .where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
-                    .query();
+            mAcquisitionItemList = mDbHelper.getAcquisitionItemDao().queryBuilder().where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, acquisitionId).query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void updateInvoiceTextView() {
+        mTvInvoiceContent.setText(getInvoice());
     }
 
     private String getInvoice() {
@@ -245,7 +245,7 @@ public class PrintingActivity extends AppCompatActivity {
         return String.format("%-" + ACQUISITION_LINE_ELEMENT_WIDTH + "s", element);
     }
 
-    private String readResourceFile(String fileName) throws IOException {
+    private String readAssetAsString(String fileName) throws IOException {
         try (InputStream is = getAssets().open(fileName);
              InputStreamReader isr = new InputStreamReader(is);
              BufferedReader reader = new BufferedReader(isr)) {
@@ -293,7 +293,7 @@ public class PrintingActivity extends AppCompatActivity {
 
         File pdfInvoiceDirectory = new File(Environment.getExternalStorageDirectory(), INVOICE_DIRECTORY_NAME);
 
-        Boolean rootDirectoryCreated = true;
+        Boolean rootDirectoryCreated;
 
         if (!pdfInvoiceDirectory.exists()) {
             rootDirectoryCreated = pdfInvoiceDirectory.mkdirs();
@@ -331,7 +331,8 @@ public class PrintingActivity extends AppCompatActivity {
             pdfDocument.writeTo(fos);
 
         } catch (IOException e) {
-            PopupUtil.snackbar(mRootLayout, R.string.activity_printing_pdf_not_generated_msg);
+            PopupUtil.snackbar(mRootLayout, R.string.activity_printing_pdf_could_not_generate_pdf_msg);
+            e.printStackTrace();
         }
 
         PopupUtil.snackbar(mRootLayout, R.string.activity_printing_pdf_generated_msg);

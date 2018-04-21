@@ -9,6 +9,7 @@
 
     <!--Messages-->
     <string name="activity_printing_pdf_generated_msg">PDF document generated</string>
-    <string name="activity_printing_pdf_not_generated_msg">Couldn\'t generate the PDF document</string>
-    <string name="activity_printing_could_not_create_invoice_directory_msg">Couldn\'t create invoice directory</string>
+    <string name="activity_printing_pdf_could_not_generate_pdf_msg">Could not generate the PDF document</string>
+    <string name="activity_printing_pdf_could_read_invoice_templates_msg">Could not read invoice templates</string>
+    <string name="activity_printing_could_not_create_invoice_directory_msg">Could not create invoice directory</string>
 </resources>
