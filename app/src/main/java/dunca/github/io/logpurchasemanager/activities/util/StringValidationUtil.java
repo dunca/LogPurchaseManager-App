@@ -13,7 +13,7 @@ public class StringValidationUtil {
         Editable editable = textInputLayout.getEditText().getText();
 
         if (TextUtils.isEmpty(editable)) {
-            textInputLayout.setError("Required");
+            textInputLayout.setError("*");
             return false;
         }
 
