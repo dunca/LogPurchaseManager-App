@@ -45,7 +45,6 @@ public class MainTabbedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main_tabbed);
 
         EventBus.getDefault().register(this);
@@ -93,7 +92,6 @@ public class MainTabbedActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     @Override
@@ -108,10 +106,6 @@ public class MainTabbedActivity extends AppCompatActivity {
                 View.VISIBLE : View.INVISIBLE;
 
         mNewAcquisitionItemFab.setVisibility(visibility);
-    }
-
-    private void switchToAcquisitionItemTab() {
-        mViewPager.setCurrentItem(2);
     }
 
     private void initViews() {
@@ -133,37 +127,14 @@ public class MainTabbedActivity extends AppCompatActivity {
     }
 
     private void setupOnClickActions() {
-        mNewAcquisitionItemFab.setOnClickListener(view -> switchToAcquisitionItemTab());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        // getMenuInflater().inflate(R.menu.menu_main_tabbed, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        // int id = item.getItemId();
-
-        // //noinspection SimplifiableIfStatement
-        // if (id == R.id.action_settings) {
-        //     return true;
-        // }
-
-        return super.onOptionsItemSelected(item);
+        mNewAcquisitionItemFab.setOnClickListener(view -> mViewPager.setCurrentItem(2));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        mAcquisitionId = getIntent().getIntExtra(EXTRA_ACQUISITION_ID,
-                MethodParameterConstants.INVALID_INDEX);
+        mAcquisitionId = getIntent().getIntExtra(EXTRA_ACQUISITION_ID, MethodParameterConstants.INVALID_INDEX);
     }
 
     /**
@@ -174,7 +145,7 @@ public class MainTabbedActivity extends AppCompatActivity {
      *              {@link Acquisition} object
      */
     @Subscribe
-    public void onAcquisitionId(AcquisitionIdEvent event) {
+    public void onAcquisitionIdEvent(AcquisitionIdEvent event) {
         mAcquisitionId = event.getAcquisitionId();
     }
 
