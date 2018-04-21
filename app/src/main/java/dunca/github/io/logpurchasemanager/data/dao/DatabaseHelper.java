@@ -6,12 +6,10 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
@@ -24,8 +22,7 @@ import io.github.dunca.logpurchasemanager.shared.model.TreeSpecies;
 import io.github.dunca.logpurchasemanager.shared.model.WoodCertification;
 import io.github.dunca.logpurchasemanager.shared.model.WoodRegion;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
-import io.github.dunca.logpurchasemanager.shared.model.custom.FullAcquisition;
-import io.github.dunca.logpurchasemanager.shared.model.custom.FullAggregation;
+import io.github.dunca.logpurchasemanager.shared.model.custom.AcquisitionData;
 import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
@@ -182,96 +179,96 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         TableUtils.clearTable(getConnectionSource(), modelClass);
     }
 
-    public List<FullAcquisition> getNeverSyncedAcquisitions() throws SQLException {
-        List<FullAcquisition> fullAcquisitionList = new ArrayList<>();
+    // public List<FullAcquisition> getNeverSyncedAcquisitions() throws SQLException {
+    //     List<FullAcquisition> fullAcquisitionList = new ArrayList<>();
+    //
+    //     List<Acquisition> acquisitions = getAcquisitionDao().queryBuilder().where()
+    //             .eq(CommonFieldNames.IS_SYNCED, false)
+    //             .and()
+    //             .eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0)
+    //             .query();
+    //
+    //     for (Acquisition acquisition : acquisitions) {
+    //         List<AcquisitionItem> acquisitionItems = getNewAcquisitionItems(acquisition.getId());
+    //         List<LogPrice> logPrices = getNewLogPrices(acquisition.getId());
+    //
+    //         fullAcquisitionList.add(new FullAcquisition(acquisition, acquisitionItems, logPrices));
+    //     }
+    //
+    //     return fullAcquisitionList;
+    // }
 
-        List<Acquisition> acquisitions = getAcquisitionDao().queryBuilder().where()
-                .eq(CommonFieldNames.IS_SYNCED, false)
-                .and()
-                .eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0)
-                .query();
+    // private List<AcquisitionItem> getNewAcquisitionItems(int acquisitionId) throws SQLException {
+    //     Where<AcquisitionItem, Integer> whereClause = getAcquisitionItemDao().queryBuilder().where();
+    //     whereClause.eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+    //             .and()
+    //             .eq(CommonFieldNames.IS_SYNCED, false);
+    //
+    //     addSynchronizationCondition(whereClause, true);
+    //
+    //     return whereClause.query();
+    // }
+    //
+    // private List<LogPrice> getNewLogPrices(int acquisitionId) throws SQLException {
+    //     Where<LogPrice, Integer> whereClause = getLogPriceDao().queryBuilder().where();
+    //     whereClause.eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
+    //             .and()
+    //             .eq(CommonFieldNames.IS_SYNCED, false);
+    //
+    //     addSynchronizationCondition(whereClause, true);
+    //
+    //     return whereClause.query();
+    // }
+    //
+    // private <T extends Model> void addSynchronizationCondition(Where<T, Integer> whereClause,
+    //                                                            boolean neverSynced) throws SQLException {
+    //     if (neverSynced) {
+    //         whereClause.and().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0);
+    //     } else {
+    //         whereClause.and().not().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0);
+    //     }
+    // }
 
-        for (Acquisition acquisition : acquisitions) {
-            List<AcquisitionItem> acquisitionItems = getNewAcquisitionItems(acquisition.getId());
-            List<LogPrice> logPrices = getNewLogPrices(acquisition.getId());
+    // public void markFullAcquisitionsAsSynced(List<FullAcquisition> fullAcquisitionList) {
+    //     for (FullAcquisition fullAcquisition : fullAcquisitionList) {
+    //         Acquisition acquisition = fullAcquisition.getAcquisition();
+    //         acquisition.setId(acquisition.getAppAllocatedId());
+    //         acquisition.setSynced(true);
+    //
+    //         getAcquisitionDao().update(acquisition);
+    //
+    //         for (AcquisitionItem acquisitionItem : fullAcquisition.getAcquisitionItemList()) {
+    //             acquisitionItem.setId(acquisitionItem.getAppAllocatedId());
+    //             acquisitionItem.setSynced(true);
+    //
+    //             getAcquisitionItemDao().update(acquisitionItem);
+    //         }
+    //
+    //         for (LogPrice logPrice : fullAcquisition.getLogPriceList()) {
+    //             logPrice.setId(logPrice.getAppAllocatedId());
+    //             logPrice.setSynced(true);
+    //
+    //             getLogPriceDao().update(logPrice);
+    //         }
+    //     }
+    // }
 
-            fullAcquisitionList.add(new FullAcquisition(acquisition, acquisitionItems, logPrices));
-        }
-
-        return fullAcquisitionList;
-    }
-
-    private List<AcquisitionItem> getNewAcquisitionItems(int acquisitionId) throws SQLException {
-        Where<AcquisitionItem, Integer> whereClause = getAcquisitionItemDao().queryBuilder().where();
-        whereClause.eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
-                .and()
-                .eq(CommonFieldNames.IS_SYNCED, false);
-
-        addSynchronizationCondition(whereClause, true);
-
-        return whereClause.query();
-    }
-
-    private List<LogPrice> getNewLogPrices(int acquisitionId) throws SQLException {
-        Where<LogPrice, Integer> whereClause = getLogPriceDao().queryBuilder().where();
-        whereClause.eq(CommonFieldNames.ACQUISITION_ID, acquisitionId)
-                .and()
-                .eq(CommonFieldNames.IS_SYNCED, false);
-
-        addSynchronizationCondition(whereClause, true);
-
-        return whereClause.query();
-    }
-
-    private <T extends Model> void addSynchronizationCondition(Where<T, Integer> whereClause,
-                                                               boolean neverSynced) throws SQLException {
-        if (neverSynced) {
-            whereClause.and().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0);
-        } else {
-            whereClause.and().not().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0);
-        }
-    }
-
-    public void markFullAcquisitionsAsSynced(List<FullAcquisition> fullAcquisitionList) {
-        for (FullAcquisition fullAcquisition : fullAcquisitionList) {
-            Acquisition acquisition = fullAcquisition.getAcquisition();
+    public void markAcquisitionDataAsSynced(AcquisitionData acquisitionData) {
+        for (Acquisition acquisition : acquisitionData.getAcquisitionList()) {
             acquisition.setId(acquisition.getAppAllocatedId());
             acquisition.setSynced(true);
 
             getAcquisitionDao().update(acquisition);
-
-            for (AcquisitionItem acquisitionItem : fullAcquisition.getAcquisitionItemList()) {
-                acquisitionItem.setId(acquisitionItem.getAppAllocatedId());
-                acquisitionItem.setSynced(true);
-
-                getAcquisitionItemDao().update(acquisitionItem);
-            }
-
-            for (LogPrice logPrice : fullAcquisition.getLogPriceList()) {
-                logPrice.setId(logPrice.getAppAllocatedId());
-                logPrice.setSynced(true);
-
-                getLogPriceDao().update(logPrice);
-            }
-        }
-    }
-
-    public void markAggregationAsSynced(FullAggregation aggregation) {
-        for (Acquisition acquisition : aggregation.getAcquisitionList()) {
-            acquisition.setId(acquisition.getAppAllocatedId());
-            acquisition.setSynced(true);
-
-            getAcquisitionDao().update(acquisition);
         }
 
-        for (AcquisitionItem acquisitionItem : aggregation.getAcquisitionItemList()) {
+        for (AcquisitionItem acquisitionItem : acquisitionData.getAcquisitionItemList()) {
             acquisitionItem.setId(acquisitionItem.getAppAllocatedId());
             acquisitionItem.setSynced(true);
 
             getAcquisitionItemDao().update(acquisitionItem);
         }
 
-        for (LogPrice logPrice : aggregation.getLogPriceList()) {
+        for (LogPrice logPrice : acquisitionData.getLogPriceList()) {
             logPrice.setId(logPrice.getAppAllocatedId());
             logPrice.setSynced(true);
 
@@ -279,25 +276,19 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public FullAggregation getPreviouslySyncedUnsyncedData() throws SQLException {
+    public AcquisitionData getUnsyncedAcquisitionData() throws SQLException {
         List<Acquisition> acquisitionList = getAcquisitionDao().queryBuilder().where()
-                .not().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0)
-                .and()
                 .eq(CommonFieldNames.IS_SYNCED, false)
                 .query();
 
         List<AcquisitionItem> acquisitionItemList = getAcquisitionItemDao().queryBuilder().where()
-                .not().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0)
-                .and()
                 .eq(CommonFieldNames.IS_SYNCED, false)
                 .query();
 
         List<LogPrice> logPriceList = getLogPriceDao().queryBuilder().where()
-                .not().eq(CommonFieldNames.SERVER_ALLOCATED_ID, 0)
-                .and()
                 .eq(CommonFieldNames.IS_SYNCED, false)
                 .query();
 
-        return new FullAggregation(acquisitionList, acquisitionItemList, logPriceList);
+        return new AcquisitionData(acquisitionList, acquisitionItemList, logPriceList);
     }
 }
