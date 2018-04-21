@@ -142,8 +142,7 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
 
     private boolean acquisitionHasPriceList() {
         try {
-            return mDbHelper.getLogPriceDao().queryBuilder()
-                    .where()
+            return mDbHelper.getLogPriceDao().queryBuilder().where()
                     .eq(CommonFieldNames.ACQUISITION_ID, AcquisitionFragment.sCurrentAcquisitionId)
                     .countOf() > 0;
         } catch (SQLException e) {
@@ -153,8 +152,7 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
 
     private void initPriceList() {
         try {
-            mLogPriceList = mDbHelper.getLogPriceDao().queryBuilder()
-                    .where()
+            mLogPriceList = mDbHelper.getLogPriceDao().queryBuilder().where()
                     .eq(CommonFieldNames.ACQUISITION_ID, AcquisitionFragment.sCurrentAcquisitionId)
                     .query();
         } catch (SQLException e) {
@@ -187,8 +185,7 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
         AlertDialog.Builder volumetricPriceDialogBuilder = new AlertDialog.Builder(getContext());
 
         View volumetricPriceDialogView = getLayoutInflater().inflate(
-                R.layout.fragment_acquisition_log_price_list_price_dialog,
-                null);
+                R.layout.fragment_acquisition_log_price_list_price_dialog, null);
 
         EditText etVolumetricPrice = volumetricPriceDialogView.findViewById(
                 R.id.etVolumetricPrice);
