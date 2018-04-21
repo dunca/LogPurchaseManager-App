@@ -29,9 +29,9 @@ import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.BarCodeScannerActivity;
+import dunca.github.io.logpurchasemanager.activities.util.InputValidationUtil;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.activities.util.StringFormatUtil;
-import dunca.github.io.logpurchasemanager.activities.util.StringValidationUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
@@ -63,6 +63,13 @@ public class AcquisitionItemFragment extends SmartFragment {
     private Spinner mSpinnerQualityClass;
 
     private TextInputLayout mTilBarCode;
+    private TextInputLayout mTilVolumetricPrice;
+    private TextInputLayout mTilGrossLength;
+    private TextInputLayout mTilGrossDiameter;
+    private TextInputLayout mTilNetLength;
+    private TextInputLayout mTilNetDiameter;
+    private TextInputLayout mTilObservations;
+
     private EditText mEtBarCode;
     private Button mBtnScanLogBarCode;
     private CheckBox mCbSpecialPrice;
@@ -228,9 +235,11 @@ public class AcquisitionItemFragment extends SmartFragment {
 
         mCbSpecialPrice = findViewById(R.id.cbSpecialPrice);
 
-        mEtVolumetricPrice = findViewById(R.id.etPrice);
+        mTilVolumetricPrice = findViewById(R.id.tilVolumetricPrice);
+        mEtVolumetricPrice = findViewById(R.id.etVolumetricPrice);
         updateUiPriceFormState();
 
+        mTilGrossLength = findViewById(R.id.tilGrossLength);
         mEtGrossLength = findViewById(R.id.etGrossLength);
         mEtGrossLength.addTextChangedListener(new TextWatcher() {
             @Override
@@ -249,6 +258,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             }
         });
 
+        mTilGrossDiameter = findViewById(R.id.tilGrossDiameter);
         mEtGrossDiameter = findViewById(R.id.etGrossDiameter);
         mEtGrossDiameter.addTextChangedListener(new TextWatcher() {
             @Override
@@ -267,6 +277,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             }
         });
 
+        mTilNetLength = findViewById(R.id.tilNetLength);
         mEtNetLength = findViewById(R.id.etNetLength);
         mEtNetLength.addTextChangedListener(new TextWatcher() {
             @Override
@@ -285,6 +296,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             }
         });
 
+        mTilNetDiameter = findViewById(R.id.tilNetDiameter);
         mEtNetDiameter = findViewById(R.id.etNetDiameter);
         mEtNetDiameter.addTextChangedListener(new TextWatcher() {
             @Override
@@ -306,6 +318,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         mTvGrossVolume = findViewById(R.id.tvGrossVolume);
         mTvNetVolume = findViewById(R.id.tvNetVolume);
 
+        mTilObservations = findViewById(R.id.tilObservations);
         mEtObservations = findViewById(R.id.etObservations);
 
         mBtnSave = findViewById(R.id.btnSave);
@@ -474,7 +487,8 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     private boolean inputFormsAreValid() {
-        return StringValidationUtil.isNotEmpty(mTilBarCode);
+        return InputValidationUtil.areNotEmpty(mTilBarCode, mTilGrossLength, mTilGrossDiameter,
+                mTilNetLength, mTilNetDiameter, mTilVolumetricPrice, mTilObservations);
     }
 
     private AcquisitionItem createAcquisitionItemMatchingUi() {

@@ -83,6 +83,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilVolumetricPrice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -93,7 +94,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tilBarCode">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPrice"
+                    android:id="@+id/etVolumetricPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/fragment_acquisition_item_volumetric_price_hint"
@@ -111,13 +112,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/tilBarCode" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputLayout5"
+                android:id="@+id/tilGrossLength"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/textInputLayout9"
+                app:layout_constraintEnd_toStartOf="@+id/tilGrossDiameter"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cbSpecialPrice">
 
@@ -132,14 +133,14 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputLayout9"
+                android:id="@+id/tilGrossDiameter"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textInputLayout5"
-                app:layout_constraintTop_toTopOf="@+id/textInputLayout5">
+                app:layout_constraintStart_toEndOf="@+id/tilGrossLength"
+                app:layout_constraintTop_toTopOf="@+id/tilGrossLength">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/etGrossDiameter"
@@ -150,15 +151,15 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputLayout10"
+                android:id="@+id/tilNetLength"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/textInputLayout11"
+                app:layout_constraintEnd_toStartOf="@+id/tilNetDiameter"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayout5">
+                app:layout_constraintTop_toBottomOf="@+id/tilGrossLength">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/etNetLength"
@@ -169,14 +170,14 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputLayout11"
+                android:id="@+id/tilNetDiameter"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textInputLayout10"
-                app:layout_constraintTop_toTopOf="@+id/textInputLayout10">
+                app:layout_constraintStart_toEndOf="@+id/tilNetLength"
+                app:layout_constraintTop_toTopOf="@+id/tilNetLength">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/etNetDiameter"
@@ -194,7 +195,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/fragment_acquisition_item_gross_volume_label"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayout10" />
+                app:layout_constraintTop_toBottomOf="@+id/tilNetLength" />
 
             <TextView
                 android:id="@+id/tvGrossVolume"
@@ -229,7 +230,7 @@
                 app:layout_constraintTop_toTopOf="@+id/textView17" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputLayout13"
+                android:id="@+id/tilObservations"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -255,7 +256,7 @@
                 android:layout_marginTop="32dp"
                 android:text="@string/fragment_acquisition_item_save_btn_label"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayout13" />
+                app:layout_constraintTop_toBottomOf="@+id/tilObservations" />
 
             <Button
                 android:id="@+id/btnDelete"
