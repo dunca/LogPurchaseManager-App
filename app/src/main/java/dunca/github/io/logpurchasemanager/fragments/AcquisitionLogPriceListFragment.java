@@ -24,10 +24,10 @@ import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.constants.MethodParameterConstants;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import io.github.dunca.logpurchasemanager.shared.model.LogPrice;
-import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
+import io.github.dunca.logpurchasemanager.shared.model.LogPrice;
+import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 
 public class AcquisitionLogPriceListFragment extends SmartFragment {
     private View mFragmentView;
@@ -237,7 +237,9 @@ public class AcquisitionLogPriceListFragment extends SmartFragment {
                     .and()
                     .eq(CommonFieldNames.IS_SPECIAL_PRICE, false);
 
-            updateBuilder.updateColumnValue(CommonFieldNames.PRICE, price).update();
+            updateBuilder.updateColumnValue(CommonFieldNames.PRICE, price)
+                    .updateColumnValue(CommonFieldNames.IS_SYNCED, false)
+                    .update();
 
             EventBus.getDefault().post(new AcquisitionTotalPriceUpdateRequestEvent());
         } catch (SQLException e) {
