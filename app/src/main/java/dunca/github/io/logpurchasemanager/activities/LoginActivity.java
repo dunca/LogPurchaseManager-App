@@ -14,11 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
-import dunca.github.io.logpurchasemanager.data.StaticDataHelper;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.service.AcquisitionDataService;
 import dunca.github.io.logpurchasemanager.service.Callback;
@@ -98,16 +98,13 @@ public class LoginActivity extends AppCompatActivity {
         Acquirer acquirer;
 
         try {
-            acquirer = mDbHelper.getAcquirerDao().queryBuilder()
-                    .where()
-                    .eq(CommonFieldNames.USERNAME, username)
-                    .queryForFirst();
+            acquirer = mDbHelper.getAcquirerDao().queryBuilder().where()
+                    .eq(CommonFieldNames.USERNAME, username).queryForFirst();
         } catch (SQLException e) {
-            // cannot talk to the db, missing tables, etc.
             String errorString = getString(R.string.activity_login_cannot_read_credentials_msg);
 
             PopupUtil.snackbar(mRootLayout, errorString);
-            Log.e(TAG, String.format("%s: %s", errorString, e.getMessage()));
+            Log.e(TAG, errorString, e);
 
             return;
         }
@@ -122,17 +119,14 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String successMessage = getString(R.string.activity_login_successfully_logged_in_msg);
-
-        PopupUtil.snackbar(mRootLayout, successMessage);
-        Log.i(TAG, successMessage);
+        PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_logged_in_msg);
 
         saveUsername();
 
-        startMainActivity();
+        startAcquisitionListActivity();
     }
 
-    private void startMainActivity() {
+    private void startAcquisitionListActivity() {
         Intent intent = new Intent(this, AcquisitionListActivity.class);
         startActivity(intent);
     }
@@ -170,16 +164,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_login, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         if (id == R.id.action_sync_static_data) {
@@ -196,12 +186,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response<StaticData> response) {
                 if (response.isSuccessful()) {
-                    StaticData staticData = response.body();
+                    StaticData newStaticData = response.body();
 
                     try {
-                        new StaticDataHelper(mDbHelper).replaceWith(staticData);
+                        mDbHelper.replaceStaticData(newStaticData);
                     } catch (SQLException e) {
-                        PopupUtil.snackbar(mRootLayout, R.string.activity_login_cannot_save_static_data_msg);
+                        String message = getString(R.string.activity_login_cannot_save_static_data_msg);
+                        PopupUtil.snackbar(mRootLayout, message);
+                        Log.e(TAG, message, e);
                         return;
                     }
 
@@ -209,13 +201,14 @@ public class LoginActivity extends AppCompatActivity {
                     PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_static_data_msg);
                 } else {
                     PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
+                    logUnsuccessfulServiceCall(response);
                 }
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                throwable.printStackTrace();
                 PopupUtil.serviceUnreachableSnackbar(mRootLayout);
+                logFailedServiceCall(throwable);
             }
         });
     }
@@ -247,14 +240,28 @@ public class LoginActivity extends AppCompatActivity {
                     PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_acquisition_data_msg);
                 } else {
                     PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
+                    logUnsuccessfulServiceCall(response);
                 }
             }
 
             @Override
             public void onFailure(Throwable throwable) {
                 PopupUtil.serviceUnreachableSnackbar(mRootLayout);
+                logFailedServiceCall(throwable);
             }
         }, acquisitionData);
+    }
+
+    private void logUnsuccessfulServiceCall(Response response) {
+        try {
+            Log.e(TAG, "Response body: " + response.errorBody().string());
+        } catch (IOException e) {
+            Log.e(TAG, "Could not read the body of a failed service request", e);
+        }
+    }
+
+    private void logFailedServiceCall(Throwable throwable) {
+        Log.e(TAG, "Could not reach service", throwable);
     }
 
     /**
