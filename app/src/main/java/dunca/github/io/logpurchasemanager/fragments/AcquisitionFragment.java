@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -332,7 +331,6 @@ public class AcquisitionFragment extends Fragment {
             deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisition.getId());
             deleteBuilder.delete();
 
-
             Intent intent = new Intent(getContext(), AcquisitionListActivity.class);
             startActivity(intent);
         } catch (SQLException e) {
@@ -571,18 +569,10 @@ public class AcquisitionFragment extends Fragment {
             return 0;
         }
 
-        List<AcquisitionItem> acquisitionItemList;
-
-        try {
-            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
         double total = 0;
 
-        for (AcquisitionItem acquisitionItem : acquisitionItemList) {
-            double currentVolume = isNetTotalValueChecked() ? acquisitionItem.getNetVolume()
+        for (AcquisitionItem acquisitionItem : getAcquisitionItemList()) {
+            double currentVolume = mCbNetTotalValue.isChecked() ? acquisitionItem.getNetVolume()
                     : acquisitionItem.getGrossVolume();
 
             total += (acquisitionItem.getPrice() * currentVolume);
@@ -608,15 +598,7 @@ public class AcquisitionFragment extends Fragment {
             return 0;
         }
 
-        List<AcquisitionItem> acquisitionItemList;
-
-        try {
-            acquisitionItemList = getAcquisitionItemsQueryBuilder().query();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        Stream<AcquisitionItem> stream = acquisitionItemList.stream();
+        Stream<AcquisitionItem> stream = getAcquisitionItemList().stream();
 
         if (net) {
             return stream.mapToDouble(AcquisitionItem::getNetVolume).sum();
@@ -639,23 +621,17 @@ public class AcquisitionFragment extends Fragment {
         mTvTotalValue.setText(StringFormatUtil.round(calculateTotalValueWithDiscount()));
     }
 
-    private boolean isNetTotalValueChecked() {
-        return mCbNetTotalValue.isChecked();
-    }
-
     private SharedPreferences getSharedPreferences() {
         return getActivity().getPreferences(Context.MODE_PRIVATE);
     }
 
-    private QueryBuilder<AcquisitionItem, Integer> getAcquisitionItemsQueryBuilder() {
-        QueryBuilder queryBuilder = mDbHelper.getAcquisitionItemDao().queryBuilder();
+    private List<AcquisitionItem> getAcquisitionItemList() {
         try {
-            queryBuilder.where().eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId());
+            return mDbHelper.getAcquisitionItemDao().queryBuilder().where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, mExistingAcquisition.getId()).query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return queryBuilder;
     }
 
     @Override
