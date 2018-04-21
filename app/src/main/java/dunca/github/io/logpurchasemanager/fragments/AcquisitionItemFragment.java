@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.greenrobot.eventbus.EventBus;
@@ -86,11 +85,6 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private final DatabaseHelper mDbHelper;
 
-    /**
-     * Stores the value of {@link AcquisitionItem#isSpecialPrice} before the instance is updated
-     */
-    private boolean mExistingAcquisitionHadSpecialPrice;
-
     private List<TreeSpecies> mSpeciesList;
     private List<LogQualityClass> mLogQualityClassList;
 
@@ -104,13 +98,12 @@ public class AcquisitionItemFragment extends SmartFragment {
     private void initDbLists() {
         try {
             mSpeciesList = mDbHelper.getTreeSpeciesDao().queryBuilder()
-                    .orderBy(CommonFieldNames.LIST_PRIORITY, true)
-                    .query();
-
-            mLogQualityClassList = mDbHelper.getLogQualityClassDao().queryForAll();
+                    .orderBy(CommonFieldNames.LIST_PRIORITY, true).query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        mLogQualityClassList = mDbHelper.getLogQualityClassDao().queryForAll();
     }
 
     public static AcquisitionItemFragment newInstance() {
@@ -186,7 +179,7 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     @Subscribe
-    public void onAcquisitionItemId(AcquisitionItemIdEvent event) {
+    public void onAcquisitionItemIdEvent(AcquisitionItemIdEvent event) {
         int acquisitionItemId = event.getAcquisitionItemId();
         initExistingAcquisitionItem(acquisitionItemId);
         mReceivedAcquisitionItemId = true;
@@ -213,7 +206,6 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private void initExistingAcquisitionItem(int acquisitionItemId) {
         mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
-        mExistingAcquisitionHadSpecialPrice = mExistingAcquisitionItem.isSpecialPrice();
     }
 
     private void initViews() {
@@ -326,7 +318,7 @@ public class AcquisitionItemFragment extends SmartFragment {
     }
 
     private void setupOnClickActions() {
-        mBtnScanLogBarCode.setOnClickListener(v -> showBarCodeScanningDialog());
+        mBtnScanLogBarCode.setOnClickListener(v -> startBarCodeScanningActivity());
 
         mBtnSave.setOnClickListener(v -> persistAcquisitionItemChanges());
         mBtnDelete.setOnClickListener(v -> deleteCurrentAcquisitionItem());
@@ -334,7 +326,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         mCbSpecialPrice.setOnCheckedChangeListener((view, state) -> updateUiPriceFormState());
     }
 
-    private void showBarCodeScanningDialog() {
+    private void startBarCodeScanningActivity() {
         Intent intent = new Intent(getContext(), BarCodeScannerActivity.class);
         startActivityForResult(intent, BAR_CODE_RESULT);
     }
@@ -344,13 +336,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             decrementLogPriceQuantity();
         }
 
-        try {
-            DeleteBuilder deleteBuilder = mDbHelper.getAcquisitionItemDao().deleteBuilder();
-            deleteBuilder.where().eq(CommonFieldNames.ID, mExistingAcquisitionItem.getId());
-            deleteBuilder.delete();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        mDbHelper.getAcquisitionItemDao().deleteById(mExistingAcquisitionItem.getId());
 
         // switch to the acquisition item list tab
         mViewPager.setCurrentItem(1);
@@ -373,7 +359,7 @@ public class AcquisitionItemFragment extends SmartFragment {
 
             mExistingAcquisitionItem = acquisitionItem;
 
-            if (!mExistingAcquisitionItem.isSpecialPrice()) {
+            if (!acquisitionItem.isSpecialPrice()) {
                 createLogPriceIfNecessary();
             }
 
@@ -381,13 +367,15 @@ public class AcquisitionItemFragment extends SmartFragment {
 
             updateDeleteButtonState();
         } else {
+            boolean hadSpecialPrice = mExistingAcquisitionItem.isSpecialPrice();
+
             syncAcquisitionItemWithUi(mExistingAcquisitionItem);
 
             // the user switched from special price, for which the price is entered as is, to a
             // not so special price, for which LogPrice entry is required
-            if (mExistingAcquisitionHadSpecialPrice && !mExistingAcquisitionItem.isSpecialPrice()) {
+            if (hadSpecialPrice && !mExistingAcquisitionItem.isSpecialPrice()) {
                 createLogPriceIfNecessary();
-            } else if (!mExistingAcquisitionHadSpecialPrice && mExistingAcquisitionItem.isSpecialPrice()) {
+            } else if (!hadSpecialPrice && mExistingAcquisitionItem.isSpecialPrice()) {
                 decrementLogPriceQuantity();
             }
 
@@ -433,7 +421,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         LogPrice logPrice = new LogPrice(mExistingAcquisitionItem.getAcquisition(),
                 mExistingAcquisitionItem.getAcquirer(),
                 mExistingAcquisitionItem.getTreeSpecies(),
-                mExistingAcquisitionItem.getLogQualityClass(), 0, 1, false);
+                mExistingAcquisitionItem.getLogQualityClass(), mExistingAcquisitionItem.getPrice(), 1, false);
 
         mDbHelper.getLogPriceDao().create(logPrice);
         logPrice.setAppAllocatedId(logPrice.getId());
@@ -467,12 +455,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         QueryBuilder<LogPrice, Integer> queryBuilder = mDbHelper.getLogPriceDao().queryBuilder();
 
         try {
-            queryBuilder.where()
-                    .eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId())
-                    .and()
-                    .eq(CommonFieldNames.TREE_SPECIES_ID, mExistingAcquisitionItem.getTreeSpecies().getId())
-                    .and()
-                    .eq(CommonFieldNames.LOG_QUALITY_CLASS_ID, mExistingAcquisitionItem.getLogQualityClass().getId());
+            queryBuilder.where().eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -514,7 +497,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         try {
             price = Double.valueOf(mEtVolumetricPrice.getText().toString());
         } catch (NumberFormatException e) {
-            price = 0;
+            throw new RuntimeException("Programming error", e);
         }
         acquisitionItem.setPrice(price);
 
@@ -538,16 +521,16 @@ public class AcquisitionItemFragment extends SmartFragment {
 
         mCbSpecialPrice.setChecked(mExistingAcquisitionItem.isSpecialPrice());
 
-        mEtVolumetricPrice.setText(String.valueOf(mExistingAcquisitionItem.getPrice()));
+        mEtVolumetricPrice.setText(StringFormatUtil.round(mExistingAcquisitionItem.getPrice()));
 
-        mEtGrossLength.setText(String.valueOf(mExistingAcquisitionItem.getGrossLength()));
-        mEtGrossDiameter.setText(String.valueOf(mExistingAcquisitionItem.getGrossDiameter()));
+        mEtGrossLength.setText(StringFormatUtil.round(mExistingAcquisitionItem.getGrossLength()));
+        mEtGrossDiameter.setText(StringFormatUtil.round(mExistingAcquisitionItem.getGrossDiameter()));
 
-        mEtNetLength.setText(String.valueOf(mExistingAcquisitionItem.getNetLength()));
-        mEtNetDiameter.setText(String.valueOf(mExistingAcquisitionItem.getNetDiameter()));
+        mEtNetLength.setText(StringFormatUtil.round(mExistingAcquisitionItem.getNetLength()));
+        mEtNetDiameter.setText(StringFormatUtil.round(mExistingAcquisitionItem.getNetDiameter()));
 
-        mTvGrossVolume.setText(String.valueOf(mExistingAcquisitionItem.getGrossVolume()));
-        mTvNetVolume.setText(String.valueOf(mExistingAcquisitionItem.getNetVolume()));
+        mTvGrossVolume.setText(StringFormatUtil.round(mExistingAcquisitionItem.getGrossVolume()));
+        mTvNetVolume.setText(StringFormatUtil.round(mExistingAcquisitionItem.getNetVolume()));
 
         mEtObservations.setText(mExistingAcquisitionItem.getObservations());
     }
@@ -588,7 +571,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             length = Double.valueOf(etLength.getText().toString());
             diameter = Double.valueOf(etDiameter.getText().toString());
         } catch (NumberFormatException e) {
-            return 0;
+            throw new RuntimeException("Programming error", e);
         }
 
         return calculateVolume(length, diameter);
