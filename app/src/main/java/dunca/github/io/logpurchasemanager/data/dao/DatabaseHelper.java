@@ -24,6 +24,7 @@ import io.github.dunca.logpurchasemanager.shared.model.WoodCertification;
 import io.github.dunca.logpurchasemanager.shared.model.WoodRegion;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
 import io.github.dunca.logpurchasemanager.shared.model.custom.AcquisitionData;
+import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
 import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
@@ -160,22 +161,22 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      * @throws SQLException if an underlying SQL related error occurs
      */
     private void createDatabaseTables() throws java.sql.SQLException {
-        createDatabaseTable(Acquirer.class);
-        createDatabaseTable(Acquisition.class);
-        createDatabaseTable(AcquisitionItem.class);
-        createDatabaseTable(LogPrice.class);
-        createDatabaseTable(LogQualityClass.class);
-        createDatabaseTable(Supplier.class);
-        createDatabaseTable(TreeSpecies.class);
-        createDatabaseTable(WoodCertification.class);
-        createDatabaseTable(WoodRegion.class);
+        createTable(Acquirer.class);
+        createTable(Acquisition.class);
+        createTable(AcquisitionItem.class);
+        createTable(LogPrice.class);
+        createTable(LogQualityClass.class);
+        createTable(Supplier.class);
+        createTable(TreeSpecies.class);
+        createTable(WoodCertification.class);
+        createTable(WoodRegion.class);
     }
 
-    private <T extends Model> void createDatabaseTable(Class<T> modelClass) throws SQLException {
+    private <T extends Model> void createTable(Class<T> modelClass) throws SQLException {
         TableUtils.createTable(getConnectionSource(), modelClass);
     }
 
-    public <T extends Model> void clearTable(Class<T> modelClass) throws SQLException {
+    private <T extends Model> void clearTable(Class<T> modelClass) throws SQLException {
         TableUtils.clearTable(getConnectionSource(), modelClass);
     }
 
@@ -210,6 +211,30 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         List<LogPrice> logPriceList = getNotSyncedWhereClause(getLogPriceDao()).query();
 
         return new AcquisitionData(acquisitionList, acquisitionItemList, logPriceList);
+    }
+
+    public synchronized void replaceStaticData(StaticData newStaticData) throws SQLException {
+        clearStaticDataTables();
+
+        getAcquirerDao().create(newStaticData.getAcquirers());
+        getLogQualityClassDao().create(newStaticData.getLogQualityClasses());
+        getSupplierDao().create(newStaticData.getSuppliers());
+        getTreeSpeciesDao().create(newStaticData.getTreeSpecies());
+        getWoodCertificationDao().create(newStaticData.getWoodCertifications());
+        getWoodRegionDao().create(newStaticData.getWoodRegions());
+
+        Log.i(TAG, "Replaced static data");
+    }
+
+    private void clearStaticDataTables() throws SQLException {
+        clearTable(Acquirer.class);
+        clearTable(LogQualityClass.class);
+        clearTable(Supplier.class);
+        clearTable(TreeSpecies.class);
+        clearTable(WoodCertification.class);
+        clearTable(WoodRegion.class);
+
+        Log.i(TAG, "Cleared static data tables");
     }
 
     private <T extends Model> Where<T, Integer> getNotSyncedWhereClause(RuntimeExceptionDao<T, Integer> dao) throws SQLException {
