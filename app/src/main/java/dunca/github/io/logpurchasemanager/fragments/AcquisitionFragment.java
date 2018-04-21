@@ -336,7 +336,7 @@ public class AcquisitionFragment extends Fragment {
                 deleteBuilder.delete();
             }
 
-            mDbHelper.getAcquisitionItemDao().deleteById(mExistingAcquisition.getId());
+            mDbHelper.getAcquisitionDao().deleteById(mExistingAcquisition.getId());
 
             Intent intent = new Intent(getContext(), AcquisitionListActivity.class);
             startActivity(intent);
