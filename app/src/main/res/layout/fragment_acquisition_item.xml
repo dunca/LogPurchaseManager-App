@@ -1,290 +1,294 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.AcquisitionItemFragment">
+    android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".fragments.AcquisitionItemFragment">
 
-        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/rootLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".fragments.AcquisitionItemFragment">
 
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/fragment_acquisition_item_species_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".fragments.AcquisitionItemFragment">
 
-            <Spinner
-                android:id="@+id/spinnerSpecies"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView9"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/fragment_acquisition_item_quality_class_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9" />
-
-            <Spinner
-                android:id="@+id/spinnerQualityClass"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView13"
-                app:layout_constraintTop_toTopOf="@+id/textView13" />
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilBarCode"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/btnScanLogBarCode"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView13">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etBarCode"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fragment_acquisition_item_bar_code_hint"
-                    android:inputType="number" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fragment_acquisition_item_species_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilVolumetricPrice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cbSpecialPrice"
-                app:layout_constraintTop_toBottomOf="@+id/tilBarCode">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etVolumetricPrice"
-                    android:layout_width="match_parent"
+                <Spinner
+                    android:id="@+id/spinnerSpecies"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fragment_acquisition_item_volumetric_price_hint"
-                    android:inputType="numberDecimal" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView9"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <CheckBox
-                android:id="@+id/cbSpecialPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/fragment_acquisition_item_special_price_checkbox_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tilBarCode" />
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilGrossLength"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/tilGrossDiameter"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cbSpecialPrice">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etGrossLength"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fragment_acquisition_item_gross_length_hint"
-                    android:inputType="numberDecimal"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="368dp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/fragment_acquisition_item_quality_class_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilGrossDiameter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tilGrossLength"
-                app:layout_constraintTop_toTopOf="@+id/tilGrossLength">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etGrossDiameter"
-                    android:layout_width="match_parent"
+                <Spinner
+                    android:id="@+id/spinnerQualityClass"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fragment_acquisition_item_gross_diameter_hint"
-                    android:inputType="numberDecimal" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView13"
+                    app:layout_constraintTop_toTopOf="@+id/textView13" />
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilNetLength"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/tilNetDiameter"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tilGrossLength">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etNetLength"
-                    android:layout_width="match_parent"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilBarCode"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fragment_acquisition_item_net_length_hint"
-                    android:inputType="numberDecimal" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/btnScanLogBarCode"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView13">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilNetDiameter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tilNetLength"
-                app:layout_constraintTop_toTopOf="@+id/tilNetLength">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etBarCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fragment_acquisition_item_bar_code_hint"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etNetDiameter"
-                    android:layout_width="match_parent"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilVolumetricPrice"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fragment_acquisition_item_net_diameter_hint"
-                    android:inputType="numberDecimal" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cbSpecialPrice"
+                    app:layout_constraintTop_toBottomOf="@+id/tilBarCode">
 
-            <TextView
-                android:id="@+id/textView15"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/fragment_acquisition_item_gross_volume_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tilNetLength" />
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etVolumetricPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fragment_acquisition_item_volumetric_price_hint"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:id="@+id/tvGrossVolume"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:text="@string/zero_float"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView15"
-                app:layout_constraintTop_toTopOf="@+id/textView15" />
-
-            <TextView
-                android:id="@+id/textView17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/fragment_acquisition_item_net_volume_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView15" />
-
-            <TextView
-                android:id="@+id/tvNetVolume"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:text="@string/zero_float"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView17"
-                app:layout_constraintTop_toTopOf="@+id/textView17" />
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilObservations"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView17">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etObservations"
-                    android:layout_width="match_parent"
+                <CheckBox
+                    android:id="@+id/cbSpecialPrice"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fragment_acquisition_item_observations_hint"
-                    android:inputType="textMultiLine" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/fragment_acquisition_item_special_price_checkbox_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tilBarCode" />
 
-            <Button
-                android:id="@+id/btnSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/fragment_acquisition_item_save_btn_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tilObservations" />
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilGrossLength"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tilGrossDiameter"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cbSpecialPrice">
 
-            <Button
-                android:id="@+id/btnDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/fragment_acquisition_item_delete_btn_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/btnSave" />
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etGrossLength"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fragment_acquisition_item_gross_length_hint"
+                        android:inputType="numberDecimal"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="368dp" />
+                </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/btnScanLogBarCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/fragment_acquisition_item_scan_bar_code_btn_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tilBarCode" />
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilGrossDiameter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tilGrossLength"
+                    app:layout_constraintTop_toTopOf="@+id/tilGrossLength">
 
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etGrossDiameter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fragment_acquisition_item_gross_diameter_hint"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:id="@+id/tvNoAcquisitionPlaceholder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/fragment_acquisition_item_no_acquisition_placeholder"
-        android:textAppearance="@android:style/TextAppearance.Material.Large"
-        android:visibility="visible" />
-</RelativeLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilNetLength"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tilNetDiameter"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tilGrossLength">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etNetLength"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fragment_acquisition_item_net_length_hint"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilNetDiameter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tilNetLength"
+                    app:layout_constraintTop_toTopOf="@+id/tilNetLength">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etNetDiameter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fragment_acquisition_item_net_diameter_hint"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/fragment_acquisition_item_gross_volume_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tilNetLength" />
+
+                <TextView
+                    android:id="@+id/tvGrossVolume"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/zero_float"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView15"
+                    app:layout_constraintTop_toTopOf="@+id/textView15" />
+
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fragment_acquisition_item_net_volume_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+                <TextView
+                    android:id="@+id/tvNetVolume"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/zero_float"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView17"
+                    app:layout_constraintTop_toTopOf="@+id/textView17" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilObservations"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView17">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etObservations"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fragment_acquisition_item_observations_hint"
+                        android:inputType="textMultiLine" />
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/fragment_acquisition_item_save_btn_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tilObservations" />
+
+                <Button
+                    android:id="@+id/btnDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/fragment_acquisition_item_delete_btn_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btnSave" />
+
+                <Button
+                    android:id="@+id/btnScanLogBarCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/fragment_acquisition_item_scan_bar_code_btn_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tilBarCode" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/tvNoAcquisitionPlaceholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/fragment_acquisition_item_no_acquisition_placeholder"
+            android:textAppearance="@android:style/TextAppearance.Material.Large"
+            android:visibility="visible" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
