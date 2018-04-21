@@ -58,10 +58,8 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             createDatabaseTables();
             Log.i(TAG, "Database tables created successfully");
         } catch (SQLException e) {
-            String message = "Cannot create database tables: " + e.getMessage();
-            Log.e(TAG, message);
-
-            throw new RuntimeException(message);
+            e.printStackTrace();
+            throw new RuntimeException("Cannot create database tables: " + e.getMessage());
         }
     }
 
@@ -204,6 +202,10 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return new AcquisitionData(acquisitionList, acquisitionItemList, logPriceList);
     }
 
+    private <T extends Model> Where<T, Integer> getNotSyncedWhereClause(RuntimeExceptionDao<T, Integer> dao) throws SQLException {
+        return dao.queryBuilder().where().eq(CommonFieldNames.IS_SYNCED, false);
+    }
+
     public void replaceStaticData(StaticData newStaticData) throws SQLException {
         clearStaticDataTables();
 
@@ -226,9 +228,5 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(WoodRegion.class);
 
         Log.i(TAG, "Cleared static data tables");
-    }
-
-    private <T extends Model> Where<T, Integer> getNotSyncedWhereClause(RuntimeExceptionDao<T, Integer> dao) throws SQLException {
-        return dao.queryBuilder().where().eq(CommonFieldNames.IS_SYNCED, false);
     }
 }
