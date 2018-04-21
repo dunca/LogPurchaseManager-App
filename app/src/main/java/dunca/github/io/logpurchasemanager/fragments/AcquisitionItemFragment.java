@@ -439,6 +439,11 @@ public class AcquisitionItemFragment extends SmartFragment {
             throw new RuntimeException(e);
         }
 
+        if (logPrice.getQuantity() == 1) {
+            mDbHelper.getLogPriceDao().deleteById(logPrice.getId());
+            return;
+        }
+
         logPrice.setQuantity(logPrice.getQuantity() - 1);
         logPrice.setSynced(false);
         mDbHelper.getLogPriceDao().update(logPrice);
