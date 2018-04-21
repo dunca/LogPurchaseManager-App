@@ -282,8 +282,7 @@ public class AcquisitionFragment extends Fragment {
                 lets the user filter the list
                 */
                 mSelectedSupplier = (Supplier) supplierListView.getItemAtPosition(position);
-
-                mTvSupplierName.setText(mSelectedSupplier.getName());
+                setSupplierNameTextBox(mSelectedSupplier);
             });
 
             ArrayAdapter<Supplier> arrayAdapter = new ArrayAdapter<>(getContext(),
@@ -320,6 +319,11 @@ public class AcquisitionFragment extends Fragment {
             updateUiDiscountValue();
             updateUiTotalValue();
         });
+    }
+
+    private void setSupplierNameTextBox(Supplier supplier) {
+        mTvSupplierName.setTag(supplier.getId());
+        mTvSupplierName.setText(supplier.getName());
     }
 
     /**
@@ -376,7 +380,7 @@ public class AcquisitionFragment extends Fragment {
 
         updateUiDate(mExistingAcquisition.getReceptionDate());
 
-        mTvSupplierName.setText(mExistingAcquisition.getSupplier().getName());
+        setSupplierNameTextBox(mExistingAcquisition.getSupplier());
 
         mCbNetTotalValue.setChecked(mExistingAcquisition.isNet());
 
@@ -437,7 +441,7 @@ public class AcquisitionFragment extends Fragment {
         int currentAcquisitionSerialNumber = getLastAcquisitionSerialNumber() + 1;
         mEtSerialNumber.setText(String.valueOf(currentAcquisitionSerialNumber));
 
-        mTvSupplierName.setText(mSelectedSupplier.getName());
+        setSupplierNameTextBox(mSelectedSupplier);
 
         updateUiDate(new Date());
     }
@@ -494,17 +498,13 @@ public class AcquisitionFragment extends Fragment {
     }
 
     private Supplier getSelectedSupplier() {
-        // TODO this is not ok, there could be suppliers with identical names
+        Supplier supplier = mDbHelper.getSupplierDao().queryForId((int) mTvSupplierName.getTag());
 
-        String selectedSupplierName = mTvSupplierName.getText().toString();
-
-        try {
-            return mDbHelper.getSupplierDao().queryBuilder()
-                    .where().eq(CommonFieldNames.NAME, selectedSupplierName)
-                    .queryForFirst();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if (supplier.getName().equals(mTvSupplierName.getText().toString())) {
+            return supplier;
         }
+
+        throw new RuntimeException("Programming error");
     }
 
     private Date getSelectedDate() {
