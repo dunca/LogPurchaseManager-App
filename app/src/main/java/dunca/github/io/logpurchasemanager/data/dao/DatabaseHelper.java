@@ -5,14 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
@@ -28,7 +26,6 @@ import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldName
 import io.github.dunca.logpurchasemanager.shared.model.custom.AcquisitionData;
 import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
 import io.github.dunca.logpurchasemanager.shared.model.interfaces.Model;
-import io.github.dunca.logpurchasemanager.shared.model.util.ConfigurationUtil;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getName();
@@ -51,7 +48,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, LOCAL_DB_NAME, null, LOCAL_DB_VERSION);
-        configureAcquisitionRelatedClasses();
         sLatestInstance = this;
     }
 
@@ -72,13 +68,6 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
             throw new RuntimeException("Cannot create database tables: " + e.getMessage());
         }
-    }
-
-    private void configureAcquisitionRelatedClasses() {
-        DaoManager.addCachedDatabaseConfigs(Arrays.asList(
-                ConfigurationUtil.getAcquisitionConfiguration(false),
-                ConfigurationUtil.getAcquisitionItemConfiguration(false),
-                ConfigurationUtil.getLogPriceConfiguration(false)));
     }
 
     @Override
