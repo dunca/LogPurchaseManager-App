@@ -15,19 +15,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import dunca.github.io.logpurchasemanager.R;
 import dunca.github.io.logpurchasemanager.activities.util.PopupUtil;
 import dunca.github.io.logpurchasemanager.data.StaticDataHelper;
 import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
-import dunca.github.io.logpurchasemanager.service.AcquisitionService;
+import dunca.github.io.logpurchasemanager.service.AcquisitionDataService;
 import dunca.github.io.logpurchasemanager.service.Callback;
 import dunca.github.io.logpurchasemanager.service.StaticDataService;
 import io.github.dunca.logpurchasemanager.shared.model.Acquirer;
 import io.github.dunca.logpurchasemanager.shared.model.constants.CommonFieldNames;
-import io.github.dunca.logpurchasemanager.shared.model.custom.FullAcquisition;
-import io.github.dunca.logpurchasemanager.shared.model.custom.FullAggregation;
+import io.github.dunca.logpurchasemanager.shared.model.custom.AcquisitionData;
 import io.github.dunca.logpurchasemanager.shared.model.custom.StaticData;
 import retrofit2.Response;
 
@@ -187,8 +185,7 @@ public class LoginActivity extends AppCompatActivity {
         if (id == R.id.action_sync_static_data) {
             syncStaticData();
         } else if (id == R.id.action_sync_acquisitions) {
-            syncNewAcquisitions();
-            syncModifiedAcquisitions();
+            syncAcquisitionData();
         }
 
         return super.onOptionsItemSelected(item);
@@ -223,64 +220,31 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void syncNewAcquisitions() {
-        List<FullAcquisition> fullAcquisitionList;
+    private void syncAcquisitionData() {
+        AcquisitionData acquisitionData;
 
         try {
-            fullAcquisitionList = mDbHelper.getNeverSyncedAcquisitions();
+            acquisitionData = mDbHelper.getUnsyncedAcquisitionData();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        if (fullAcquisitionList.isEmpty()) {
-            PopupUtil.snackbar(mRootLayout, R.string.activity_login_no_acquisitions_to_sync);
+        if (acquisitionData.getAcquisitionItemList().isEmpty() &&
+                acquisitionData.getAcquisitionList().isEmpty() &&
+                acquisitionData.getLogPriceList().isEmpty()) {
+
+            PopupUtil.snackbar(mRootLayout, R.string.activity_login_no_acquisition_data_to_sync);
             return;
         }
 
-        AcquisitionService.getInstance().postFullAcquisitionList(new Callback<List<FullAcquisition>>(this) {
+        AcquisitionDataService.getInstance().postAcquisitionData(new Callback<AcquisitionData>(this) {
             @Override
-            public void onResponse(Response<List<FullAcquisition>> response) {
+            public void onResponse(Response<AcquisitionData> response) {
                 if (response.isSuccessful()) {
-                    List<FullAcquisition> list = response.body();
-                    mDbHelper.markFullAcquisitionsAsSynced(list);
+                    AcquisitionData data = response.body();
+                    mDbHelper.markAcquisitionDataAsSynced(data);
 
-                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_new_acquisitions_msg);
-                } else {
-                    PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                throwable.printStackTrace();
-                PopupUtil.serviceUnreachableSnackbar(mRootLayout);
-            }
-        }, fullAcquisitionList);
-    }
-
-    private void syncModifiedAcquisitions() {
-        FullAggregation aggregation;
-
-        try {
-            aggregation = mDbHelper.getPreviouslySyncedUnsyncedData();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (aggregation.getAcquisitionItemList().isEmpty() &&
-                aggregation.getAcquisitionList().isEmpty() &&
-                aggregation.getLogPriceList().isEmpty()) {
-            return;
-        }
-
-        AcquisitionService.getInstance().postAggregation(new Callback<FullAggregation>(this) {
-            @Override
-            public void onResponse(Response<FullAggregation> response) {
-                if (response.isSuccessful()) {
-                    FullAggregation list = response.body();
-                    mDbHelper.markAggregationAsSynced(list);
-
-                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_acquisitions_msg);
+                    PopupUtil.snackbar(mRootLayout, R.string.activity_login_successfully_synced_acquisition_data_msg);
                 } else {
                     PopupUtil.serviceErrorSnackbar(mRootLayout, response.code());
                 }
@@ -290,7 +254,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Throwable throwable) {
                 PopupUtil.serviceUnreachableSnackbar(mRootLayout);
             }
-        }, aggregation);
+        }, acquisitionData);
     }
 
     /**
