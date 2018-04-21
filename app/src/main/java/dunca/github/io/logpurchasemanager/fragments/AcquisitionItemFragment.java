@@ -455,7 +455,12 @@ public class AcquisitionItemFragment extends SmartFragment {
         QueryBuilder<LogPrice, Integer> queryBuilder = mDbHelper.getLogPriceDao().queryBuilder();
 
         try {
-            queryBuilder.where().eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId());
+            queryBuilder.where()
+                    .eq(CommonFieldNames.ACQUISITION_ID, mAcquisition.getId())
+                    .and()
+                    .eq(CommonFieldNames.TREE_SPECIES_ID, mExistingAcquisitionItem.getTreeSpecies().getId())
+                    .and()
+                    .eq(CommonFieldNames.LOG_QUALITY_CLASS_ID, mExistingAcquisitionItem.getLogQualityClass().getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
