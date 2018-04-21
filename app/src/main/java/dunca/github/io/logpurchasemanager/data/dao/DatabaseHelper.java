@@ -31,9 +31,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getName();
 
     private static final int LOCAL_DB_VERSION = 1;
-    private static final String LOCAL_DB_NAME = "lpm_database.db";
-
-    private ConnectionSource mConnectionSource;
+    private static final String LOCAL_DB_NAME = "data.db";
 
     private static DatabaseHelper sLatestInstance;
 
@@ -56,13 +54,11 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-        mConnectionSource = connectionSource;
-
         try {
             createDatabaseTables();
             Log.i(TAG, "Database tables created successfully");
         } catch (SQLException e) {
-            final String message = "Cannot create database tables: " + e.getMessage();
+            String message = "Cannot create database tables: " + e.getMessage();
             Log.e(TAG, message);
 
             throw new RuntimeException(message);
@@ -155,12 +151,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return sLatestInstance;
     }
 
-    /**
-     * Creates tables based on model classes
-     *
-     * @throws SQLException if an underlying SQL related error occurs
-     */
-    private void createDatabaseTables() throws java.sql.SQLException {
+    private void createDatabaseTables() throws SQLException {
         createTable(Acquirer.class);
         createTable(Acquisition.class);
         createTable(AcquisitionItem.class);
@@ -213,7 +204,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return new AcquisitionData(acquisitionList, acquisitionItemList, logPriceList);
     }
 
-    public synchronized void replaceStaticData(StaticData newStaticData) throws SQLException {
+    public void replaceStaticData(StaticData newStaticData) throws SQLException {
         clearStaticDataTables();
 
         getAcquirerDao().create(newStaticData.getAcquirers());
