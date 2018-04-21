@@ -78,10 +78,10 @@ public class AcquisitionListActivity extends AppCompatActivity {
     }
 
     private void setupOnClickActions() {
-        mFab.setOnClickListener(view -> startMainActivity(null));
+        mFab.setOnClickListener(view -> startMainTabbedActivity(null));
     }
 
-    private void startMainActivity(Acquisition acquisition) {
+    private void startMainTabbedActivity(Acquisition acquisition) {
         Intent intent = new Intent(this, MainTabbedActivity.class);
 
         int id;
@@ -100,7 +100,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        mOriginalAcquisitionList =mDbHelper.getAcquisitionDao().queryForAll();
+        mOriginalAcquisitionList = mDbHelper.getAcquisitionDao().queryForAll();
         mAcquisitionList = new ArrayList<>(mOriginalAcquisitionList);
 
         if (!mOriginalAcquisitionList.isEmpty()) {
@@ -180,7 +180,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
             mBtnPrint = itemView.findViewById(R.id.btnPrint);
 
             itemView.setOnClickListener(v -> {
-                startMainActivity(mOriginalAcquisitionList.get(getAdapterPosition()));
+                startMainTabbedActivity(mOriginalAcquisitionList.get(getAdapterPosition()));
             });
 
             mBtnPrint.setOnClickListener(v -> startPrintingActivity());
@@ -197,16 +197,12 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_acquisition_list, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         if (id == R.id.action_filter_list) {
@@ -235,7 +231,7 @@ public class AcquisitionListActivity extends AppCompatActivity {
 
         if (mFilteringCancelled || TextUtils.isEmpty(mLastFilteringDate)) {
             updateDateInTextView(tvDate, new Date());
-        } else if (!mFilteringCancelled) {
+        } else {
             tvDate.setText(mLastFilteringDate);
         }
 
