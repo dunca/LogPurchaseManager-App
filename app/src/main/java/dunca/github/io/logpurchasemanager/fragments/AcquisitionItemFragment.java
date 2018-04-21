@@ -502,7 +502,7 @@ public class AcquisitionItemFragment extends SmartFragment {
         try {
             price = Double.valueOf(mEtVolumetricPrice.getText().toString());
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Programming error", e);
+            price = 0;
         }
         acquisitionItem.setPrice(price);
 
