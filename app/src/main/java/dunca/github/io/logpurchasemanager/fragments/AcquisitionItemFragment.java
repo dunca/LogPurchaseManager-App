@@ -575,7 +575,7 @@ public class AcquisitionItemFragment extends SmartFragment {
             length = Double.valueOf(etLength.getText().toString());
             diameter = Double.valueOf(etDiameter.getText().toString());
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Programming error", e);
+            return 0;
         }
 
         return calculateVolume(length, diameter);

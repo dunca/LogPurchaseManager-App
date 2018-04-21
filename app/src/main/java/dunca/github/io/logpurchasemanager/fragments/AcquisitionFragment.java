@@ -519,7 +519,7 @@ public class AcquisitionFragment extends Fragment {
         try {
             return Double.valueOf(mEtDiscountPercentage.getText().toString());
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Programming error", e);
+            return 0;
         }
     }
 
