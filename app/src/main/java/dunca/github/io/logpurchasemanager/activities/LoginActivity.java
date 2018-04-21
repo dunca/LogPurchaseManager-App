@@ -101,10 +101,8 @@ public class LoginActivity extends AppCompatActivity {
             acquirer = mDbHelper.getAcquirerDao().queryBuilder().where()
                     .eq(CommonFieldNames.USERNAME, username).queryForFirst();
         } catch (SQLException e) {
-            String errorString = getString(R.string.activity_login_cannot_read_credentials_msg);
-
-            PopupUtil.snackbar(mRootLayout, errorString);
-            Log.e(TAG, errorString, e);
+            PopupUtil.snackbar(mRootLayout, R.string.activity_login_cannot_read_credentials_msg);
+            e.printStackTrace();
 
             return;
         }
@@ -191,9 +189,8 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         mDbHelper.replaceStaticData(newStaticData);
                     } catch (SQLException e) {
-                        String message = getString(R.string.activity_login_cannot_save_static_data_msg);
-                        PopupUtil.snackbar(mRootLayout, message);
-                        Log.e(TAG, message, e);
+                        PopupUtil.snackbar(mRootLayout, R.string.activity_login_cannot_save_static_data_msg);
+                        e.printStackTrace();
                         return;
                     }
 
@@ -219,7 +216,9 @@ public class LoginActivity extends AppCompatActivity {
         try {
             acquisitionData = mDbHelper.getUnsyncedAcquisitionData();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            PopupUtil.snackbar(mRootLayout, R.string.activity_login_could_not_read_unsynced_acquisition_data_msg);
+            e.printStackTrace();
+            return;
         }
 
         if (acquisitionData.getAcquisitionItemList().isEmpty() &&

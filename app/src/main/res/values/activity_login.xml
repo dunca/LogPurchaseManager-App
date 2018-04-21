@@ -16,6 +16,7 @@
     <string name="activity_login_sync_static_data_placeholder">Empty database. Sync with the service to continue</string>
     <string name="activity_login_cannot_save_static_data_msg">Cannot save static data</string>
     <string name="activity_login_successfully_synced_static_data_msg">Successfully synced static data</string>
+    <string name="activity_login_could_not_read_unsynced_acquisition_data_msg">Could not read unsynced acquisition data</string>
     <string name="activity_login_no_acquisition_data_to_sync">No acquisition data to sync</string>
     <string name="activity_login_successfully_synced_acquisition_data_msg">Successfully synced acquisition data</string>
 </resources>
