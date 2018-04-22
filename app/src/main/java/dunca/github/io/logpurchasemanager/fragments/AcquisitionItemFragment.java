@@ -475,8 +475,8 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private boolean inputFormsAreValid() {
         return InputValidationUtil.areNotEmpty(mTilBarCode, mTilGrossLength, mTilGrossDiameter,
-                mTilNetLength, mTilNetDiameter, mTilObservations) && !mCbSpecialPrice.isChecked()
-                || InputValidationUtil.isNotEmpty(mTilVolumetricPrice);
+                mTilNetLength, mTilNetDiameter, mTilObservations) && (!mCbSpecialPrice.isChecked()
+                || InputValidationUtil.isNotEmpty(mTilVolumetricPrice));
     }
 
     private AcquisitionItem createAcquisitionItemMatchingUi() {
