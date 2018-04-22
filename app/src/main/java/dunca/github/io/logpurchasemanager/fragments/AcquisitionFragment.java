@@ -472,6 +472,8 @@ public class AcquisitionFragment extends Fragment {
             EventBus.getDefault().post(new AcquisitionIdEvent(acquisition.getId()));
 
             updateDeleteButtonState();
+
+            getArguments().putInt(MethodParameterConstants.ACQUISITION_ID_PARAM, acquisition.getId());
         } else {
             syncAcquisitionWithUi(mExistingAcquisition);
             mExistingAcquisition.setSynced(false);
