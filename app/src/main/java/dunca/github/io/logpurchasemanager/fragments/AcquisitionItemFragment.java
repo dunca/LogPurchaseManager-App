@@ -4,6 +4,8 @@ package dunca.github.io.logpurchasemanager.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -36,6 +38,7 @@ import dunca.github.io.logpurchasemanager.data.dao.DatabaseHelper;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionItemIdEvent;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalPriceUpdateRequestEvent;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionTotalVolumeUpdateRequestEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.NewAcquisitionEvent;
 import dunca.github.io.logpurchasemanager.fragments.interfaces.SmartFragment;
 import dunca.github.io.logpurchasemanager.fragments.util.FragmentUtil;
 import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
@@ -50,11 +53,11 @@ import static android.app.Activity.RESULT_OK;
 
 public class AcquisitionItemFragment extends SmartFragment {
     public static final String EXTRA_BAR_CODE = "extra_bar_code";
+    private static final String PREVIOUS_ACQUISITION_ITEM_ID_PARAM = "previous_acquisition_item_id_param";
     private static final int BAR_CODE_RESULT = 1;
     private final DatabaseHelper mDbHelper;
     private ViewPager mViewPager;
     private View mFragmentView;
-    private boolean mReceivedAcquisitionItemId;
     private TextView mTvNoAcquisitionsPlaceholder;
     private View mRootLayout;
     private Spinner mSpinnerSpecies;
@@ -84,6 +87,7 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     private Acquisition mAcquisition;
     private AcquisitionItem mExistingAcquisitionItem;
+    private int mExistingAcquisitionItemId = MethodParameterConstants.INVALID_INDEX;
 
     public AcquisitionItemFragment() {
         mDbHelper = DatabaseHelper.getLatestInstance();
@@ -102,6 +106,17 @@ public class AcquisitionItemFragment extends SmartFragment {
         }
 
         mLogQualityClassList = mDbHelper.getLogQualityClassDao().queryForAll();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            return;
+        }
+
+        mExistingAcquisitionItemId = savedInstanceState.getInt(PREVIOUS_ACQUISITION_ITEM_ID_PARAM, MethodParameterConstants.INVALID_INDEX);
     }
 
     @Override
@@ -129,15 +144,25 @@ public class AcquisitionItemFragment extends SmartFragment {
         mTvNoAcquisitionsPlaceholder.setVisibility(View.GONE);
         mRootLayout.setVisibility(View.VISIBLE);
 
-        if (mReceivedAcquisitionItemId) {
-            syncUiWithAcquisitionItem();
-            mReceivedAcquisitionItemId = false;
-        } else {
-            mExistingAcquisitionItem = null;
+        if (mExistingAcquisitionItemId == MethodParameterConstants.INVALID_INDEX) {
             resetUi();
+        } else {
+            initExistingAcquisitionItem();
+            syncUiWithAcquisitionItem();
         }
 
         updateDeleteButtonState();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mExistingAcquisitionItem == null) {
+            return;
+        }
+
+        outState.putInt(PREVIOUS_ACQUISITION_ITEM_ID_PARAM, mExistingAcquisitionItem.getId());
     }
 
     @Override
@@ -174,9 +199,13 @@ public class AcquisitionItemFragment extends SmartFragment {
 
     @Subscribe
     public void onAcquisitionItemIdEvent(AcquisitionItemIdEvent event) {
-        int acquisitionItemId = event.getAcquisitionItemId();
-        initExistingAcquisitionItem(acquisitionItemId);
-        mReceivedAcquisitionItemId = true;
+        mExistingAcquisitionItemId = event.getAcquisitionItemId();
+    }
+
+    @Subscribe
+    public void onNewAcquisitionEvent(NewAcquisitionEvent event) {
+        mExistingAcquisitionItemId = MethodParameterConstants.INVALID_INDEX;
+        mExistingAcquisitionItem = null;
     }
 
     @Override
@@ -198,8 +227,8 @@ public class AcquisitionItemFragment extends SmartFragment {
         setupOnClickActions();
     }
 
-    private void initExistingAcquisitionItem(int acquisitionItemId) {
-        mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(acquisitionItemId);
+    private void initExistingAcquisitionItem() {
+        mExistingAcquisitionItem = mDbHelper.getAcquisitionItemDao().queryForId(mExistingAcquisitionItemId);
     }
 
     private void initViews() {

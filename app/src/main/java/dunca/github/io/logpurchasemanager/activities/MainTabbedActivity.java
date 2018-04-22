@@ -22,6 +22,7 @@ import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionItemListFragment;
 import dunca.github.io.logpurchasemanager.fragments.AcquisitionLogPriceListFragment;
 import dunca.github.io.logpurchasemanager.fragments.events.AcquisitionIdEvent;
+import dunca.github.io.logpurchasemanager.fragments.events.NewAcquisitionEvent;
 import io.github.dunca.logpurchasemanager.shared.model.Acquisition;
 
 public class MainTabbedActivity extends AppCompatActivity {
@@ -125,7 +126,10 @@ public class MainTabbedActivity extends AppCompatActivity {
     }
 
     private void setupOnClickActions() {
-        mNewAcquisitionItemFab.setOnClickListener(view -> mViewPager.setCurrentItem(2));
+        mNewAcquisitionItemFab.setOnClickListener(view -> {
+            EventBus.getDefault().post(new NewAcquisitionEvent());
+            mViewPager.setCurrentItem(2);
+        });
     }
 
     @Override
