@@ -18,15 +18,18 @@ Observations     :${acquisition_observations}
 
 Acquirer         :${acquirer_username} ${acquirer_first_name} ${acquirer_last_name}
 
--------------------------------------------------------------------------------------------
-Log code       Species        Quality class  Length         Diameter       Volume
--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+Log code       Species        Quality class  Length         Diameter       Volume         Price
+--------------------------------------------------------------------------------------------------------
 ${acquisition_lines}
--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 
-Log count       :${log_count}
-Total volume    :${total_log_volume}
-Length average  :${length_average} 
-Diameter average:${diameter_average}
-Volume average  :${volume_average}
-                       
+Log count            :${log_count}
+Total volume         :${total_log_volume}
+Total value          :${total_value}
+Discount percentage  :${discount_percentage} %
+
+Volume average       :${volume_average}
+Average price        :${price_average}
+Length average       :${length_average}
+Diameter average     :${diameter_average}

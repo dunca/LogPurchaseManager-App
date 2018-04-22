@@ -1,2 +1,2 @@
-${log_code}${species}${quality_class}${length}${diameter}${volume}
+${log_code}${species}${quality_class}${length}${diameter}${volume}${price}
 ${log_observations}

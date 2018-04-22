@@ -203,9 +203,12 @@ public class PrintingActivity extends AppCompatActivity {
 
         values.put("log_count", String.valueOf(getLogCount()));
         values.put("total_log_volume", StringFormatUtil.round(getTotalVolume()));
+        values.put("total_value", StringFormatUtil.round(getTotalValue()));
+        values.put("discount_percentage", StringFormatUtil.round(mAcquisition.getDiscountPercentage()));
+        values.put("volume_average", StringFormatUtil.round(getVolumeAverage()));
+        values.put("price_average", StringFormatUtil.round(getPriceAverage()));
         values.put("length_average", StringFormatUtil.round(getLengthAverage()));
         values.put("diameter_average", StringFormatUtil.round(getDiameterAverage()));
-        values.put("volume_average", StringFormatUtil.round(getVolumeAverage()));
 
         return new StringSubstitutor(values).replace(mInvoiceTemplate);
     }
@@ -225,6 +228,8 @@ public class PrintingActivity extends AppCompatActivity {
 
         double volume = mNetInvoice ? acquisitionItem.getNetVolume() : acquisitionItem.getGrossVolume();
         values.put("volume", padAcquisitionLineElement(StringFormatUtil.round(volume)));
+
+        values.put("price", padAcquisitionLineElement(StringFormatUtil.round(acquisitionItem.getPrice())));
 
         values.put("log_observations", padAcquisitionLineElement(acquisitionItem.getObservations().trim()));
 
@@ -282,6 +287,19 @@ public class PrintingActivity extends AppCompatActivity {
 
     private double getVolumeAverage() {
         return getAverageOf(item -> mNetInvoice ? item.getNetVolume() : item.getGrossVolume());
+    }
+
+    private double getPriceAverage() {
+        return mAcquisitionItemList.stream().mapToDouble(AcquisitionItem::getPrice).average().getAsDouble();
+    }
+
+    private double getTotalValue() {
+        double totalValue = mAcquisitionItemList.stream().mapToDouble(item -> item.getPrice() *
+                (mNetInvoice ? item.getNetVolume() : item.getGrossVolume()))
+                .sum();
+        double discountValue = mAcquisition.getDiscountPercentage() / 100 * totalValue;
+
+        return totalValue - discountValue;
     }
 
     private double getAverageOf(ToDoubleFunction<AcquisitionItem> doublePropertyGetter) {
