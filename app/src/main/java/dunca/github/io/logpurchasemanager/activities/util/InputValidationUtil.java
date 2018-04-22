@@ -4,6 +4,9 @@ import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InputValidationUtil {
     private InputValidationUtil() {
 
@@ -22,12 +25,18 @@ public class InputValidationUtil {
     }
 
     public static boolean areNotEmpty(TextInputLayout... textInputLayouts) {
-        boolean allAreValid = true;
+        List<Boolean> validityList = new ArrayList<>();
 
         for (TextInputLayout textInputLayout : textInputLayouts) {
-            allAreValid &= isNotEmpty(textInputLayout);
+            validityList.add(isNotEmpty(textInputLayout));
         }
 
-        return allAreValid;
+        for (boolean validity : validityList) {
+            if (!validity) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
