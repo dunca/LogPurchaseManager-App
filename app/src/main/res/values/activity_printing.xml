@@ -3,8 +3,8 @@
     <!--Labels-->
     <string name="activity_printing_net_placeholder">net</string>
     <string name="activity_printing_gross_placeholder">gross</string>
-    <string name="activity_printing_use_net_values_label">Use net values</string>
-    <string name="activity_printing_use_gross_values_label">Use gross values</string>
+    <string name="activity_printing_using_net_values_label">Using net values</string>
+    <string name="activity_printing_using_gross_values_label">Using gross values</string>
     <string name="activity_printing_pdf_generation_btn_label">Generate PDF</string>
 
     <!--Messages-->

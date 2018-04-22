@@ -104,12 +104,14 @@ public class PrintingActivity extends AppCompatActivity {
         mBtnGeneratePdf = findViewById(R.id.btnGeneratePdf);
         mTvInvoiceContent = findViewById(R.id.tvInvoiceContent);
         mCbPrintUsingNetValues = findViewById(R.id.cbPrintUsingNetValues);
+
+        mNetInvoice = mCbPrintUsingNetValues.isChecked();
     }
 
     private void setupOnClickActions() {
         mCbPrintUsingNetValues.setOnCheckedChangeListener((view, isChecked) -> {
-            int labelId = isChecked ? R.string.activity_printing_use_net_values_label
-                    : R.string.activity_printing_use_gross_values_label;
+            int labelId = isChecked ? R.string.activity_printing_using_net_values_label
+                    : R.string.activity_printing_using_gross_values_label;
             mCbPrintUsingNetValues.setText(labelId);
 
             mNetInvoice = isChecked;

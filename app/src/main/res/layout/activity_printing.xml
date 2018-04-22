@@ -32,8 +32,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:checked="false"
-            android:text="@string/activity_printing_use_gross_values_label"
+            android:checked="true"
+            android:text="@string/activity_printing_using_net_values_label"
             app:layout_constraintEnd_toStartOf="@+id/btnGeneratePdf"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
