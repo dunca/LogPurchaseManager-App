@@ -12,7 +12,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public abstract class Service {
     protected static final Retrofit RETROFIT;
-    private static final String SERVER_URL = "http://192.168.1.3";
+    private static final String SERVER_URL = "http://10.24.145.100";
 
     static {
         Retrofit.Builder retrofitBuilder = new Retrofit.Builder().addConverterFactory(JacksonConverterFactory.create());
